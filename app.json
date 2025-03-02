@@ -1,21 +1,23 @@
 {
   "expo": {
-    "name": "PomPomExpense",
+    "name": "PomPom",
     "slug": "PomPomExpense",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/imagesMain/pomCoffee.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.PomPomExpense"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.PomPomExpense"
     },
     "web": {
       "bundler": "metro",
@@ -27,10 +29,11 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "image": "./assets/imagesMain/pompomBgWhite.jpg",
+          "imageWidth": "100%",
+          "resizeMode": "cover",
+          "backgroundColor": "#ffffff",
+          "borderRadius": 20
         }
       ]
     ],

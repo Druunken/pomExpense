@@ -2,9 +2,10 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "baseUrl": ".",  // This tells TypeScript to resolve modules from the root of the project
     "paths": {
       "@/*": [
-        "./*"
+        "./*" 
       ]
     }
   },
@@ -12,6 +13,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "./PomPomExpense/**/*"
   ]
 }
