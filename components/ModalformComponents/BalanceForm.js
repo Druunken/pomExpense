@@ -20,7 +20,7 @@ const BalanceForm = ({ setPointer, setPointerSeen, prevVal, setPrevVal, pointerS
             <Text style={{color:Colors.primaryBgColor.prime,fontFamily:"BoldFont",fontSize:20}}>Enter your starting balance</Text>
           </View>
           <NumberInput autoFocus={false} state={value} setState={setValue} secState={false} style={styles.input}/>
-          <CondBtn cond={value.toString().length < 1} label={"Save"} type={"confirm"} onPress={() =>{
+          <CondBtn cond={false} label={"Save"} type={"confirm"} onPress={() =>{
               const actualVal = numberValidation.convertToNumber(value)
               const fixedVal = numberValidation.converToString(actualVal)
               setPrevVal(fixedVal)
