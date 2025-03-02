@@ -68,7 +68,8 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
     }
 
   return (
-    <Modal animationType='slide' transparent={true} visible={visible}>
+    <View>
+        <Modal animationType='slide' transparent={false} visible={visible}>
             <View style={[styles.container,{}]}>
                 <View style={[styles.header,{height:inset.top * 2}]}>
                     <View style={styles.headerLayout}>
@@ -138,7 +139,8 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
                 )}
             {/* </KeyboardAvoidingView> */}
             </View>
-    </Modal>
+        </Modal>
+    </View>
   )
 }
 

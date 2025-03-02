@@ -147,7 +147,7 @@ export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
             const getCosts = await db.getTotalCosts()
             setMarkingPoints()
             
-            const convertStr = numberInputValidation.converToString(getValue.toFixed(2))
+            const convertStr = numberInputValidation.converToString(getValue)
             const costsStr = numberInputValidation.converToString(getCosts)
 
             setCurrency(getCurrency)
