@@ -69,9 +69,9 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
 
   return (
     <View>
-        <Modal animationType='slide' transparent={false} visible={visible}>
+        <Modal animationType='slide' transparent={true} visible={visible}>
             <View style={[styles.container,{}]}>
-                <View style={[styles.header,{height:inset.top * 2}]}>
+                <View style={[styles.header,{height:Platform.OS === "ios" ? inset.top * 2 : 60}]}>
                     <View style={styles.headerLayout}>
                             {backToOverview && (
                                 <BacktoFinal setPointer={setPointer} />
@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
         position:"absolute",
         backgroundColor: "rgba(0, 0, 0, 0.9)",
         height:"100%",
+        width: "100%"
     },
     inputContainer:{
         alignItems:"center",
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius:20,
         height:"100%",
         alignItems:"flex-end",
-        paddingBottom:6
+        paddingBottom:6,
     },
     label:{
         fontSize:40,

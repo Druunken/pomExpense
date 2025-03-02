@@ -81,7 +81,7 @@ const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
             addRow()
             const actualCost = numberInputValidation.convertToNumber(fixedCostAmount)
             const actualAmount = numberInputValidation.convertToNumber(amount)
-            const sum = (actualCost - actualAmount).toFixed(2)
+            const sum = (actualCost - actualAmount)
             const res = numberInputValidation.converToString(sum)
 
             setFixedCostAmount(res)
