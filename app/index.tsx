@@ -1,9 +1,11 @@
-import { Text, View, StyleSheet, ImageBackground, TouchableOpacity, SafeAreaView } from "react-native";
+import { Text, View, StyleSheet, ImageBackground, TouchableOpacity, SafeAreaView, Platform, StatusBar } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming} from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+
 
 import Mainpom from '../assets/icons/pompomFriends.svg'
 import  db  from '../services/serverSide.js'
@@ -345,14 +347,17 @@ export default function Index() {
     }
   },[])
 
+  const insets = useSafeAreaInsets()
+
   return (
 
-      <View style={{width:"100%",flex:1}}>
+      <View style={{flex:1}}>
+        <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
         <ModalEntryForm visible={modalVisible} pointer={pointer} setPointer={setPointer}/>
         {firstLaunch && (
           <ImageBackground resizeMode="cover" style={styles.pomPomBg}  source={require("../assets/imagesMain/pompomBg4.jpg")}/>
         )}
-        <SafeAreaView style={{flex:1,position:"relative"}}>
+        <SafeAreaView style={{flex:1,position:"relative", paddingTop:Platform.OS === "android" && insets.top}}>
           {!firstLaunch && (
             <View style={styles.chatDiv}>
             <Mainpom style={styles.pomMain}/>

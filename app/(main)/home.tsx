@@ -3,6 +3,8 @@ import {
   StyleSheet,
   SafeAreaView,
   ImageBackground,
+  StatusBar,
+  Platform
 } from "react-native";
 import React, { useState, useContext } from "react";
 import ModalTransactions from '@/components/ModalTransactions'
@@ -20,6 +22,7 @@ import BalanceContainer from '@/components/BalanceContainer'
 import AddTransactionBtn from '@/components/AddTransactionBtn'
 import LatestTransComponent from '@/components/LatestTransComponent'
 import { Calendar, CalendarList } from "react-native-calendars";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ** *** TECHNICAL SOLUTIONS *** ** //
 
@@ -45,6 +48,8 @@ const home = () => {
   const balanceOpacity = useSharedValue(1)
   const balanceColor = useSharedValue(1)
 
+  const insets = useSafeAreaInsets()
+
   const balanceFade = () =>{
     balanceOpacity.value = 0
     balanceOpacity.value = withTiming(1, { duration: 500 })
@@ -57,8 +62,9 @@ const home = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       <ImageBackground style={styles.pomBg}source={require("@/assets/imagesMain/pompomBg.png")}/>
-      <SafeAreaView>
+      <SafeAreaView style={{paddingTop: Platform.OS === "android" && insets.top}}>
         <ModalTransactions editId={editId} balanceFade={balanceFade()} value={value} setValue={setValue} editMode={editMode} setEditMode={setEditMode} expenseMode={expenseMode} setExpenseMode={setExpenseMode} visible={visibleModal} setVisible={setVisibleModal}/>
         <ModalInfoTransaction id={infoId} visible={infoModal} setVisible={setInfoModal}/>
         <BalanceContainer currency={currency} value={value} />

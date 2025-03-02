@@ -205,7 +205,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                                         setCate("Food")
                                         setId(1)
                                         setPressed(true)
-                                    }} id={1} value style={[styles.cateLay, {backgroundColor: pressed && id === 1 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
+                                    }}  value style={[styles.cateLay, {backgroundColor: pressed && id === 1 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
                                         <Text style={styles.cateLabel}>Food</Text>
                                     </TouchableOpacity>
 
@@ -213,7 +213,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                                         setCate("Drink")
                                         setId(2)
                                         setPressed(true)
-                                    }} id={2} style={[styles.cateLay, {backgroundColor: pressed && id === 2 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
+                                    }}  style={[styles.cateLay, {backgroundColor: pressed && id === 2 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
                                         <Text style={styles.cateLabel}>Drink</Text>
                                     </TouchableOpacity>
 
@@ -221,7 +221,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                                         setCate("Education")
                                         setId(3)
                                         setPressed(true)
-                                    }} id={3} style={[styles.cateLay, {backgroundColor: pressed && id === 3 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
+                                    }}  style={[styles.cateLay, {backgroundColor: pressed && id === 3 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
                                         <Text style={styles.cateLabel}>Education</Text>
                                     </TouchableOpacity>
 
@@ -229,7 +229,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                                         setCate("Shopping")
                                         setId(4)
                                         setPressed(true)
-                                    }} id={4} style={[styles.cateLay, {backgroundColor: pressed && id === 4 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
+                                    }}  style={[styles.cateLay, {backgroundColor: pressed && id === 4 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
                                         <Text style={styles.cateLabel}>Shopping</Text>
                                     </TouchableOpacity>
                                 </ScrollView>

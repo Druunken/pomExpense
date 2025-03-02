@@ -1,6 +1,4 @@
 const convertToNumber = (val) => {
-  console.log(val)
-  console.log(typeof val)
     const arr = val.split(".").join("").split("")
 
     if(arr.includes(",")){
@@ -15,8 +13,6 @@ const convertToNumber = (val) => {
 }
 
 const converToString = (val) => {
-  console.log(val)
-  console.log(typeof val)
   if(val === 0) return "0,00"
   const arr = val.toString().split("")
   const len = arr.length

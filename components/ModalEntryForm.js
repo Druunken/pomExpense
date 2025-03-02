@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Modal, StyleSheet, Text, View, Platform } from 'react-native'
+import { KeyboardAvoidingView, Modal, StyleSheet, Text, View, Platform, StatusBar } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
 import Animated, {useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming} from "react-native-reanimated";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -68,7 +68,8 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
     }
 
   return (
-    <View>
+    <View style={{padding: 0}}>
+        <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
         <Modal animationType='slide' transparent={true} visible={visible}>
             <View style={[styles.container,{}]}>
                 <View style={[styles.header,{height:Platform.OS === "ios" ? inset.top * 2 : 60}]}>
