@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Modal, StyleSheet, Text, View, Platform, StatusBar } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
 import Animated, {useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming} from "react-native-reanimated";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import CurrencyForm from '@/components/ModalformComponents/CurrencyForm'
 import BalanceForm from '@/components/ModalformComponents/BalanceForm'
 import IncomeForm from '@/components/ModalformComponents/IncomeForm'
@@ -68,12 +68,11 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
     }
 
   return (
-    <View style={{padding: 0}}>
-        <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+    <View style={{}}>
         <Modal animationType='slide' transparent={true} visible={visible}>
-            <View style={[styles.container,{}]}>
+            <View style={[styles.container]}>
                 <View style={[styles.header,{height:Platform.OS === "ios" ? inset.top * 2 : 60}]}>
-                    <View style={styles.headerLayout}>
+                    <View style={[styles.headerLayout]}>
                             {backToOverview && (
                                 <BacktoFinal setPointer={setPointer} />
                             )}
@@ -138,10 +137,9 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
                 {pointer === 7 && (
                         <FinalViewForm pointer={pointer} setPointer={setPointer} pointerSeen={pointerSeen} setPointerSeen={setPointerSeen}  prevIncome={prevIncome} prevCurrency={prevCurrency} prevVal={prevVal} prevGoal={prevGoal} prevUsername={prevUsername}/>
                 )}
-            {/* </KeyboardAvoidingView> */}
             </View>
-        </Modal>
-    </View>
+            </Modal>
+        </View>
   )
 }
 
@@ -152,7 +150,8 @@ const styles = StyleSheet.create({
         position:"absolute",
         backgroundColor: "rgba(0, 0, 0, 0.9)",
         height:"100%",
-        width: "100%"
+        width: "100%",
+        top:0
     },
     inputContainer:{
         alignItems:"center",

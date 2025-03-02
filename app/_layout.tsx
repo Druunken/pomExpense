@@ -47,7 +47,7 @@ export default function RootLayout() {
         <BalanceProvider>
           <Stack>
             <Stack.Screen name="(main)" options={{ headerShown: false}}/>
-            <Stack.Screen name="index" options={{ headerShown: false }}/>
+            <Stack.Screen name="index" options={{ headerShown: false,statusBarStyle:"dark"}}/>
             <Stack.Screen name="auth"/>
           </Stack>
         </BalanceProvider>
