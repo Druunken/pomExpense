@@ -13,6 +13,9 @@ const BalanceForm = ({ setPointer, setPointerSeen, prevVal, setPrevVal, pointerS
   const { value,setValue } = useContext(usersBalanceContext)
   const isSeen = pointerSeen[7] !== 1
 
+
+  useEffect(() => {
+  },[])
   return (
       <View style={styles.container}>
         <KeyboardAvoidingView style={styles.keyboardDiv} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100}>

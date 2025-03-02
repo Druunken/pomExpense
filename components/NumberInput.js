@@ -194,6 +194,8 @@ const NumberInput = ({
     }
 
     const txtValidation = () => {
+      console.log(state)
+      if(state === undefined) return ""
       const len = state.length
       if(state.length === 0){
         return ""
@@ -202,6 +204,7 @@ const NumberInput = ({
     }
 
     const placeHolderValidation = () => {
+      if(state === undefined) setState("")
       const len = state.length
       const lastInd = len - 1
 
