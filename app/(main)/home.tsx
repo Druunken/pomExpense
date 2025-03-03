@@ -62,7 +62,7 @@ const home = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      {/* <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" /> */}
       <ImageBackground style={styles.pomBg}source={require("@/assets/imagesMain/pompomBg.png")}/>
       <SafeAreaView style={{paddingTop: Platform.OS === "android" && insets.top}}>
         <ModalTransactions editId={editId} balanceFade={balanceFade()} value={value} setValue={setValue} editMode={editMode} setEditMode={setEditMode} expenseMode={expenseMode} setExpenseMode={setExpenseMode} visible={visibleModal} setVisible={setVisibleModal}/>

@@ -352,7 +352,7 @@ export default function Index() {
   return (
 
       <View style={{flex:1,position:"relative"}}>
-        <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+        {/* <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" /> */}
         <ModalEntryForm visible={modalVisible} pointer={pointer} setPointer={setPointer}/>
         {firstLaunch && (
           <ImageBackground resizeMode="cover" style={styles.pomPomBg}  source={require("../assets/imagesMain/pompomBg4.jpg")}/>
