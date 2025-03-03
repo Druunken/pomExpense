@@ -276,16 +276,16 @@ const deleteTable = async() => {
       const rmMonthsProps = await connection.runAsync('DROP TABLE IF EXISTS monthsProps')
       const rmFixedCosts = await connection.runAsync('DROP TABLE IF EXISTS fixedCosts')
 
-      const getAllTables = await connection.getAllAsync(
-        'SELECT name FROM sqlite_master WHERE type="table"'
-      )
-      if(getAllTables[0].name === "sqlite_sequence"){
-        console.log("DROPPED ALL TABLES")
-        return true
-      }
-      else {
-        console.log("FAILED TO DROPP TABLES")
-        return false
+      const getAllTables = await connection.allAsync(
+        'SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"'
+      );
+  
+      if (getAllTables.length === 0) {
+        console.log("DROPPED ALL TABLES");
+        return true;
+      } else {
+        console.log("FAILED TO DROP TABLES", getAllTables);
+        return false;
       }
 
     } catch (error) {
