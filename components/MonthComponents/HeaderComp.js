@@ -18,7 +18,7 @@ const HeaderComp = () => {
     })
 
     const animatedText = useAnimatedStyle(() => {
-        const fontSize = interpolate(
+        /* const fontSize = interpolate(
             viewX.value,
             [0,150],
             [minFont,maxFont],
@@ -26,12 +26,12 @@ const HeaderComp = () => {
         )
         return {
             fontSize
-        }
+        } */
     })
     const animatedMid = useAnimatedStyle(() => {
         const fontSize = interpolate(
             midX.value,
-            [0,150],
+            [-50,150],
             [minFont,maxFont],
             
         )
@@ -43,7 +43,7 @@ const HeaderComp = () => {
 
 
     useEffect(() => {
-        viewX.value = withTiming(150, {duration:500})
+        viewX.value = withTiming(0, {duration:500})
         if(viewX.value > 0){
 
         }
@@ -65,8 +65,6 @@ export default HeaderComp
 
 const styles = StyleSheet.create({
     container:{
-        borderWidth:2,
-        borderColor:"red",
         borderRadius:10,
         width:"100%"
     },
