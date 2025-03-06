@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native'
 const AnimatedSplashScreen = () => {
   return (
     <View style={styles.container}>
-        <LottieView style={{height:150,width:150}} autoPlay loop source={require("../assets/lottie/loading_bar.json")} />
+        <LottieView style={{height:150,width:150}} autoPlay loop source={require("../assets/lottie/pomCoffeeAnim.json")} />
     </View>
   )
 }
