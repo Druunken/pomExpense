@@ -13,6 +13,7 @@ import { incomeActiveContext, usersBalanceContext } from "../hooks/balanceContex
 import { AppInitializationContext } from "../hooks/appContext";
 import numberValidation from '../services/numberInputValidation'
 import ModalEntryForm from '../components/ModalEntryForm'
+import AnimatedSplashScreen from '../components/AnimatedSplashScreen.js'
 
 // ** ** Build splash Art
 // ** ** **  Make the layout responsive throught out devices ** ** ** //
@@ -271,7 +272,7 @@ export default function Index() {
       setTimeout(() => {
         asyncUpdateFirstLaunch()
         router.push("/(main)/home")
-      },6000)
+      },10000)
     }
   },[firstLaunch])
  
@@ -358,15 +359,16 @@ export default function Index() {
           <ImageBackground resizeMode="cover" style={styles.pomPomBg}  source={require("../assets/imagesMain/pompomBg4.jpg")}/>
         )}
         <SafeAreaView style={{flex:1,position:"relative", paddingTop:Platform.OS === "android" && insets.top}}>
-          {!firstLaunch && (
-            <View style={styles.chatDiv}>
-            <Mainpom style={styles.pomMain}/>
-          </View> 
-          )}
+          
         <View style={styles.greetContainer}>
           <View style={styles.greetLayout}>
             <Text style={styles.greetP}>POMPOM SAVINGS</Text>
           </View>
+
+          {!firstLaunch && (
+              <AnimatedSplashScreen/>
+          )}
+
           <View style={[styles.descripContainer]}>
             {firstLaunch && (
               <View style={{alignItems:"center",gap:30}}>
@@ -459,27 +461,13 @@ export default function Index() {
           </Animated.View>
         </View>
         )}
-
-            {!firstLaunch && (
-              <View style={{gap:30,alignItems:"center",marginTop:150}}>
-
-                <View style={[styles.loadingContainer, {backgroundColor:"transparent"}]}>
-                  <Animated.View style={[styles.loadingLayout, animateLoadingBar]}>
-                  
-                </Animated.View>
-                <Animated.View style={[textAnimate, { marginTop:0,width:60,borderWidth:0,borderRadius:5,justifyContent:"center",alignItems:"center",backgroundColor:Colors.primaryBgColor.babyBlue}]}>
-                  <Text style={{fontFamily:"BoldFont",fontSize:16,color:Colors.primaryBgColor.prime}}>{textContent}</Text>
-                </Animated.View>
-            </View>
-              </View>
-            )}
         </SafeAreaView>
       </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container:{
+  container:{ 
     
   },
   input:{
