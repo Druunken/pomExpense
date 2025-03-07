@@ -370,7 +370,8 @@ export default function Index() {
 
       <Animated.View style={[animatedBackground,{flex:1,position:"relative",backgroundColor:Colors.primaryBgColor.white}]}>
         
-        <AnimatedViewComp/>
+        {/* <AnimatedViewComp/> */}
+        <AnimatedSplashScreen/>
         <ModalEntryForm visible={modalVisible} pointer={pointer} setPointer={setPointer}/>
         {firstLaunch && (
           <ImageBackground resizeMode="cover" style={styles.pomPomBg}  source={require("../assets/imagesMain/pompomBg4.jpg")}/>
@@ -382,9 +383,6 @@ export default function Index() {
             <Text style={styles.greetP}>POMPOM SAVINGS</Text>
           </View>
 
-          {!firstLaunch && (
-              <AnimatedSplashScreen/>
-          )}
           
           <View style={[styles.descripContainer]}>
             {firstLaunch && (

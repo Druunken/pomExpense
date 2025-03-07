@@ -12,7 +12,7 @@ const AnimatedViewComp = () => {
         }, 500);
     })
   return (
-    <View style={styles.container}>
+    <View style={styles.lottieBottomView}>
       <LottieView resizeMode="cover" style={styles.mainView} autoPlay={ready} loop={false} source={require("../assets/lottie/bgAnimated.json")} />
     </View>
   )
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         height:300,
         width:"100%"
     },
-    container:{
+    lottieBottomView:{
         position:"absolute",
         top:0,
         left:0,
