@@ -287,7 +287,7 @@ export default function Index() {
       /* setTimeout(() => {
         asyncUpdateFirstLaunch()
         router.push("/(main)/home")
-      },6000) */
+      },10000) */
     }
   },[firstLaunch])
  
@@ -371,7 +371,9 @@ export default function Index() {
       <Animated.View style={[animatedBackground,{flex:1,position:"relative",backgroundColor:Colors.primaryBgColor.white}]}>
         
         {/* <AnimatedViewComp/> */}
-        <AnimatedSplashScreen/>
+        {!firstLaunch && (
+          <AnimatedSplashScreen/>
+        )}
         <ModalEntryForm visible={modalVisible} pointer={pointer} setPointer={setPointer}/>
         {firstLaunch && (
           <ImageBackground resizeMode="cover" style={styles.pomPomBg}  source={require("../assets/imagesMain/pompomBg4.jpg")}/>
@@ -379,15 +381,12 @@ export default function Index() {
         <SafeAreaView style={{flex:1,position:"relative", paddingTop:Platform.OS === "android" && insets.top}}>
           
         <View style={[styles.greetContainer]}>
-          <View style={[styles.greetLayout, {display:"none"}]}>
-            <Text style={styles.greetP}>POMPOM SAVINGS</Text>
-          </View>
 
           
           <View style={[styles.descripContainer]}>
             {firstLaunch && (
               <View style={{alignItems:"center",gap:30}}>
-                <Animated.View style={[styles.descripDiv, animatedStyle1]}>
+                <Animated.View style={[styles.descripDiv, animatedStyle1,{display:"none"}]}>
                   <Text style={styles.descripP}>A cute simple way to track withdraws.</Text>
                 </Animated.View>
 

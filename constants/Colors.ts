@@ -10,8 +10,8 @@ export const Colors = {
   primaryBgColor: {
     prime:"#66bf8a",
     lightPrime:'#94d6c0',
-    newPrime:'#d3ffda',
     primeLight:"#c7d871",
+    newPrime:'#d3ffda',
     dark:"#ffde4f",
     light:"#fff8ac",
     white:"white",
