@@ -14,6 +14,7 @@ import { AppInitializationContext } from "../hooks/appContext";
 import numberValidation from '../services/numberInputValidation'
 import ModalEntryForm from '../components/ModalEntryForm'
 import AnimatedSplashScreen from '../components/AnimatedSplashScreen.js'
+import AnimatedViewComp from '../components/AnimatedViewComp.js'
 
 // ** ** Build splash Art
 // ** ** **  Make the layout responsive throught out devices ** ** ** //
@@ -353,7 +354,7 @@ export default function Index() {
   return (
 
       <View style={{flex:1,position:"relative",backgroundColor:Colors.primaryBgColor.newPrime}}>
-        {/* <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" /> */}
+        <AnimatedViewComp/>
         <ModalEntryForm visible={modalVisible} pointer={pointer} setPointer={setPointer}/>
         {firstLaunch && (
           <ImageBackground resizeMode="cover" style={styles.pomPomBg}  source={require("../assets/imagesMain/pompomBg4.jpg")}/>
