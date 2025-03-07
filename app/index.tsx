@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, ImageBackground, TouchableOpacity, SafeAreaView, Platform, StatusBar } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, {useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming} from "react-native-reanimated";
+import Animated, {interpolateColor, useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming} from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -94,6 +94,19 @@ export default function Index() {
   const fadeIn = () => {
     opacity.value = withTiming(1,{duration:3500})
   }
+
+
+  const progress = useSharedValue(0)
+
+  const animatedBackground = useAnimatedStyle(() => {
+    return {
+      backgroundColor: interpolateColor(
+        progress.value,
+        [0,1],
+        ["white",Colors.primaryBgColor.newPrime]
+      )
+    }
+  })
 
   const router = useRouter();
 
@@ -270,6 +283,7 @@ export default function Index() {
   useEffect(() => {
 
     if(!firstLaunch){
+      progress.value = withTiming(1,{duration:1000})
       /* setTimeout(() => {
         asyncUpdateFirstLaunch()
         router.push("/(main)/home")
@@ -317,6 +331,7 @@ export default function Index() {
       console.error(error)
     }
   }
+  
 
   useEffect(() => {
     setPointer(1)
@@ -353,7 +368,8 @@ export default function Index() {
 
   return (
 
-      <View style={{flex:1,position:"relative",backgroundColor:Colors.primaryBgColor.newPrime}}>
+      <Animated.View style={[animatedBackground,{flex:1,position:"relative",backgroundColor:Colors.primaryBgColor.white}]}>
+        
         <AnimatedViewComp/>
         <ModalEntryForm visible={modalVisible} pointer={pointer} setPointer={setPointer}/>
         {firstLaunch && (
@@ -361,8 +377,8 @@ export default function Index() {
         )}
         <SafeAreaView style={{flex:1,position:"relative", paddingTop:Platform.OS === "android" && insets.top}}>
           
-        <View style={styles.greetContainer}>
-          <View style={styles.greetLayout}>
+        <View style={[styles.greetContainer]}>
+          <View style={[styles.greetLayout, {display:"none"}]}>
             <Text style={styles.greetP}>POMPOM SAVINGS</Text>
           </View>
 
@@ -463,7 +479,7 @@ export default function Index() {
         </View>
         )}
         </SafeAreaView>
-      </View>
+      </Animated.View>
   );
 }
 

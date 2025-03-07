@@ -16,18 +16,20 @@ const AnimatedSplashScreen = () => {
 
 
     useEffect(() => {
-        opacity.value = withTiming(1,{duration:1000})
+        setTimeout(() => {
+            opacity.value = withTiming(1,{duration:1000})
+        }, 500);
     },[])
 
     return (
     <Animated.View style={[styles.container,animatedView]}>
-        <View>
+        <View style={{position:"relative", borderWidth:0,width:400}}>
             <View style={styles.hideView} />
-            <LottieView style={{height:300,width:300}} loop autoPlay={true} source={require("../assets/lottie/lottieCoffee.json")} />
+            <LottieView style={{height:390,width:390}} loop autoPlay={true} source={require("../assets/lottie/lottieCoffee.json")} />
         </View>
-        <View style={{justifyContent:"center",alignItems:"center",width:300}}>
-            <LottieView style={{height:60,width:60}} loop autoPlay={true} source={require("../assets/lottie/loading_bar.json")} />
-        </View>
+        {/* <View style={{justifyContent:"center",alignItems:"center",width:500}}>
+            <LottieView resizeMode='contain' style={{height:150,width:150}} loop autoPlay={true} source={require("../assets/lottie/animated_progress_bar.json")} />
+        </View> */}
     </Animated.View>
   )
 }
@@ -49,6 +51,6 @@ const styles = StyleSheet.create({
         height:30,
         width:300,
         backgroundColor:Colors.primaryBgColor.newPrime,
-        zIndex:-1,
+        zIndex:1,
     }
 })

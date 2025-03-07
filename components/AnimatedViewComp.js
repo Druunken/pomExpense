@@ -1,11 +1,19 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import LottieView from 'lottie-react-native'
 
 const AnimatedViewComp = () => {
+    const [ready,setReady] = useState(false)
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            setReady(true)
+        }, 500);
+    })
   return (
     <View style={styles.container}>
-      <LottieView resizeMode="cover" style={styles.mainView} autoPlay loop={false} source={require("../assets/lottie/bgAnimated.json")} />
+      <LottieView resizeMode="cover" style={styles.mainView} autoPlay={ready} loop={false} source={require("../assets/lottie/bgAnimated.json")} />
     </View>
   )
 }
