@@ -30,14 +30,15 @@ const AnimatedSplashScreen = () => {
             {/* <View style={styles.hideView} /> */}
             <LottieView style={{height:180,width:180,borderWidth:0}} resizeMode='cover' loop autoPlay={true} source={require("../assets/lottie/lottieCoffee.json")} />
         </View>
-        {/* <View style={{justifyContent:"center",alignItems:"center",width:500}}>
+        <View style={{justifyContent:"center",alignItems:"center",width:500}}>
             <LottieView resizeMode='contain' style={{height:150,width:150}} loop autoPlay={true} source={require("../assets/lottie/animated_progress_bar.json")} />
-        </View> */}
+        </View>
         <View style={styles.lottieBottomView}>
-            <LottieView resizeMode="cover" style={{height:300,width:"100%"}} autoPlay={ready} loop={false} source={require("../assets/lottie/bgAnimated.json")} />
+            <LottieView resizeMode="cover" style={{height:150,width:"100%"}} autoPlay={ready} loop={false} source={require("../assets/lottie/bgAnimated.json")} />
         </View>
         <View style={styles.lottieTopView}>
-            <LottieView resizeMode="cover" style={{height:300,width:"100%"}} autoPlay={ready} loop={false} source={require("../assets/lottie/bgAnimated.json")} />
+            <LottieView resizeMode="cover" style={{height:200,width:"100%"}} autoPlay={ready} loop={false} source={require("../assets/lottie/heaven_top.json")} />
+            
         </View>
     </Animated.View>
   )
