@@ -269,10 +269,10 @@ export default function Index() {
   useEffect(() => {
 
     if(!firstLaunch){
-      setTimeout(() => {
+      /* setTimeout(() => {
         asyncUpdateFirstLaunch()
         router.push("/(main)/home")
-      },10000)
+      },6000) */
     }
   },[firstLaunch])
  
@@ -352,7 +352,7 @@ export default function Index() {
 
   return (
 
-      <View style={{flex:1,position:"relative"}}>
+      <View style={{flex:1,position:"relative",backgroundColor:Colors.primaryBgColor.newPrime}}>
         {/* <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" /> */}
         <ModalEntryForm visible={modalVisible} pointer={pointer} setPointer={setPointer}/>
         {firstLaunch && (
@@ -368,7 +368,7 @@ export default function Index() {
           {!firstLaunch && (
               <AnimatedSplashScreen/>
           )}
-
+          
           <View style={[styles.descripContainer]}>
             {firstLaunch && (
               <View style={{alignItems:"center",gap:30}}>
