@@ -11,6 +11,8 @@ const AnimatedSplashScreen = () => {
     const [loadingIndex,setLoadingIndex] = useState(0)
 
     const opacity = useSharedValue(0)
+    const bottomTopView = useSharedValue(0)
+    const bottomBotView = useSharedValue(0)
 
     const animatedView = useAnimatedStyle(() => {
         return {
@@ -18,10 +20,30 @@ const AnimatedSplashScreen = () => {
         }
     })
 
+    const animatedBottomVIew = useAnimatedStyle(() => {
+        return{
+            bottom:bottomBotView.value 
+        }
+    })
+
+    const animatedTopView = useAnimatedStyle(() => {
+        return{
+            bottom:bottomTopView.value
+        }
+    })
+
+
     const [ready,setReady] = useState(false)
 
 
     useEffect(() => {
+
+        setTimeout(() => {
+            bottomTopView.value = withTiming(150,{duration:800})
+            bottomBotView.value = withTiming(-150,{duration:800})
+            opacity.value = withTiming(0,{duration:800})
+        }, 10000);
+
         setInterval(() => {
             setLoadingIndex((prev)  => prev + 1)
         }, 1500);
@@ -44,13 +66,14 @@ const AnimatedSplashScreen = () => {
             <LottieView resizeMode='cover' style={{height:50,width:50}} loop autoPlay={true} source={require("../assets/lottie/animated_progress_bar.json")} />
             <Text style={styles.label}>{loadingArr[loadingIndex]}</Text>
         </View>
-        <View style={styles.lottieBottomView}>
+        
+        <Animated.View style={[styles.lottieBottomView, animatedBottomVIew]}>
             <LottieView resizeMode="cover" style={{height:150,width:"100%"}} autoPlay={ready} loop={false} source={require("../assets/lottie/bgAnimated.json")} />
-        </View>
-        <View style={styles.lottieTopView}>
+        </Animated.View>
+        <Animated.View style={[styles.lottieTopView, animatedTopView]}>
             <LottieView resizeMode="cover" style={{height:200,width:"100%"}} autoPlay={ready} loop={false} source={require("../assets/lottie/heaven_top.json")} />
             
-        </View>
+        </Animated.View>
     </Animated.View>
   )
 }

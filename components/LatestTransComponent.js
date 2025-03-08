@@ -32,7 +32,7 @@ export default LatestTransComponent
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor:Colors.primaryBgColor.light,
+        backgroundColor:Colors.primaryBgColor.prime,
         width:"100%",
         height:"100%",
         borderRadius:15,
