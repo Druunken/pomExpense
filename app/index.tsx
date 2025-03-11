@@ -284,10 +284,10 @@ export default function Index() {
 
     if(!firstLaunch){
       progress.value = withTiming(1,{duration:1000})
-      /* setTimeout(() => {
+      setTimeout(() => {
         asyncUpdateFirstLaunch()
         router.push("/(main)/home")
-      },10000) */
+      },11000)
     }
   },[firstLaunch])
  
