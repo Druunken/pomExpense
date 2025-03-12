@@ -1,13 +1,14 @@
 import { Colors } from '@/constants/Colors'
 import { Stack, } from 'expo-router'
 import { Tabs } from 'expo-router'
-import { Image,Text } from 'react-native'
+import { Image,Text,StyleSheet } from 'react-native'
 import React from 'react'
 
 
 import SettingsIcon from '../../assets/icons/pompomFriends.svg'; 
 import BalanceIcon from '../../assets/icons/pompomBox.svg';
 import HomeIcon from '../../assets/icons/pompomMuffin.svg';
+import LottieView from 'lottie-react-native'
 
 // create a modern navbar design 
 // the tabbar has a safeArea thats why i couldnt center the elements
@@ -50,7 +51,7 @@ const _layout = () => {
         }}/>
 
       <Tabs.Screen  name="settings" options={{ headerShown: false,tabBarIcon:({focused}) => (
-         <SettingsIcon height={35} width={35}/>
+         <LottieView resizeMode='contain' loop={true} autoPlay source={require("../../assets/lottie/settings_lottie.json")} style={styles.lottieIcon}/>
         ),
         tabBarLabel:({focused}) => (
           <Text style={{
@@ -67,5 +68,12 @@ const _layout = () => {
     </Tabs>
   )
 }
+
+const styles = StyleSheet.create({
+  lottieIcon: {
+    width:35,
+    height:35,
+  }
+})
 
 export default _layout
