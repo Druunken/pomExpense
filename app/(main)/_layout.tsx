@@ -2,7 +2,8 @@ import { Colors } from '@/constants/Colors'
 import { Stack, } from 'expo-router'
 import { Tabs } from 'expo-router'
 import { Image,Text,StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useRoute } from '@react-navigation/native';
 
 
 import SettingsIcon from '../../assets/icons/pompomFriends.svg'; 
@@ -15,7 +16,13 @@ import LottieView from 'lottie-react-native'
 const _layout = () => {
 
 
-  const settingsRef = useRef(null)
+  const [settingsRef,setSettingsRef] = useState(null)
+  const route = useRoute()
+
+
+  useEffect(() => {
+    console.log(route.path)
+  }, [route.name])
 
   return (
     <Tabs  safeAreaInsets={{bottom:0}}  screenOptions={{ tabBarStyle:{
@@ -40,8 +47,12 @@ const _layout = () => {
           }} >Transactions</Text>
         )}}/>
         
-      <Tabs.Screen  name="home" options={{ headerShown: false,tabBarIcon:({focused}) => (
-         <HomeIcon height={35} width={35}/>
+      <Tabs.Screen  listeners={(({navigation, route}) => ({
+        tabPress: (e) => {
+          console.log("pressed home")
+        }
+      }))} name="home" options={{ headerShown: false,tabBarIcon:({focused}) => (
+         <LottieView  speed={1} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/settings_lottie.json")} style={styles.lottieIcon}/>
         ),
         tabBarLabel:({focused}) => (
           <Text style={{
@@ -56,13 +67,20 @@ const _layout = () => {
 
       <Tabs.Screen  listeners={(({ navigation, route} )=> ({
         tabPress: (e) => {
-          console.log("pressed")
-          settingsRef.current?.reset()
-          settingsRef.current?.play()
+          console.log("pressed settings")
+          e.preventDefault()
+          settingsRef.reset()
+          navigation.navigate(route.name)
+          settingsRef.play()
         }
       }) )} name="settings" options={{ headerShown: false, 
         tabBarIcon:({focused}) => (
-          <LottieView ref={settingsRef} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/settings_lottie.json")} style={styles.lottieIcon}/>
+          focused ? (
+            <LottieView ref={(ref) => setSettingsRef(ref)} speed={1} resizeMode='contain' loop={false} autoPlay={true} source={require("../../assets/lottie/settings_lottie.json")} style={styles.lottieIcon}/>
+          ) :
+          <>
+          <LottieView  speed={1} resizeMode='contain' loop={true} autoPlay={true} source={require("../../assets/lottie/loading_bar.json")} style={styles.lottieIcon}/>
+          </>
         ),
         tabBarLabel:({focused}) => (
           <Text style={{

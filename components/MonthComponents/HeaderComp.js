@@ -18,7 +18,7 @@ const HeaderComp = () => {
     })
 
     const animatedText = useAnimatedStyle(() => {
-        /* const fontSize = interpolate(
+        const fontSize = interpolate(
             viewX.value,
             [0,150],
             [minFont,maxFont],
@@ -26,7 +26,7 @@ const HeaderComp = () => {
         )
         return {
             fontSize
-        } */
+        }
     })
     const animatedMid = useAnimatedStyle(() => {
         const fontSize = interpolate(
