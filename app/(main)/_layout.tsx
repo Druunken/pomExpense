@@ -26,12 +26,15 @@ const _layout = () => {
 
   return (
     <Tabs  safeAreaInsets={{bottom:0}}  screenOptions={{ tabBarStyle:{
-      backgroundColor:Colors.primaryBgColor.prime,
+      backgroundColor:Colors.primaryBgColor.newPrime,
       position:"absolute",
-      height:110,
+      height:90,
       borderRadius:15,
       justifyContent:"center",
-      paddingTop:20,
+      paddingTop:10,
+      alignItems:"center",
+      borderWidth:2,
+      marginBottom:0,
     },
      
     }}>
@@ -42,7 +45,7 @@ const _layout = () => {
           <Text style={{
             fontSize:15,
             fontFamily:"MainFont",
-            color: focused ? Colors.primaryBgColor.white : "black",
+            color: focused ? Colors.primaryBgColor.prime : "black",
             fontWeight: focused ? "600" : "300",
           }} >Transactions</Text>
         )}}/>
@@ -52,13 +55,13 @@ const _layout = () => {
           console.log("pressed home")
         }
       }))} name="home" options={{ headerShown: false,tabBarIcon:({focused}) => (
-         <LottieView  speed={1} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/settings_lottie.json")} style={styles.lottieIcon}/>
+         <HomeIcon/>
         ),
         tabBarLabel:({focused}) => (
           <Text style={{
             fontSize:15,
             fontFamily:"MainFont",
-            color: focused ? Colors.primaryBgColor.white : "black",
+            color: focused ? Colors.primaryBgColor.prime : "black",
             fontWeight: focused ? "600" : "300"
           }} >Home</Text>
         )
@@ -79,14 +82,14 @@ const _layout = () => {
             <LottieView ref={(ref) => setSettingsRef(ref)} speed={1} resizeMode='contain' loop={false} autoPlay={true} source={require("../../assets/lottie/settings_lottie.json")} style={styles.lottieIcon}/>
           ) :
           <>
-          <LottieView  speed={1} resizeMode='contain' loop={true} autoPlay={true} source={require("../../assets/lottie/loading_bar.json")} style={styles.lottieIcon}/>
+            <LottieView  speed={1} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/settings_lottie_static.json")} style={styles.lottieIcon}/>
           </>
         ),
         tabBarLabel:({focused}) => (
           <Text style={{
             fontSize:15,
             fontFamily:"MainFont",
-            color: focused ? Colors.primaryBgColor.white : "black",
+            color: focused ? Colors.primaryBgColor.prime : "black",
             fontWeight: focused ? "600" : "300"
           }} >Settings</Text>
         )
