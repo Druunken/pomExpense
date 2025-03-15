@@ -17,6 +17,7 @@ const _layout = () => {
 
 
   const [settingsRef,setSettingsRef] = useState(null)
+  const [transactionsRef,setTransactionsRef] = useState(null)
   const route = useRoute()
 
 
@@ -38,16 +39,26 @@ const _layout = () => {
     },
      
     }}>
-      <Tabs.Screen name="transactions"   options={{ headerShown: false, tabBarIcon:({focused}) => (
-          <BalanceIcon height={32} width={32} fill={focused ? Colors.primaryBgColor.prime : Colors.txtColor.dark} />
+      <Tabs.Screen listeners={(({ navigation, route}) => ({
+        tabPress:(e) => {
+          e.preventDefault()
+          transactionsRef.reset()
+          navigation.navigate(route.name)
+          transactionsRef.play()
+        }
+      }))} name="transactions"  options={{ headerShown: false, tabBarIcon:({focused}) => (
+          focused ? 
+          <LottieView ref={(ref) => setTransactionsRef(ref)} speed={1} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/transaction_lottie.json")} style={styles.lottieIcon}/>
+          :
+          <BalanceIcon/>
         ),
         tabBarLabel:({focused}) => (
           <Text style={{
             fontSize:15,
             fontFamily:"MainFont",
             color: focused ? Colors.primaryBgColor.prime : "black",
-            fontWeight: focused ? "600" : "300",
-          }} >Transactions</Text>
+            fontWeight: focused ? "600" : "300"
+          }} >Settings</Text>
         )}}/>
         
       <Tabs.Screen  listeners={(({navigation, route}) => ({
