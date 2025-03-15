@@ -50,7 +50,7 @@ const _layout = () => {
           focused ? 
           <LottieView ref={(ref) => setTransactionsRef(ref)} speed={1} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/transaction_lottie.json")} style={styles.lottieIcon}/>
           :
-          <LottieView ref={(ref) => setTransactionsRef(ref)} speed={1} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/transaction_lottie_static.json")} style={styles.lottieIcon}/>
+          <LottieView speed={1} resizeMode='contain' loop={false} autoPlay={false} source={require("../../assets/lottie/transaction_lottie_static.json")} style={styles.lottieIcon}/>
         ),
         tabBarLabel:({focused}) => (
           <Text style={{
@@ -114,8 +114,8 @@ const _layout = () => {
 
 const styles = StyleSheet.create({
   lottieIcon: {
-    width:35,
-    height:35,
+    width:38,
+    height:38,
   }
 })
 
