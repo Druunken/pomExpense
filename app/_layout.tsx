@@ -46,7 +46,7 @@ export default function RootLayout() {
       <IncomeProvider>
         <BalanceProvider>
           <Stack>
-            <Stack.Screen name="(main)" options={{ headerShown: false}} />
+            <Stack.Screen name="(main)" options={{ headerShown: false, animation:"none"}}  />
             <Stack.Screen name="index" options={{ headerShown: false,statusBarStyle:"dark"}}/>
             <Stack.Screen name="auth"/>
           </Stack>

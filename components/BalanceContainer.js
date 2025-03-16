@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import numberValidation from '@/services/numberInputValidation'
 import { Colors } from '@/constants/Colors';
+import LottieView from 'lottie-react-native';
 
 const BalanceContainer = ({ value, currency }) => {
 
@@ -36,11 +37,12 @@ const BalanceContainer = ({ value, currency }) => {
 
             <View style={styles.balanceDiv}>
               <View style={styles.balanceLayout}>
-                <Image
+                {/* <Image
                   resizeMode="contain"
                   style={styles.pomCoffee}
                   source={require("@/assets/imagesMain/pomCoffee.png")}
-                />
+                /> */}
+                <LottieView loop autoPlay style={{width:120,height:80}} resizeMode='cover' source={require("../assets/lottie/lottieCoffee.json")} />
                 <View style={{ padding: 5, alignItems: "center" }}>
                   <Text style={[styles.pomText,]}>PomBalance</Text>
                   <View style={[{ flexDirection: "row", alignItems: "center" }]}>
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
   balanceDiv: {
     position: "relative",
     width: "100%",
-    padding: 20,
+    padding: 15,
     shadowColor: "#000000",
     shadowOffset: {
       width: 0,
@@ -125,9 +127,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 180,
-    backgroundColor: Colors.primaryBgColor.light,
+    backgroundColor: Colors.primaryBgColor.chillOrange,
     borderRadius: 15,
-    borderColor: Colors.primaryBgColor.brown,
+    borderColor: Colors.primaryBgColor.white,
     borderWidth: 2,
   },
   pomBg: {

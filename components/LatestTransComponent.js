@@ -13,9 +13,9 @@ const LatestTransComponent = ({ setVisibleModal, setEditMode, setEditId, setInfo
 
   return (
     <View style={styles.container}>
-        <View style={{alignItems:"center",justifyContent:"center",marginBottom:5}} >
+        {/* <View style={{alignItems:"center",justifyContent:"center",marginBottom:5}} >
             <View style={{ width:70,height:10,backgroundColor:Colors.primaryBgColor.gray,borderRadius:10}}/>
-        </View>
+        </View> */}
         <View style={styles.header}>
             <Text style={styles.headerTitle}>Latest Transactions</Text>
             <Text style={{ fontFamily: "MainLight" }}>{username}</Text>
@@ -32,7 +32,6 @@ export default LatestTransComponent
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor:Colors.primaryBgColor.prime,
         width:"100%",
         height:"100%",
         borderRadius:15,

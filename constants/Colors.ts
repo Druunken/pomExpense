@@ -20,7 +20,8 @@ export const Colors = {
     babyBlue:"#d7f3ef",
     lightGray:'#f4f4f2',
     black:"black",
-    gray:"#737373"
+    gray:"#737373",
+    chillOrange:'#FFFDEC'
   },
   txtColor:{
     prime:"white",

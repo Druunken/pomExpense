@@ -65,7 +65,7 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
                 }} onLongPress={() => {
                     if(month === date[1] && year === date[2] && data[i].automationType === "none"){
                         Alert.alert("Balance", "balance editor", [
-                            { text: "Cancel", onPress: () => console.log(), style: "cancel" },
+                            { text: "Cancel", onPress: () => console.log("cancel"), style: "cancel" },
                             {
                               text: "Delete",
                               onPress: async() => {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     container:{
         alignItems:"center",
         marginTop:10,
-        height:300,
+        height:330,
         paddingHorizontal:12,
         gap:7,
     },
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
         borderRadius:10,
     },
     scrollDiv:{
-        gap:10
+        gap:10,
     },
     scrollDarkDiv:{
     },

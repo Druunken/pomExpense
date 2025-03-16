@@ -26,7 +26,7 @@ const _layout = () => {
   }, [route.name])
 
   return (
-    <Tabs  safeAreaInsets={{bottom:0}}  screenOptions={{ tabBarStyle:{
+    <Tabs   safeAreaInsets={{bottom:0}}  screenOptions={{ tabBarStyle:{
       backgroundColor:Colors.primaryBgColor.newPrime,
       position:"absolute",
       height:90,
@@ -34,8 +34,8 @@ const _layout = () => {
       justifyContent:"center",
       paddingTop:10,
       alignItems:"center",
-      borderWidth:2,
       marginBottom:0,
+      borderColor:Colors.primaryBgColor.prime
     },
      
     }}>
@@ -58,7 +58,7 @@ const _layout = () => {
             fontFamily:"MainFont",
             color: focused ? Colors.primaryBgColor.prime : "black",
             fontWeight: focused ? "600" : "300"
-          }} >Settings</Text>
+          }} >Transactions</Text>
         )}}/>
         
       <Tabs.Screen  listeners={(({navigation, route}) => ({

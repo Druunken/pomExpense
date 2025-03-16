@@ -6,14 +6,15 @@ import {
   StatusBar,
   Platform
 } from "react-native";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import ModalTransactions from '@/components/ModalTransactions'
 
 import { Colors } from "@/constants/Colors";
-import {
+import Animated, {
   useSharedValue,
   withTiming,
   withDelay,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 
 import { usersBalanceContext } from "@/hooks/balanceContext";
@@ -23,6 +24,8 @@ import AddTransactionBtn from '@/components/AddTransactionBtn'
 import LatestTransComponent from '@/components/LatestTransComponent'
 import { Calendar, CalendarList } from "react-native-calendars";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+
 
 // ** *** TECHNICAL SOLUTIONS *** ** //
 
@@ -48,6 +51,8 @@ const home = () => {
   const balanceOpacity = useSharedValue(1)
   const balanceColor = useSharedValue(1)
 
+  const containerOpacity = useSharedValue(0)
+
   const insets = useSafeAreaInsets()
 
   const balanceFade = () =>{
@@ -58,6 +63,17 @@ const home = () => {
     })
   }
 
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      opacity: containerOpacity.value
+    }
+  })
+
+
+  useEffect(() => {
+    containerOpacity.value = withTiming(1, {duration:1500})
+  }, [])
+
   // ** MAIN COMPONENT ** //
 
   return (
@@ -65,11 +81,13 @@ const home = () => {
       {/* <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" /> */}
      {/*  <ImageBackground style={styles.pomBg}source={require("@/assets/imagesMain/pompomBg.png")}/> */}
       <SafeAreaView style={{paddingTop: Platform.OS === "android" && insets.top}}>
+        <Animated.View style={[containerStyle]}>
         <ModalTransactions editId={editId} balanceFade={balanceFade()} value={value} setValue={setValue} editMode={editMode} setEditMode={setEditMode} expenseMode={expenseMode} setExpenseMode={setExpenseMode} visible={visibleModal} setVisible={setVisibleModal}/>
         <ModalInfoTransaction id={infoId} visible={infoModal} setVisible={setInfoModal}/>
         <BalanceContainer currency={currency} value={value} />
         <AddTransactionBtn setVisibleModal={setVisibleModal}/>
         <LatestTransComponent setInfoId={setInfoId} setInfoModal={setInfoModal} setEditId={setEditId} setEditMode={setEditMode} setVisibleModal={setVisibleModal}/>
+        </Animated.View>
       </SafeAreaView>
     </View>
   );
