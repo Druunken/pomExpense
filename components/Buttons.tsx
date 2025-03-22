@@ -22,7 +22,7 @@ const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
 
   return (
     <View style={styles.container}>
-            <Pressable style={[styles.btn,{opacity:opacity,borderColor:brdCol,backgroundColor:secBtn ? Colors.primaryBgColor.brown : Colors.primaryBgColor.prime}]} onPress={onPress} onPressIn={
+            <Pressable style={[styles.btn,{opacity:opacity,borderColor:brdCol,backgroundColor:secBtn ? Colors.primaryBgColor.brown : Colors.primaryBgColor.chillOrange}]} onPress={onPress} onPressIn={
                 () => {
                     setOpacity(0.3)
                 }
@@ -42,19 +42,16 @@ const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
 const styles = StyleSheet.create({
     btn:{
         borderWidth:2,
-        padding:13,
-        borderRadius:9,
+        padding:15,
+        borderRadius:30,
         width:"100%",
         flexDirection:"row",
         alignItems:"center",
         gap:30,
         height:80,
         borderColor: Colors.primaryBgColor.prime,
-        
-
     },
     container:{
-        paddingHorizontal:25,
         width:"100%",
         justifyContent:"center",
         alignItems:"center",
@@ -75,8 +72,8 @@ const styles = StyleSheet.create({
     icon:{
         width:50,
         height:50,
-        borderRadius:9,
-        borderWidth:1
+        borderRadius:20,
+        opacity:0
     }
 })
 

@@ -129,12 +129,14 @@ const settings = () => {
         </Modal>
       )}
 
-      <SafeAreaView style={[styles.layout,{backgroundColor:Colors.primaryBgColor.lightGray}]}>
+      <SafeAreaView style={[styles.layout,{backgroundColor:Colors.primaryBgColor.newPrime}]}>
         <View style={{alignItems:"center",marginBottom:10}}>
           <Text style={{fontSize:30,fontFamily:"MainFont"}}>Settings</Text>
         </View>
       <ScrollView contentContainerStyle={styles.mainOptions} >
-        <Buttons secBtn={false} icon={""} onPress={() => alert("Available soon")} label={"Change Theme"} brdCol={Colors.primaryBgColor.white}></Buttons>
+        <Text style={styles.settingsLabel}>Appearance</Text>
+        <Buttons secBtn={false} icon={""} onPress={() => alert("Available soon")} label={"Change Theme"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+        <Text style={styles.settingsLabel}>Profile</Text>
         <Buttons 
           secBtn={false} icon={""} 
           onPress={() => {
@@ -143,7 +145,8 @@ const settings = () => {
             setShowIncome(false)
             setModalVisible(true)
           }}
-          label={"Change Name"} brdCol={Colors.primaryBgColor.white}></Buttons>
+          label={"Change Name"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+        <Text style={styles.settingsLabel}>Accounting settings</Text>
         <Buttons 
           secBtn={false} 
           icon={""} 
@@ -153,8 +156,7 @@ const settings = () => {
             setShowSavingGoal(false)
             setModalCurrVisible(true)
           }}
-          label={"Change Currency"} brdCol={Colors.primaryBgColor.white}></Buttons>
-        
+          label={"Change Currency"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
         <Buttons 
           secBtn={false} 
           icon={""} 
@@ -164,7 +166,7 @@ const settings = () => {
             setShowSavingGoal(false)
             setModalVisible(true)
           }}
-          label={"Change Income"} brdCol={Colors.primaryBgColor.white}></Buttons>
+          label={"Change Income"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
 
         <Buttons 
           secBtn={false} 
@@ -175,7 +177,7 @@ const settings = () => {
             setShowUsername(false)
             setModalVisible(true)
           }}
-          label={"Change Saving Goal"} brdCol={Colors.primaryBgColor.white}></Buttons>
+          label={"Change Saving Goal"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
 
         <Buttons 
           secBtn={false} 
@@ -183,22 +185,18 @@ const settings = () => {
           onPress={() => {
             alert("Available soon")
           }}
-          label={"Change Fixed Costs"} brdCol={Colors.primaryBgColor.white}></Buttons>
-
+          label={"Change Fixed Costs"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+        <Text style={styles.settingsLabel}>App service</Text>
         <Buttons 
           secBtn={false} 
           icon={""} 
           onPress={() => {
             alert("Available soon")
           }}
-          label={"Reset Balance"} brdCol={Colors.primaryBgColor.white}></Buttons>
-
-      </ScrollView>
-
-      <View style={styles.footer}>
-          <Buttons secBtn={true} icon={""} label={"Reset App"} brdCol={Colors.primaryBgColor.persianRed} onPress={() => {
+          label={"Reset Balance"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
 
 
+        <Buttons secBtn={true} icon={""} label={"Reset App"} brdCol={Colors.primaryBgColor.persianRed} onPress={() => {
           Alert.alert(
             'Reset App',
             'It will reset all your balance transactions',
@@ -212,9 +210,9 @@ const settings = () => {
                 },4000)
               }}
             ]
-        );
-        }}></Buttons>
-        </View>
+          );
+          }}></Buttons>
+      </ScrollView>
       </SafeAreaView>
     </View>
   )
@@ -226,17 +224,8 @@ const styles = StyleSheet.create({
     position:"relative",
   },
   mainOptions:{
-    justifyContent:"center",
-    borderRadius:10,
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowOpacity:  0.21,
-    shadowRadius: 7.68,
-    elevation: 10,
-    alignItems:"center"
+    paddingHorizontal:20,
+    paddingBottom:80,
     },
   layout:{
     height:"100%",
@@ -244,6 +233,10 @@ const styles = StyleSheet.create({
   footer:{
     marginTop:10,
     marginBottom:60,
+  },
+  settingsLabel:{
+    fontFamily:"MainFont",
+    color:Colors.primaryBgColor.prime
   }
 })
 

@@ -12,6 +12,7 @@ export const Colors = {
     lightPrime:'#94d6c0',
     primeLight:"#c7d871",
     newPrime:'#d3ffda',
+    newPrimeLight:'#e9ffec',
     dark:"#ffde4f",
     light:"#fff8ac",
     white:"white",
