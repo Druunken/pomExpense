@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     headerTitle:{
         textAlign: "center",
         fontSize: 18,
-        color: Colors.primaryBgColor.brown,
+        color: Colors.primaryBgColor.black,
         fontFamily: "BoldFont",
     },
 })

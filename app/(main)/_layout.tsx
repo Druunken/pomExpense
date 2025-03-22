@@ -61,7 +61,7 @@ const _layout = () => {
           }} >Transactions</Text>
         )}}/>
         
-      <Tabs.Screen  listeners={(({navigation, route}) => ({
+      <Tabs.Screen listeners={(({navigation, route}) => ({
         tabPress: (e) => {
           console.log("pressed home")
         }
@@ -114,8 +114,8 @@ const _layout = () => {
 
 const styles = StyleSheet.create({
   lottieIcon: {
-    width:38,
-    height:38,
+    width:30,
+    height:30,
   }
 })
 

@@ -5,12 +5,14 @@ import { usersBalanceContext } from "@/hooks/balanceContext";
 import { Colors } from '@/constants/Colors';
 import db from '@/services/serverSide'
 import numberValidation from '@/services/numberInputValidation'
+import LottieView from 'lottie-react-native';
 
 const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode, setEditId, setInfoModal, darkmode, dayView, givinData }) => {
 
     const { value,setValue, setMarkedDates } = useContext(usersBalanceContext)
     const [data,setData] = useState({})
     const [date,setDate] = useState([])
+    const [isExisting,setIsExisting] = useState(true)
     const [initilaizedData,setInitilaizedData] = useState(false)
 
     const getImageSource = (description) => {
@@ -121,6 +123,8 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
             setData(getData)
             setDate(getDate)
             setInitilaizedData(true)
+            if(getData.length < 1) setIsExisting(false)
+            else setIsExisting(true)
         } catch (error) {
             setInitilaizedData(false)
             console.error("Error while fetching getAllData()",error)
@@ -150,6 +154,9 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
     <View style={[styles.container,/* darkmode && styles.containerDark */]}>
         <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollDiv,styles.scrollDarkDiv]}>
             {initilaizedData && displayData()}
+            {!isExisting && (
+                <LottieView autoPlay loop source={require("../assets/lottie/settings_lottie.json")} style={styles.noDataLottie} />
+            )}
         </ScrollView>
 
     </View>
@@ -163,6 +170,12 @@ const styles = StyleSheet.create({
         height:330,
         paddingHorizontal:12,
         gap:7,
+        justifyContent:"center",
+        alignItems:"center",
+    },
+    noDataLottie:{
+        width:50,
+        height:50
     },
     containerDark:{
         backgroundColor:Colors.primaryBgColor.white,
@@ -172,6 +185,9 @@ const styles = StyleSheet.create({
         gap:10,
     },
     scrollDarkDiv:{
+        height:300,
+        justifyContent:"center",
+        alignItems:"center"
     },
     valueDiv:{
         flexDirection:"row",

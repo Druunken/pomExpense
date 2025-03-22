@@ -94,9 +94,10 @@ const settings = () => {
 
   
   const router = useRouter();
+
+
   return (
     <View style={styles.container}>
-
       {showUsername && (
         <Modal visible={modalVisible}>
           <UserInput label={currentUsername} type={"username"} onPress={() => {
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
   },
   footer:{
     marginTop:10,
-    marginBottom:100,
+    marginBottom:60,
   }
 })
 

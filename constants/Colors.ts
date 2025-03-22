@@ -15,13 +15,13 @@ export const Colors = {
     dark:"#ffde4f",
     light:"#fff8ac",
     white:"white",
-    brown:"#7a3833",
+    brown:"#ffc61a",
     persianRed:"#cf3336",
     babyBlue:"#d7f3ef",
     lightGray:'#f4f4f2',
     black:"black",
     gray:"#737373",
-    chillOrange:'#FFFDEC'
+    chillOrange:'#fff4d1' /*  */
   },
   txtColor:{
     prime:"white",
