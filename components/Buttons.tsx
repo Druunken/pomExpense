@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native'
-import React,{useState} from 'react'
+import React,{useRef, useState} from 'react'
 import { Colors } from '@/constants/Colors';
+import LottieView from 'lottie-react-native';
 
 const getImageSource = (description: string) => {
     switch(description.toLowerCase()){
@@ -19,12 +20,17 @@ const getImageSource = (description: string) => {
 const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
 
     const [opacity,setOpacity] = useState(1);
+    const lottieRef = useRef(null)
+
+
 
   return (
     <View style={styles.container}>
             <Pressable style={[styles.btn,{opacity:opacity,borderColor:brdCol,backgroundColor:secBtn ? Colors.primaryBgColor.brown : Colors.primaryBgColor.chillOrange}]} onPress={onPress} onPressIn={
                 () => {
                     setOpacity(0.3)
+                    lottieRef.current?.reset()
+                    lottieRef.current?.play()
                 }
             }
             onPressOut={() =>{
@@ -33,7 +39,8 @@ const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
             >
 
                 <Image style={styles.icon} resizeMode='contain' source={getImageSource(icon)}></Image>
-                <Text style={{fontSize:20, color:secBtn && "white",fontFamily: secBtn ? "BoldFont" : "MainReg"}}>{label}</Text>
+                <Text style={{fontSize:20, color:secBtn && "white",fontFamily: secBtn ? "BoldFont" : "MainReg",minWidth:180}}>{label}</Text>
+                <LottieView loop={false} ref={lottieRef} resizeMode='contain' source={require("../assets/lottie/settings_arrow.json")} style={styles.lottieArrow} />
             </Pressable>
     </View>
   )
@@ -70,10 +77,14 @@ const styles = StyleSheet.create({
 
     },
     icon:{
-        width:50,
-        height:50,
+        width:30,
+        height:30,
         borderRadius:20,
         opacity:0
+    },
+    lottieArrow:{
+      width:40,
+      height:50,
     }
 })
 
