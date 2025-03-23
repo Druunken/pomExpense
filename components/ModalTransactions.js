@@ -18,6 +18,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     const [prevAmount,setPrevAmount] = useState("")
     const [title,setTitle] = useState("")
     const [cate,setCate] = useState("")
+    const [subType,setSubType] = useState("")
     const [editDate,setEditDate] = useState("")
     const [pressed,setPressed] = useState(false)
     const [id,setId] = useState(0)
@@ -209,13 +210,13 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
-        <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate}/>
+        <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType}/>
         <View style={styles.blurView} blurAmount={5} blurType='light' />
         <View style={[styles.container,{paddingTop:inset.top}]}>
             <View style={styles.formDiv}>
                 {/* The placeholder for touch event */}
                 <View style={{justifyContent:"center",alignItems:"center"}}>
-                    <View style={styles.scrollView}></View>
+                    <View style={styles.scrollView}/>
                 </View>
                 <View style={styles.infoDiv}>
                     <Animated.View style={[animatedPrev,styles.prevView]}>
@@ -245,7 +246,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                     </View>
 
                     <View style={{gap:5, opacity: expenseMode ? 1 : 0,marginTop:80}}>
-                        <GenreButton setVisible={setGenreModalVisible} cate={cate}/>
+                        <GenreButton setVisible={setGenreModalVisible} subType={subType}/>
                         {/* <View style={[styles.cateContainer,{ }]}>
                             {expenseMode && (
                                 <ScrollView horizontal contentContainerStyle={styles.cateDiv}>
@@ -302,7 +303,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                         if(expenseMode && !editMode) {
                             const calcEx = (prevValNum - actualVal).toFixed(2)
                             const convertCalcEx = numberValidation.converToString(calcEx)
-                            db.saveData(title, -actualVal, cate, "minus","none");
+                            db.saveData(title, -actualVal, cate, subType, "minus","none");
                             db.negativeBalance(-actualVal);
                             if(convertCalcEx){
                                 setValue(convertCalcEx)

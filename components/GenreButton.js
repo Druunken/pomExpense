@@ -2,13 +2,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Colors } from '@/constants/Colors'
 
-const GenreButton = ({ setVisible, cate }) => {
+const GenreButton = ({ setVisible, subType }) => {
 
-  const isSelected = cate.length > 0
+  const isSelected = subType.length > 0
   
   return (
     <TouchableOpacity style={[styles.container, isSelected ? styles.selected : styles.unSelected]} onPress={() => setVisible(true)}>
-      <Text style={styles.label}>{isSelected ? cate : "Select one"}</Text>
+      <Text style={styles.label}>{isSelected ? subType : "Select one"}</Text>
     </TouchableOpacity>
   )
 }

@@ -1,17 +1,18 @@
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React, { useEffect } from 'react'
 
-import { genreTypes } from '../constants/GenreTypes.js'
+import { generalTypes, foodTypes, drinkTypes, sweetTypes } from '../constants/GenreTypes.js'
 import { Colors } from '@/constants/Colors.ts'
 
 
 
-const GenreElement = ({ setVisible, setCate }) => {
+const GenreElement = ({ setVisible, setCate, setSubType }) => {
 
     const Element = ({ title, type }) => (
         <TouchableOpacity style={styles.singleView} onPress={() => {
             setVisible(false)
             setCate(type)
+            setSubType(title)
         }}>
             <Text style={styles.label}>{title}</Text>
         </TouchableOpacity>
@@ -19,7 +20,27 @@ const GenreElement = ({ setVisible, setCate }) => {
 
 
   return (
-    <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={genreTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+    <View>
+        <View>
+            <Text style={styles.label}>General Types</Text>
+            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+        </View>
+
+        <View>
+            <Text style={styles.label}>Food Types</Text>
+            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={foodTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+        </View>
+
+        <View>
+            <Text style={styles.label}>Drink Types</Text>
+            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={drinkTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+        </View>
+
+        <View>
+            <Text style={styles.label}>Sweet Types</Text>
+            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={sweetTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+        </View>
+    </View>
   )
 }
 

@@ -5,7 +5,7 @@ import GenreElement from './GenreElement.js'
 import CondBtn from './CondBtn.tsx'
 import { Colors } from '@/constants/Colors.ts'
 
-const GenreComponent = ({ visible, setVisible, setCate }) => {
+const GenreComponent = ({ visible, setVisible, setCate, setSubType }) => {
   const inset = useSafeAreaInsets()
   return (
     <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10}]}>

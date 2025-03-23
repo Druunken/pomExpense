@@ -178,7 +178,7 @@ const newOpening = async() => {
 
     const createBalance = await connection.runAsync(
       `
-      CREATE TABLE IF NOT EXISTS balance (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, moneyValue INTEGER, type TEXT NOT NULL, balanceType TEXT NOT NULL, date TEXT, year TEXT, month TEXT, day TEXT, automationType TEXT);`
+      CREATE TABLE IF NOT EXISTS balance (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, moneyValue INTEGER, type TEXT NOT NULL, subType TEXT, balanceType TEXT NOT NULL, date TEXT, year TEXT, month TEXT, day TEXT, automationType TEXT);`
     )
     const checkBalance = await connection.getFirstAsync(
       'SELECT name FROM sqlite_master WHERE type="table" AND name="balance"'
@@ -187,7 +187,7 @@ const newOpening = async() => {
     else console.log("Table balance doesn't exists")
 
     const createFixedCosts = await connection.runAsync(
-      `
+      ` 
       CREATE TABLE IF NOT EXISTS fixedCosts (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, moneyValue INTEGER, type TEXT);`
     )
 
@@ -1237,7 +1237,7 @@ const getBalance = async() => {
   }
 }
 
-const saveData = async(value,moneyValue,type,balanceType,automationType) => {
+const saveData = async(value,moneyValue,type,subType,balanceType,automationType) => {
   try {
 
     const date = await createCurrentDate()
@@ -1249,7 +1249,7 @@ const saveData = async(value,moneyValue,type,balanceType,automationType) => {
     const fixedAmount = Number(moneyValue.toFixed(2))
 
     const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.runAsync('INSERT INTO balance(value, moneyValue, type, balanceType, date, year, month, day, automationType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',[value,fixedAmount,type,balanceType,fullDate,year,month,day,automationType])
+    const data = await connection.runAsync('INSERT INTO balance(value, moneyValue, type, subType, balanceType, date, year, month, day, automationType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[value,fixedAmount,type,subType,balanceType,fullDate,year,month,day,automationType])
 
     if(data.changes > 0){
       console.log(`\nvalue: ${value}\nmoneyValue: ${fixedAmount}\ntype: ${type}\nbalanceType: ${balanceType}\ndate: ${fullDate}\nyear: ${year}\nmonth: ${month}\nday: ${day}`)
