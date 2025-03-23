@@ -2,10 +2,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Colors } from '@/constants/Colors'
 
-const GenreButton = ({ setVisible }) => {
+const GenreButton = ({ setVisible, cate }) => {
+
+  const isSelected = cate.length > 0
+  
   return (
-    <TouchableOpacity style={styles.container} onPress={() => setVisible(true)}>
-      <Text style={styles.label}>Select a Categorie</Text>
+    <TouchableOpacity style={[styles.container, isSelected ? styles.selected : styles.unSelected]} onPress={() => setVisible(true)}>
+      <Text style={styles.label}>{isSelected ? cate : "Select one"}</Text>
     </TouchableOpacity>
   )
 }
@@ -16,16 +19,22 @@ const styles = StyleSheet.create({
     container:{
         borderWidth:5,
         borderRadius:10,
-        borderColor:Colors.primaryBgColor.prime,
         justifyContent:"center",
         alignItems:"center",
         width:300,
         height:50,
-        backgroundColor:Colors.primaryBgColor.newPrime
     },
     label:{
         fontFamily:"MainFont",
         fontSize:15,
         color:Colors.primaryBgColor.prime
     },
+    selected:{
+      borderColor:Colors.primaryBgColor.prime,
+      backgroundColor:Colors.primaryBgColor.newPrime
+    },
+    unSelected:{
+      backgroundColor:Colors.primaryBgColor.chillOrange,
+      borderColor:Colors.primaryBgColor.newPrimeLight,
+    }
 })

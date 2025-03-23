@@ -245,7 +245,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                     </View>
 
                     <View style={{gap:5, opacity: expenseMode ? 1 : 0,marginTop:80}}>
-                        <GenreButton setVisible={setGenreModalVisible}/>
+                        <GenreButton setVisible={setGenreModalVisible} cate={cate}/>
                         {/* <View style={[styles.cateContainer,{ }]}>
                             {expenseMode && (
                                 <ScrollView horizontal contentContainerStyle={styles.cateDiv}>
