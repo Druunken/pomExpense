@@ -155,7 +155,9 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
         <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollDiv,styles.scrollDarkDiv]}>
             {initilaizedData && displayData()}
             {!isExisting && (
-                <LottieView autoPlay loop source={require("../assets/lottie/settings_lottie.json")} style={styles.noDataLottie} />
+                <View style={{width:"100%",height:"100%",justifyContent:"center",alignItems:"center"}}>
+                    <LottieView autoPlay loop source={require("../assets/lottie/settings_lottie.json")} style={styles.noDataLottie} />
+                </View>
             )}
         </ScrollView>
 
@@ -186,8 +188,6 @@ const styles = StyleSheet.create({
     },
     scrollDarkDiv:{
         height:300,
-        justifyContent:"center",
-        alignItems:"center"
     },
     valueDiv:{
         flexDirection:"row",

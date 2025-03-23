@@ -10,6 +10,7 @@ import Buttons from '../../components/Buttons'
 import UserInput from '../../components/UserInput';
 import { AppInitializationContext } from '../../hooks/appContext';
 import { usersBalanceContext } from "../../hooks/balanceContext"
+import LoadingSplashScreen from '../../components/LoadingSplashScreen.js'
 
 
 
@@ -35,16 +36,18 @@ const settings = () => {
 
   const [modalVisible,setModalVisible] = useState(false)
   const [modalCurrVisible,setModalCurrVisible] = useState(false)
+  const [loadingSplash,setLoadingSplash] = useState(false)
 
   const handleReset = async() => {
     try {
-      const deleteTables = await db.deleteTable();
+      setLoadingSplash(true)
+      /* const deleteTables = await db.deleteTable();
       const insertTables = await db.newOpening()
       setFixedCostAmount("0,00")
       setMarkedDates({})
       setFirstLaunch(true)
       if(deleteTables && insertTables) return true
-      else return false
+      else return false */
     } catch (error) {
       console.error("ERROR HERE")
     }
@@ -199,7 +202,7 @@ const settings = () => {
         <Buttons secBtn={true} icon={""} label={"Reset App"} brdCol={Colors.primaryBgColor.persianRed} onPress={() => {
           Alert.alert(
             'Reset App',
-            'It will reset all your balance transactions',
+            `This will literally reset everything.\n All data will be lost!`,
             [
               {text: "Cancel", style:"cancel"},
               {text: "Reset", style:"destructive",onPress:async() => {
@@ -213,6 +216,7 @@ const settings = () => {
           );
           }}></Buttons>
       </ScrollView>
+      <LoadingSplashScreen title={"Reseting Application..."} visible={loadingSplash} />
       </SafeAreaView>
     </View>
   )

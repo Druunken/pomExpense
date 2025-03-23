@@ -31,7 +31,7 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
 const styles = StyleSheet.create({
     titleInput:{
         borderWidth:1,
-        width:250,
+        width:300,
         height:50,
         justifyContent:"center",
         alignItems:"center",

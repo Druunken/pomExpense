@@ -276,7 +276,7 @@ const deleteTable = async() => {
       const rmMonthsProps = await connection.runAsync('DROP TABLE IF EXISTS monthsProps')
       const rmFixedCosts = await connection.runAsync('DROP TABLE IF EXISTS fixedCosts')
 
-      const getAllTables = await connection.allAsync(
+      const getAllTables = await connection.getAllAsync(
         'SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"'
       );
   
@@ -289,7 +289,7 @@ const deleteTable = async() => {
       }
 
     } catch (error) {
-      console.error("ERROR","DELETE FN")
+      console.error("ERROR","DELETE FN",error)
     }
   }
 

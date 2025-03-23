@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
     latestTransDiv:{
         height: 350,
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
     },
     header:{
         marginBottom: 10,

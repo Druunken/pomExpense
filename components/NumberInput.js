@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     opacity:0.5
   },
   txtLayout:{
-    width:250,
+    width:300,
     height:50,
     borderRadius:10,
     backgroundColor:Colors.primaryBgColor.white,

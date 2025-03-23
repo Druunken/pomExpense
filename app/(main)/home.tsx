@@ -82,7 +82,7 @@ const home = () => {
      {/*  <ImageBackground style={styles.pomBg}source={require("@/assets/imagesMain/pompomBg.png")}/> */}
       <SafeAreaView style={{paddingTop: Platform.OS === "android" && insets.top}}>
         <Animated.View style={[containerStyle]}>
-        <ModalTransactions editId={editId} balanceFade={balanceFade()} value={value} setValue={setValue} editMode={editMode} setEditMode={setEditMode} expenseMode={expenseMode} setExpenseMode={setExpenseMode} visible={visibleModal} setVisible={setVisibleModal}/>
+        <ModalTransactions editId={editId} balanceFade={balanceFade} value={value} setValue={setValue} editMode={editMode} setEditMode={setEditMode} expenseMode={expenseMode} setExpenseMode={setExpenseMode} visible={visibleModal} setVisible={setVisibleModal}/>
         <ModalInfoTransaction id={infoId} visible={infoModal} setVisible={setInfoModal}/>
         <BalanceContainer currency={currency} value={value} />
         <AddTransactionBtn setVisibleModal={setVisibleModal}/>
