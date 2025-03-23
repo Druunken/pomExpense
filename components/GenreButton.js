@@ -8,7 +8,7 @@ const GenreButton = ({ setVisible, cate }) => {
   
   return (
     <TouchableOpacity style={[styles.container, isSelected ? styles.selected : styles.unSelected]} onPress={() => setVisible(true)}>
-      <Text style={styles.label}>{isSelected ? cate : "Select one"}</Text>
+      <Text style={styles.label}>{isSelected ? `Selected: ${cate}` : "Select Categorie"}</Text>
     </TouchableOpacity>
   )
 }
