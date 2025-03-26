@@ -41,13 +41,13 @@ const settings = () => {
   const handleReset = async() => {
     try {
       setLoadingSplash(true)
-      /* const deleteTables = await db.deleteTable();
+      const deleteTables = await db.deleteTable();
       const insertTables = await db.newOpening()
       setFixedCostAmount("0,00")
       setMarkedDates({})
       setFirstLaunch(true)
       if(deleteTables && insertTables) return true
-      else return false */
+      else return false
     } catch (error) {
       console.error("ERROR HERE")
     }

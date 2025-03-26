@@ -14,7 +14,7 @@ const GenreComponent = ({ visible, setVisible, setCate, setSubType }) => {
           <Text style={styles.label}>Select one</Text>
         </View>
         <View style={styles.content}>
-          <GenreElement setVisible={setVisible} setCate={setCate}/>
+          <GenreElement setVisible={setVisible} setCate={setCate} setSubType={setSubType}/>
         </View>
         <View style={[styles.footer,{paddingBottom:inset.bottom}]}>
           <CondBtn label={"Go Back"} style={{width:"100%"}} onPress={() => setVisible(false)}/>
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     width:"100%",
     height:"100%",
     zIndex:100,
-    backgroundColor:Colors.primaryBgColor.babyBlue,
+    backgroundColor:Colors.primaryBgColor.newPrimeLight,
     borderRadius:10,
   },
   label:{

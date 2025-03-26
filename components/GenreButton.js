@@ -8,11 +8,14 @@ const GenreButton = ({ setVisible, subType }) => {
   
   return (
     <TouchableOpacity style={[styles.container, isSelected ? styles.selected : styles.unSelected]} onPress={() => setVisible(true)}>
-<<<<<<< HEAD
-      <Text style={styles.label}>{isSelected ? subType : "Select one"}</Text>
-=======
-      <Text style={styles.label}>{isSelected ? `Selected: ${cate}` : "Select Categorie"}</Text>
->>>>>>> 6efc1e8d2ef2cc732bb31e95abbbdf7c16425564
+      {isSelected ? (
+        <View style={{justifyContent:"center",alignItems:"center",flexDirection:"row"}}>
+          <Text style={styles.label}>Selected: </Text>
+          <Text style={[styles.label, {color:Colors.primaryBgColor.black}]}>{subType}</Text>
+        </View>
+      ): (
+        <Text style={[styles.label,{color:Colors.primaryBgColor.prime,fontSize:18}]}>Select a Categorie</Text>
+      )}
     </TouchableOpacity>
   )
 }
@@ -31,7 +34,7 @@ const styles = StyleSheet.create({
     label:{
         fontFamily:"MainFont",
         fontSize:15,
-        color:Colors.primaryBgColor.prime
+        color:Colors.primaryBgColor.prime,
     },
     selected:{
       borderColor:Colors.primaryBgColor.prime,
@@ -39,6 +42,6 @@ const styles = StyleSheet.create({
     },
     unSelected:{
       backgroundColor:Colors.primaryBgColor.chillOrange,
-      borderColor:Colors.primaryBgColor.newPrimeLight,
+      borderColor:Colors.primaryBgColor.prime,
     }
 })

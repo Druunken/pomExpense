@@ -103,7 +103,14 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
                         <Image style={styles.image} source={getImageSource(data[i].type)}/>
                         <View>
                             <Text style={[styles.title,{color:data[i].automationType === "income" ? Colors.primaryBgColor.lightPrime : darkmode ? Colors.primaryBgColor.white : Colors.primaryBgColor.black}]}>{isLongVal(data[i].value)}</Text>
-                            <Text style={styles.dateLabel}>{isToday ? "today" : data[i].date}</Text>
+                            <View style={{flexDirection:"row",gap:20}}>
+                                <View style={styles.dateDiv}>
+                                    <Text style={styles.dateLabel}>{isToday ? "today" : data[i].date}</Text>
+                                </View>
+                                <View style={styles.genreDiv}>
+                                    <Text style={styles.genreLabel}>{data[i].subType}</Text>
+                                </View>
+                            </View>
                         </View>
                     </View>
                     <View style={styles.valueDiv}>
@@ -155,7 +162,7 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
         <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollDiv,styles.scrollDarkDiv]}>
             {initilaizedData && displayData()}
             {!isExisting && (
-                <View style={{width:"100%",height:"100%",justifyContent:"center",alignItems:"center"}}>
+                <View style={{width:"100%",height:"100%",justifyContent:"center",alignItems:"center",marginTop:80}}>
                     <LottieView autoPlay loop source={require("../assets/lottie/settings_lottie.json")} style={styles.noDataLottie} />
                 </View>
             )}
@@ -175,6 +182,25 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
     },
+    genreDiv:{
+        borderWidth:1,
+        justifyContent:"center",
+        alignItems:"center",
+        backgroundColor:Colors.primaryBgColor.chillOrange,
+        paddingHorizontal:5,
+        borderRadius:10,
+        minWidth:50
+    },
+    dateDiv:{
+        justifyContent:"center",
+        alignItems:"center",
+        minHeight:30
+    },
+    genreLabel:{
+        fontSize:8,
+        fontFamily:"MainReg",
+
+    },
     noDataLottie:{
         width:50,
         height:50
@@ -186,14 +212,11 @@ const styles = StyleSheet.create({
     scrollDiv:{
         gap:10,
     },
-    scrollDarkDiv:{
-        height:300,
-    },
     valueDiv:{
         flexDirection:"row",
         gap:5,
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
     },
     leftDiv:{
         flexDirection:"row",

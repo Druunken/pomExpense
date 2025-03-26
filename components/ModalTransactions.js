@@ -354,6 +354,8 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                         //reset
                         setId(0)
                         setCate("")
+                        setTitle("")
+                        setSubType("")
                         setPressed(false)
                         setVisible(false)
                         setEditMode(false)

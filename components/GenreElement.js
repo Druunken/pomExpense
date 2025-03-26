@@ -20,25 +20,29 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
 
 
   return (
-    <View>
+    <View style={{gap:20}}>
         <View>
-            <Text style={styles.label}>General Types</Text>
-            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            <Text style={styles.mainLabel}>Recent Types</Text>
+            <Text>Null</Text>
+        </View>
+        <View>
+            <Text style={styles.mainLabel}>General Types</Text>
+            <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
 
         <View>
-            <Text style={styles.label}>Food Types</Text>
-            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={foodTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            <Text style={styles.mainLabel}>Food Types</Text>
+            <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={foodTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
 
         <View>
-            <Text style={styles.label}>Drink Types</Text>
-            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={drinkTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            <Text style={styles.mainLabel}>Drink Types</Text>
+            <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={drinkTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
 
         <View>
-            <Text style={styles.label}>Sweet Types</Text>
-            <FlatList numColumns={4} contentContainerStyle={styles.container} key={item => item.id} data={sweetTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            <Text style={styles.mainLabel}>Sweet Types</Text>
+            <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={sweetTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
     </View>
   )
@@ -49,22 +53,27 @@ export default GenreElement
 const styles = StyleSheet.create({
     container:{
         width:"100%",
-        gap:13,
+        gap:5,
+        borderRadius:10
     },
     label:{
+        fontSize:12,
+        fontFamily:"MainFont",
+        color: Colors.primaryBgColor.prime
+    },
+    mainLabel:{
         fontSize:15,
         fontFamily:"MainFont",
-        color:"black"
+        color: Colors.primaryBgColor.black
     },
     singleView:{
         height:80,
         width:80,
-        borderWidth:1,
+        borderWidth:3,
         justifyContent:"center",
         borderRadius:10,
         alignItems:"center",
         backgroundColor:Colors.primaryBgColor.newPrime,
         borderColor:Colors.primaryBgColor.prime,
-        marginRight:13
     }
 })
