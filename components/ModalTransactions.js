@@ -1,4 +1,4 @@
-import { View, Text, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, TouchableOpacity, StatusBar } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
 import { Colors } from '@/constants/Colors'
 import SwitchBtn from './SwitchBtn'
@@ -9,9 +9,12 @@ import db from '@/services/serverSide'
 import numberValidation from '@/services/numberInputValidation'
 import { usersBalanceContext } from "@/hooks/balanceContext";
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import GenreButton from './GenreButton.js'
 import GenreComponent from './GenreComponent.js'
+import { Dimensions } from 'react-native';
+
+const {width,height} = Dimensions.get("window") 
 
 const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, editMode, value, setValue, balanceFade, setEditMode, editId }) => {
     const [amount,setAmount] = useState("")
@@ -26,7 +29,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
     const [genreModalVisible,setGenreModalVisible] = useState(false)
 
-    const { setMarkedDates } = useContext(usersBalanceContext) 
+    const { setMarkedDates, currency } = useContext(usersBalanceContext) 
 
     const inset = useSafeAreaInsets()
 
@@ -156,15 +159,45 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
     /* animate values */
 
+    const layoutY = useSharedValue(0)
+    const layoutBg = useSharedValue(0)
+    const layoutOp = useSharedValue(1)
+
+    const containerBg = useSharedValue(0)
+
     const currOpacity = useSharedValue(1)
     const prevOpacity = useSharedValue(0)
 
     const currY = useSharedValue(20)
     const prevY = useSharedValue(50)
 
+
+    const animatedContainer = useAnimatedStyle(() => {
+        return{
+            backgroundColor: interpolateColor(
+                containerBg.value,
+                [0,1],
+                ['rgba(0, 0, 0, 0.9)','rgba(0, 0, 0, 0)']
+            ),
+        }
+    })
+
+    const animatedLayout = useAnimatedStyle(() => {
+        return{
+            transform: [
+                { translateY: layoutY.value }
+            ],
+            backgroundColor: interpolateColor(
+                layoutBg.value,
+                [0,1],
+                [Colors.primaryBgColor.newPrimeLight,Colors.primaryBgColor.chillOrange]
+            ),
+            opacity:layoutOp.value
+        }
+    })
+
     const animatedCurr = useAnimatedStyle(() => {
         return{
-            opacity: currOpacity.value,
             transform:[{ translateY: currY.value }]
         }
     })
@@ -184,6 +217,44 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     
     const expenseInputValid = expenseMode && !cate || Number(amount) === 0 || title.length === 0
     const incomeINputValid = !expenseMode &&  Number(amount) === 0 || title.length === 0
+
+
+    /* Touch Functionality */
+
+    const pressedLayout = (ev) => {
+
+        /* change condition if the specific scenario is choosen */
+        /* this will execute the closing of the modal */
+        if(true){
+            formExecution()
+        }
+
+    }
+
+
+    const formExecution = (closeType) => {
+
+        if(closeType !== "form"){
+            console.log("!FORM")
+            layoutY.value = withSpring(height,{ damping:15 })
+            containerBg.value = withTiming(1,{ duration:600 })
+
+            setGenreModalVisible(false)
+            setSubType("")
+            setAmount("")
+            setTitle("")
+            setCate("")
+            setPressed(false)
+            setEditMode(false)
+            setTimeout(() => {
+                setVisible(false)
+            }, 600);
+
+        }else{
+            console.log("FORM")
+            layoutOp.val = withTiming(0,{duration:500})
+        }
+    }
 
     useEffect(() => {
         showChangedValue()
@@ -208,14 +279,34 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
         }
     },[amount])
 
+    useEffect(() => {
+        if(visible){
+            containerBg.value = withTiming(0,{ duration:1000 })
+            layoutY.value = withSpring(0,{damping:13})
+        }
+    },[visible])
+
+
+    /* Checking for valid form and execute animation */
+    /* SWAPPED LOGIC */
+    useEffect(() => {
+        if(!expenseInputValid){
+            setTimeout(() => {
+                layoutBg.value = withTiming(1, { duration:500 })
+            }, 250);
+        }else if(expenseInputValid){
+            layoutBg.value = withTiming(0, { duration:500 })
+        }
+    },[expenseInputValid])
+
   return (
-    <Modal animationType="slide" transparent={true} visible={visible}>
+    <Modal animationType="none" transparent={true} visible={visible}>
         <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType}/>
-        <View style={styles.blurView} blurAmount={5} blurType='light' />
-        <View style={[styles.container,{paddingTop:inset.top}]}>
-            <View style={styles.formDiv}>
+        {/* <Animated.View style={[styles.blurView, animatedBlurView, {}]}></Animated.View> */}
+        <Animated.View style={[styles.container,animatedContainer,{paddingTop:inset.top}]}>
+            <Animated.View style={[styles.formDiv,animatedLayout]}>
                 {/* The placeholder for touch event */}
-                <View style={{justifyContent:"center",alignItems:"center"}}>
+                <View onTouchStart={(ev) => pressedLayout(ev)} style={{justifyContent:"center",alignItems:"center"}}>
                     <View style={styles.scrollView}/>
                 </View>
                 <View style={styles.infoDiv}>
@@ -224,8 +315,8 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                         <Text style={{fontSize:22,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>{value}</Text> 
                      </Animated.View>
                      <Animated.View style={[animatedCurr, { justifyContent:"center",alignItems:"center" }]}>
-                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.newPrime}}>Current Balance</Text>
-                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.newPrime}}>{showChangedValue()}</Text>
+                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}}>Current Balance</Text>
+                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}}>{showChangedValue()}</Text>
                     </Animated.View>
                 </View>
 
@@ -236,55 +327,19 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                     </View>
                     <View style={{}}>
                         <View style={{}}>
-                            <Text style={styles.title}>Set title</Text>
+                            <Text style={styles.title}>Title</Text>
                         </View>
                         <TitleInput state={title} setState={setTitle}/>
                     </View>
                     <View style={{}}>
-                        <Text style={styles.title} >Set amount</Text>
-                        <NumberInput autoFocus={false} state={amount} setState={setAmount}/>
+                        <Text style={styles.title} >Amount</Text>
+                        <NumberInput autoFocus={false} state={amount} setState={setAmount} currency={currency}/>
                     </View>
 
-                    <View style={{gap:5, opacity: expenseMode ? 1 : 0,marginTop:80}}>
-                        <GenreButton setVisible={setGenreModalVisible} subType={subType}/>
-                        {/* <View style={[styles.cateContainer,{ }]}>
-                            {expenseMode && (
-                                <ScrollView horizontal contentContainerStyle={styles.cateDiv}>
-                                    <TouchableOpacity onPress={(el) => {
-                                        setCate("Food")
-                                        setId(1)
-                                        setPressed(true)
-                                    }}  value style={[styles.cateLay, {backgroundColor: pressed && id === 1 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
-                                        <Text style={styles.cateLabel}>Food</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity onPress={(el) => {
-                                        setCate("Drink")
-                                        setId(2)
-                                        setPressed(true)
-                                    }}  style={[styles.cateLay, {backgroundColor: pressed && id === 2 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
-                                        <Text style={styles.cateLabel}>Drink</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity onPress={(el) => {
-                                        setCate("Education")
-                                        setId(3)
-                                        setPressed(true)
-                                    }}  style={[styles.cateLay, {backgroundColor: pressed && id === 3 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
-                                        <Text style={styles.cateLabel}>Education</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity onPress={(el) => {
-                                        setCate("Shopping")
-                                        setId(4)
-                                        setPressed(true)
-                                    }}  style={[styles.cateLay, {backgroundColor: pressed && id === 4 ? Colors.primaryjBgColor.prime : Colors.primaryBgColor.babyBlue}]}>
-                                        <Text style={styles.cateLabel}>Shopping</Text>
-                                    </TouchableOpacity>
-                                </ScrollView>
-                            )}
-                        </View> */}
-                    </View>
+                    <View style={{gap:5, opacity: expenseMode ? 1 : 0.5}}>
+                        <Text></Text>
+                        <GenreButton setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode}/>
+                    </View> 
                 </View>
                 
 
@@ -344,25 +399,12 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
 
                         //reset
-                        setId(0)
-                        setPressed(false)
-                        setVisible(false)
-                        setEditMode(false)
+                        formExecution("form")
                     }}/>
-                    <CondBtn label={"Cancel"} type={"cancel"} style={styles.condBtn} onPress={() => {
-
-                        //reset
-                        setId(0)
-                        setCate("")
-                        setTitle("")
-                        setSubType("")
-                        setPressed(false)
-                        setVisible(false)
-                        setEditMode(false)
-                    }}/>
+                    
                 </View> 
-            </View>
-        </View>
+            </Animated.View>
+        </Animated.View>
         
     </Modal>
   )
@@ -375,7 +417,6 @@ const styles = StyleSheet.create({
         opacity:1,
         position:"absolute",
         top:"0%",
-        backgroundColor:Colors.primaryBgColor.newPrime
     },
     infoDiv:{
         minHeight:150,
@@ -395,14 +436,13 @@ const styles = StyleSheet.create({
         left:0,
         right:0,
         bottom:0,
-        backgroundColor:'rgba(0, 0, 0, 0.9)'
     },
     condBtn:{
         width:"100%"
     },
     formDiv:{
-        borderRadius:8,
-        backgroundColor:"black",
+        borderRadius:30,
+        backgroundColor:Colors.primaryBgColor.newPrimeLight,
         height:"100%",
         paddingTop:15,
         paddingHorizontal:20
@@ -440,10 +480,11 @@ const styles = StyleSheet.create({
         backgroundColor:Colors.primaryBgColor.babyBlue
     },
     layout:{
-        gap:15,
+        marginTop:50,
+        gap:10,
         borderColor:"white",
         flex:1,
-        alignItems:"center"
+        alignItems:"center", 
     },
     headerLabel:{
         fontSize:25,
@@ -461,7 +502,7 @@ const styles = StyleSheet.create({
         color:Colors.primaryBgColor.prime
     },
     scrollView:{
-        backgroundColor:Colors.primaryBgColor.white,
+        backgroundColor:Colors.primaryBgColor.black,
         height:7,
         width:80,
         borderRadius:3,

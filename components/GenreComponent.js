@@ -8,7 +8,7 @@ import { Colors } from '@/constants/Colors.ts'
 const GenreComponent = ({ visible, setVisible, setCate, setSubType }) => {
   const inset = useSafeAreaInsets()
   return (
-    <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10}]}>
+    <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10,opacity: visible ? 1 : 0}]}>
       <View style={styles.layout}> 
         <View style={styles.header}>
           <Text style={styles.label}>Select one</Text>

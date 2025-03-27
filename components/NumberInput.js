@@ -1,6 +1,9 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+
+// on fully submitting the input the text will stay in place and will make some margin between val and currency
 
 let punctMode = false
 let userPunct = false
@@ -15,9 +18,11 @@ const NumberInput = ({
     style,
     onPress,
     autoFocus,
-    setIsOnFocus
+    setIsOnFocus,
+    currency
 }) => {
     const [invalid,setInvalid] = useState(false)
+    const [validInput,setValidInput] = useState(false)
     /* const [input,setState] = useState("") */
 
 
@@ -28,6 +33,7 @@ const NumberInput = ({
     const inputRef = useRef(null)
 
     const inputFocus = () => {
+      setValidInput(false)
       if(inputRef.current){
         if(setIsOnFocus !== undefined){
           setIsOnFocus(true)
@@ -235,21 +241,61 @@ const NumberInput = ({
 
     }
 
+
+
+    /* animated */
+
+    const backgroundVal = useSharedValue(0)
+
+    const animatedStyle = useAnimatedStyle(() => {
+      return {
+        backgroundColor: interpolateColor(
+          backgroundVal.value,
+          [0,1],
+          [Colors.primaryBgColor.white,Colors.primaryBgColor.prime]
+        )
+      }
+    })
+
+    const onPressedDone = () => {
+      if(state.length > 0) {
+        setValidInput(true)
+        backgroundVal.value = withTiming(1, { duration: 250 })
+      }else{
+        setValidInput(false)
+        backgroundVal.value = withTiming(0, { duration: 250 })
+      }
+    }
+
+
+    useEffect(() => {
+    }, [inputRef])
+
     useEffect(() => {
       setState("")
+      onPressedDone()
     },[])
   return (
-    <>
-      <TouchableOpacity onPress={() => {
-        inputFocus()
-        setState("")
-        
-      }} activeOpacity={0.9} style={styles.txtLayout}>
-        <Text placeholderTextColor={"black"} placeholder={"0,00"} style={styles.txtFillStyle}>{txtValidation()}</Text>
-        <Text placeholderTextColor={"black"} placeholder={"0,00"} style={styles.txtStyle}>{placeHolderValidation()}</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <Animated.View style={[animatedStyle,{borderRadius:10}]}>
+        <TouchableOpacity onPress={() => {
+          backgroundVal.value = withTiming(0, { duration: 250 })
+          inputFocus()
+          setState("")
+        }} activeOpacity={0.9} style={[styles.txtLayout, style, {
+        }]}>
+          <Text placeholderTextColor={"black"} placeholder={"0,00"} style={[styles.txtFillStyle, {
+            color: validInput ? Colors.primaryBgColor.white : Colors.primaryBgColor.black
+          }]}>{txtValidation()}</Text>
+          <Text placeholderTextColor={"black"} placeholder={"0,00"} style={[styles.txtStyle, {
+            color: validInput ? Colors.primaryBgColor.white : Colors.primaryBgColor.black
+          }]}>{placeHolderValidation()}</Text>
+          <Text style={{fontFamily:"MainFont",fontSize:17}}>{currency}</Text>
+        </TouchableOpacity>
+      </Animated.View>
 
       <TextInput ref={inputRef}  returnKeyType="done" onBlur={() => {
+        onPressedDone()
         if(setIsOnFocus){
           setIsOnFocus(false)
         }
@@ -257,14 +303,14 @@ const NumberInput = ({
         if(setIsOnFocus){
           setIsOnFocus(false)
         }
-      }}  placeholderTextColor={"black"} style={[style,{
+      }}  placeholderTextColor={"black"} style={[{
           width:220,
           borderColor: !invalid ? Colors.primaryBgColor.white : Colors.primaryBgColor.persianRed,
           borderWidth:3,
           marginBottom:15,
           opacity:0,
           zIndex:-100,
-          position:"absolute"
+          position:"absolute",
         }]} 
         keyboardType="decimal-pad"  placeholder="0,00"
         value={state}
@@ -277,12 +323,19 @@ const NumberInput = ({
         {invalid && (
             <Text style={{fontSize:14,fontFamily:"MainFont",color:Colors.primaryBgColor.persianRed}}>{secState && state > 0 ? "MAX" : "MIN"} Value is: {secState && state > 0 ? secState - 1 : 1}</Text>
         )}
-        
-    </>
+        {validInput && (
+          <View style={styles.markDiv}>
+            <Text style={styles.label}>check</Text>
+          </View>
+        )}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container:{
+    
+  },
   txtStyle:{
     fontFamily:"MainFont",
     fontSize:25,
@@ -293,7 +346,6 @@ const styles = StyleSheet.create({
     width:300,
     height:50,
     borderRadius:10,
-    backgroundColor:Colors.primaryBgColor.white,
     justifyContent:"center",
     alignItems:"center",
     flexDirection:"row",
@@ -303,6 +355,21 @@ const styles = StyleSheet.create({
     fontFamily:"MainFont",
     fontSize:25,
     color:Colors.primaryBgColor.prime,
+  },
+  markDiv:{
+    position:"absolute",
+    right:0,
+    height:"100%",
+    justifyContent:"center",
+    alignItems:"center",
+    borderRadius:10,
+    width:50,
+
+  },
+  label:{
+    color:"white",
+    fontSize:12,
+    fontFamily:"MainFont"
   }
 })
 
