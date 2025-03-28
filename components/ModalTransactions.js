@@ -1,5 +1,5 @@
 import { View, Text, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, TouchableOpacity, StatusBar } from 'react-native'
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useRef } from 'react'
 import { Colors } from '@/constants/Colors'
 import SwitchBtn from './SwitchBtn'
 import NumberInput from './NumberInput'
@@ -24,6 +24,8 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     const [cate,setCate] = useState("")
     const [subType,setSubType] = useState("")
     const [editDate,setEditDate] = useState("")
+
+    const passedLottieRef = useRef(null)
 
     const [genreModalVisible,setGenreModalVisible] = useState(false)
 
@@ -245,14 +247,20 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             setCate("")
             setEditMode(false) 
 
+
+            setTimeout(() => {
+                passedLottieRef.current?.reset()
+                passedLottieRef.current?.play()
+            }, 500);
+
             setTimeout(() => {
                 containerBg.value = withTiming(1,{ duration:600 })
                 passedOp.value = withTiming(0, { duration:500})
-            }, 1000);
+            }, 5000);
 
             setTimeout(() => {
                 setVisible(false)
-            }, 2000);
+            }, 5000);
         }
     }
 
@@ -309,7 +317,8 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
         <Animated.View style={[styles.container,animatedContainer,{paddingTop:inset.top}]}>
             <View style={[styles.passedDiv,{}]}>
                 <Animated.View style={[styles.passedLayout, animatedPassedDiv]}>
-                    <Text style={{fontFamily:"MainFont",color:"white",fontSize:13}}>Check</Text>
+                    <LottieView ref={passedLottieRef} autoPlay loop={false} style={{ width: 80, height:80,borderRadius:20}} resizeMode='cover' source={require("../assets/lottie/check_mark_lottie.json")}/>
+                    <Text style={{fontFamily:"MainFont",color:"white",fontSize:13}}>Complete 100%</Text>
                 </Animated.View>
             </View>
             <Animated.View style={[styles.formDiv,animatedLayout]}>
@@ -430,7 +439,7 @@ const styles = StyleSheet.create({
         width:"100%",
         justifyContent:"center",
         alignItems:"center",
-        height:"100%"
+        height:"100%",
     },
     passedLayout:{
         backgroundColor:Colors.primaryBgColor.prime,
