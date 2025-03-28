@@ -252,15 +252,18 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                 passedLottieRef.current?.reset()
                 passedLottieRef.current?.play()
             }, 500);
+            
+            setTimeout(() => {
+                passedOp.value = withTiming(0, { duration:300})
+            }, 1500);
 
             setTimeout(() => {
                 containerBg.value = withTiming(1,{ duration:600 })
-                passedOp.value = withTiming(0, { duration:500})
-            }, 5000);
+            }, 1800);
 
             setTimeout(() => {
                 setVisible(false)
-            }, 5000);
+            }, 2100);
         }
     }
 
