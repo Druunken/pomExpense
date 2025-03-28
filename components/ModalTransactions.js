@@ -13,6 +13,7 @@ import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withSprin
 import GenreButton from './GenreButton.js'
 import GenreComponent from './GenreComponent.js'
 import { Dimensions } from 'react-native';
+import LottieView from 'lottie-react-native'
 
 const {width,height} = Dimensions.get("window") 
 
@@ -23,9 +24,6 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     const [cate,setCate] = useState("")
     const [subType,setSubType] = useState("")
     const [editDate,setEditDate] = useState("")
-    const [pressed,setPressed] = useState(false)
-    const [id,setId] = useState(0)
-    const [readyRender,setReadyRender] = useState(false)
 
     const [genreModalVisible,setGenreModalVisible] = useState(false)
 
@@ -112,30 +110,6 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
         }
     }
 
-    const getCate = (type) => {
-        switch(type){
-            case "Food":
-            setId(1)
-            break
-
-            case "Drink":
-            setId(2)
-            break
-
-            case "Education":
-            setId(3)
-            break
-
-            case "Shopping":
-            setId(4)
-            break
-
-            default:
-            setId(0)
-            break
-        }
-    }
-
     const fetchTransaction = async(editId) => {
         try {
             const transaction = await db.getSingleEntry(editId)
@@ -145,12 +119,9 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             setPrevAmount(convertStr)
             setTitle(transaction.value)
             setCate(transaction.type)
-            getCate(transaction.type)
             setEditDate(transaction.date)
             if(transaction.balanceType === "minus") setExpenseMode(true)
             else setExpenseMode(false)
-            setPressed(true)
-            setReadyRender(true)
         } catch (error) {
             console.error(error)
         }
@@ -202,7 +173,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             backgroundColor: interpolateColor(
                 layoutBg.value,
                 [0,1],
-                [Colors.primaryBgColor.newPrimeLight,Colors.primaryBgColor.newPrime]
+                [expenseMode ? Colors.primaryBgColor.newPrimeLight : Colors.primaryBgColor.babyBlue,Colors.primaryBgColor.newPrime]
             ),
             opacity:layoutOp.value
         }
@@ -255,7 +226,6 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             setAmount("")
             setTitle("")
             setCate("")
-            setPressed(false)
             setEditMode(false)
             setTimeout(() => {
                 setVisible(false)
@@ -273,12 +243,13 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             setAmount("")
             setTitle("")
             setCate("")
-            setPressed(false)
             setEditMode(false) 
+
             setTimeout(() => {
                 containerBg.value = withTiming(1,{ duration:600 })
                 passedOp.value = withTiming(0, { duration:500})
             }, 1000);
+
             setTimeout(() => {
                 setVisible(false)
             }, 2000);
@@ -359,8 +330,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
                 <View style={styles.layout}>
                     <View style={{alignItems:"center"}}>
-                        <Text style={styles.btnTitle}>{expenseMode ? "Expense" : "Income"}</Text>
-                        <SwitchBtn active={expenseMode} setActive={editMode ? undefined : setExpenseMode}/>
+                        <SwitchBtn active={expenseMode} setActive={editMode ? undefined : setExpenseMode} lottie={true} expenseMode={expenseMode}/>
                     </View>
                     <View style={{}}>
                         <View style={{}}>

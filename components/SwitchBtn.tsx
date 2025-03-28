@@ -5,8 +5,9 @@ import db from '../services/serverSide.js'
 import Animated,{ interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors'
 import { incomeActiveContext } from '@/hooks/balanceContext.tsx'
+import LottieView from 'lottie-react-native'
 
-const SwitchBtn = ({ label,active,setActive }) => {
+const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
 
     const leftCircle = useSharedValue(5)
     const textOpacity = useSharedValue(1)
@@ -49,9 +50,15 @@ const SwitchBtn = ({ label,active,setActive }) => {
 
   return (
     <View style={styles.container}>
-        {label && (
+        {label && !lottie ? (
             <Text style={styles.label}>{label} {active}</Text>
-        )}
+        ) : lottie && expenseMode ? (
+            <LottieView autoPlay loop={true} resizeMode='cover' style={styles.lottieDiv} source={require("../assets/lottie/expense_lottie.json")}/>
+        ) : (
+            <LottieView autoPlay loop={true} resizeMode='cover' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
+        )
+            
+        }
             <TouchableOpacity activeOpacity={0.9} onPress={() => {
                 if(setActive === undefined) return
                 setActive(prev => !prev)
@@ -76,6 +83,10 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
         position:"relative",
         backgroundColor:"white",
+    },
+    lottieDiv:{
+        width:120,
+        height:50
     },
     switchBtn:{
         position:"absolute",
