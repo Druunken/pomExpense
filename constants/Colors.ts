@@ -13,7 +13,7 @@ export const Colors = {
     primeLight:"#c7d871",
     newPrime:'#d3ffda',
     newPrimeLight:'#e9ffec',
-    dark:"#ffde4f",
+    dark:"#68a1b7",
     light:"#fff8ac",
     white:"white",
     brown:"#ffc61a",
@@ -22,7 +22,8 @@ export const Colors = {
     lightGray:'#f4f4f2',
     black:"black",
     gray:"#737373",
-    chillOrange:'#fff4d1' /*  */
+    chillOrange:'#fff4d1', /*  */
+    darkPurple:'#bebfdb',
   },
   txtColor:{
     prime:"white",

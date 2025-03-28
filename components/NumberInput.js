@@ -273,11 +273,11 @@ const NumberInput = ({
 
     useEffect(() => {
       setState("")
-      onPressedDone()
     },[])
   return (
     <View style={styles.container}>
-      <Animated.View style={[animatedStyle,{borderRadius:10}]}>
+      <Animated.View style={[animatedStyle,{borderRadius:10,borderColor:Colors.primaryBgColor.darkPurple,
+            borderWidth:3}]}>
         <TouchableOpacity onPress={() => {
           backgroundVal.value = withTiming(0, { duration: 250 })
           inputFocus()

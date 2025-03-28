@@ -159,9 +159,13 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
     /* animate values */
 
-    const layoutY = useSharedValue(0)
+    const layoutY = useSharedValue(height)
     const layoutBg = useSharedValue(0)
     const layoutOp = useSharedValue(1)
+
+    const passedOp = useSharedValue(0)
+    const passedY = useSharedValue(-150)
+    const passedIndex = useSharedValue(-50)
 
     const containerBg = useSharedValue(0)
 
@@ -182,6 +186,14 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
         }
     })
 
+    const animatedPassedDiv = useAnimatedStyle(() => {
+        return{
+            opacity:passedOp.value,
+            transform:[{ translateY: passedY.value }],
+            zIndex:passedIndex.value
+        }
+    })
+
     const animatedLayout = useAnimatedStyle(() => {
         return{
             transform: [
@@ -190,7 +202,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             backgroundColor: interpolateColor(
                 layoutBg.value,
                 [0,1],
-                [Colors.primaryBgColor.newPrimeLight,Colors.primaryBgColor.chillOrange]
+                [Colors.primaryBgColor.newPrimeLight,Colors.primaryBgColor.newPrime]
             ),
             opacity:layoutOp.value
         }
@@ -233,7 +245,6 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
 
     const formExecution = (closeType) => {
-
         if(closeType !== "form"){
             console.log("!FORM")
             layoutY.value = withSpring(height,{ damping:15 })
@@ -252,7 +263,25 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
         }else{
             console.log("FORM")
-            layoutOp.val = withTiming(0,{duration:500})
+            passedIndex.value = 1
+            layoutOp.value = withTiming(1,{duration:250})
+            layoutY.value = withSpring(height,{ damping:15 })
+            passedOp.value = withTiming(1, { duration: 500 })
+            passedY.value = withSpring(0)
+            setGenreModalVisible(false)
+            setSubType("")
+            setAmount("")
+            setTitle("")
+            setCate("")
+            setPressed(false)
+            setEditMode(false) 
+            setTimeout(() => {
+                containerBg.value = withTiming(1,{ duration:600 })
+                passedOp.value = withTiming(0, { duration:500})
+            }, 1000);
+            setTimeout(() => {
+                setVisible(false)
+            }, 2000);
         }
     }
 
@@ -281,8 +310,12 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
     useEffect(() => {
         if(visible){
+            console.log("visible")
             containerBg.value = withTiming(0,{ duration:1000 })
             layoutY.value = withSpring(0,{damping:13})
+            layoutOp.value = 1
+            passedOp.value = 0
+            passedY.value = -150
         }
     },[visible])
 
@@ -298,12 +331,16 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             layoutBg.value = withTiming(0, { duration:500 })
         }
     },[expenseInputValid])
-
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
         <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType}/>
         {/* <Animated.View style={[styles.blurView, animatedBlurView, {}]}></Animated.View> */}
         <Animated.View style={[styles.container,animatedContainer,{paddingTop:inset.top}]}>
+            <View style={[styles.passedDiv,{}]}>
+                <Animated.View style={[styles.passedLayout, animatedPassedDiv]}>
+                    <Text style={{fontFamily:"MainFont",color:"white",fontSize:13}}>Check</Text>
+                </Animated.View>
+            </View>
             <Animated.View style={[styles.formDiv,animatedLayout]}>
                 {/* The placeholder for touch event */}
                 <View onTouchStart={(ev) => pressedLayout(ev)} style={{justifyContent:"center",alignItems:"center"}}>
@@ -417,6 +454,21 @@ const styles = StyleSheet.create({
         opacity:1,
         position:"absolute",
         top:"0%",
+    },
+    passedDiv:{
+        position:"absolute",
+        width:"100%",
+        justifyContent:"center",
+        alignItems:"center",
+        height:"100%"
+    },
+    passedLayout:{
+        backgroundColor:Colors.primaryBgColor.prime,
+        width:150,
+        height:150,
+        justifyContent:"center",
+        alignItems:"center",
+        borderRadius:20,
     },
     infoDiv:{
         minHeight:150,

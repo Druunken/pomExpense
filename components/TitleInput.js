@@ -45,7 +45,8 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
   
   return (
     <Animated.View style={[styles.container, animatedView, {
-      backgroundColor: validInput ? Colors.primaryBgColor.prime : Colors.primaryBgColor.white,
+      borderColor:Colors.primaryBgColor.darkPurple,
+      borderWidth:3
     }]}>
       <TextInput onBlur={() => {
         onPressDone()
