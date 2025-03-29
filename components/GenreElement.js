@@ -10,13 +10,15 @@ import LottieView from 'lottie-react-native'
 const GenreElement = ({ setVisible, setCate, setSubType }) => {
 
 
+    /*  refs neeed to be created for every instance of lottie View */
     const lottieRef = useRef(null)
 
     const getLottie = (type) => {
         let validType = type.toLowerCase()
         if(validType === "food") return require("../assets/lottie/food_lottie.json")
-        /* else if(validType === "drink") return require("../assets/lottie/drink_lottie.json") */
+        else if(validType === "drink") return require("../assets/lottie/drink_lottie.json")
         else if(validType === "grocerie") return require("../assets/lottie/groceries_lottie.json")
+        else if(validType === "education") return require("../assets/lottie/education_lottie.json")
         else return require("../assets/lottie/settings_lottie.json")
     }
 
@@ -42,9 +44,9 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
             <Text style={styles.mainLabel}>Recent Types</Text>
             <Text style={styles.noLabel}>Available soon</Text>
         </View>
-        <View>
+        <View style={{}}>
             <Text style={styles.mainLabel}>General Types</Text>
-            <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            <FlatList contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
 
         {/* <View>
@@ -71,12 +73,15 @@ const styles = StyleSheet.create({
     container:{
         width:"100%",
         gap:5,
-        borderRadius:10
+        borderRadius:10,
+        flexDirection:"row",
+        flexWrap:"wrap",
+        justifyContent:"center",
     },
     label:{
         fontSize:13,
         fontFamily:"MainFont",
-        color: Colors.primaryBgColor.white
+        color: Colors.primaryBgColor.prime
     },
     mainLabel:{
         fontSize:15,
@@ -84,23 +89,22 @@ const styles = StyleSheet.create({
         color: Colors.primaryBgColor.white,
     },
     singleView:{
-        height:60,
-        width:90,
+        height:120,
+        width:150,
         borderWidth:3,
         justifyContent:"center",
         borderRadius:8,
         alignItems:"center",
-        backgroundColor:Colors.primaryBgColor.prime,
+        backgroundColor:Colors.primaryBgColor.newPrime,
         borderColor:Colors.primaryBgColor.dark,
     },
     noLabel:{
         fontSize:14,
         fontFamily:"MainFont",
-        color:Colors.primaryBgColor.persianRed
+        color:Colors.primaryBgColor.persianRed,
     },
     lottieStyle:{
-        width:25,
-        height:25,
-
+        width:45,
+        height:45,
     }
 })

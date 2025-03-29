@@ -77,6 +77,9 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
           <LottieView ref={passedRef} loop={false} autoPlay resizeMode='cover' style={{ width: 20, height:20}} source={require("../assets/lottie/passed_mark.json")}/>
         </View>
       )}
+      <View style={styles.iconDiv}>
+        <LottieView style={styles.lottieStyle} resizeMode='contain' source={require("../assets/lottie/title_lottie.json")}/>
+      </View>
     </Animated.View>
   )
 }
@@ -85,6 +88,18 @@ const styles = StyleSheet.create({
     container:{
       backgroundColor:"white",
       borderRadius:10
+    },
+    iconDiv:{
+      position:"absolute",
+      left:0,
+      height:"100%",
+      justifyContent:"center",
+      alignItems:"center",
+    },
+    lottieStyle:{
+      width:30,
+      height:30,
+      marginLeft:10
     },
     titleInput:{
         width:300,

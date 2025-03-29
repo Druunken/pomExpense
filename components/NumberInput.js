@@ -331,6 +331,9 @@ const NumberInput = ({
             <LottieView ref={passedRef} loop={false} autoPlay resizeMode='cover' style={{ width: 20, height:20}} source={require("../assets/lottie/passed_mark.json")}/>
           </View>
         )}
+        <View style={styles.iconDiv}>
+          <LottieView style={styles.lottieStyle} resizeMode='contain' source={require("../assets/lottie/amount_lottie.json")}/>
+        </View>
     </View>
   )
 }
@@ -338,6 +341,18 @@ const NumberInput = ({
 const styles = StyleSheet.create({
   container:{
     
+  },
+  iconDiv:{
+    position:"absolute",
+    left:0,
+    height:"100%",
+    justifyContent:"center",
+    alignItems:"center",
+  },
+  lottieStyle:{
+    width:30,
+    height:30,
+    marginLeft:10
   },
   txtStyle:{
     fontFamily:"MainFont",
