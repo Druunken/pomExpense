@@ -7,6 +7,7 @@ import { Colors } from '@/constants/Colors.ts'
 
 const GenreComponent = ({ visible, setVisible, setCate, setSubType }) => {
   const inset = useSafeAreaInsets()
+  
   return (
     <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10,opacity: visible ? 1 : 0}]}>
       <View style={styles.layout}> 
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
   layout:{
     width:"100%",
     height:"100%",
-    gap:20
+    gap:20,
   },
   header:{
     justifyContent:"center",

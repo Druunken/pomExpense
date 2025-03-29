@@ -1,19 +1,36 @@
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { generalTypes, foodTypes, drinkTypes, sweetTypes } from '../constants/GenreTypes.js'
 import { Colors } from '@/constants/Colors.ts'
+import LottieView from 'lottie-react-native'
 
 
 
 const GenreElement = ({ setVisible, setCate, setSubType }) => {
 
+
+    const lottieRef = useRef(null)
+
+    const getLottie = (type) => {
+        let validType = type.toLowerCase()
+        if(validType === "food") return require("../assets/lottie/food_lottie.json")
+        /* else if(validType === "drink") return require("../assets/lottie/drink_lottie.json") */
+        else if(validType === "grocerie") return require("../assets/lottie/groceries_lottie.json")
+        else return require("../assets/lottie/settings_lottie.json")
+    }
+
     const Element = ({ title, type }) => (
         <TouchableOpacity style={styles.singleView} onPress={() => {
-            setVisible(false)
+            lottieRef.current?.reset()
+            lottieRef.current?.play()
             setCate(type)
             setSubType(title)
+            setTimeout(() => {
+                setVisible(false)
+            }, 1500);
         }}>
+            <LottieView ref={lottieRef} loop={false} autoPlay={false} style={styles.lottieStyle} source={getLottie(type)}/>
             <Text style={styles.label}>{title}</Text>
         </TouchableOpacity>
     )
@@ -30,7 +47,7 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
             <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
 
-        <View>
+        {/* <View>
             <Text style={styles.mainLabel}>Food Types</Text>
             <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={foodTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
@@ -43,7 +60,7 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
         <View>
             <Text style={styles.mainLabel}>Sweet Types</Text>
             <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={sweetTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
-        </View>
+        </View> */}
     </View>
   )
 }
@@ -80,5 +97,10 @@ const styles = StyleSheet.create({
         fontSize:14,
         fontFamily:"MainFont",
         color:Colors.primaryBgColor.persianRed
+    },
+    lottieStyle:{
+        width:25,
+        height:25,
+
     }
 })
