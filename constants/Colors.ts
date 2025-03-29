@@ -22,7 +22,7 @@ export const Colors = {
     lightGray:'#f4f4f2',
     black:"black",
     gray:"#737373",
-    chillOrange:'#  ', /*  */
+    chillOrange:'#fff4d1', /*  */
     darkPurple:'#bebfdb',
   },
   txtColor:{
