@@ -1,4 +1,5 @@
 const convertToNumber = (val) => {
+    if(val === undefined) return
     const arr = val.split(".").join("").split("")
 
     if(arr.includes(",")){

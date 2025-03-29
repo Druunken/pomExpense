@@ -2,6 +2,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import React, { useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import LottieView from 'lottie-react-native'
 
 // on fully submitting the input the text will stay in place and will make some margin between val and currency
 
@@ -23,6 +24,8 @@ const NumberInput = ({
 }) => {
     const [invalid,setInvalid] = useState(false)
     const [validInput,setValidInput] = useState(false)
+
+    const passedRef = useRef(null)
     /* const [input,setState] = useState("") */
 
 
@@ -260,16 +263,16 @@ const NumberInput = ({
     const onPressedDone = () => {
       if(state.length > 0) {
         setValidInput(true)
+        setTimeout(() => {
+          passedRef.current?.reset()
+          passedRef.current?.play()
+        }, 100);
         backgroundVal.value = withTiming(1, { duration: 250 })
       }else{
         setValidInput(false)
         backgroundVal.value = withTiming(0, { duration: 250 })
       }
     }
-
-
-    useEffect(() => {
-    }, [inputRef])
 
     useEffect(() => {
       setState("")
@@ -325,7 +328,7 @@ const NumberInput = ({
         )}
         {validInput && (
           <View style={styles.markDiv}>
-            <Text style={styles.label}>check</Text>
+            <LottieView ref={passedRef} loop={false} autoPlay resizeMode='cover' style={{ width: 20, height:20}} source={require("../assets/lottie/passed_mark.json")}/>
           </View>
         )}
     </View>

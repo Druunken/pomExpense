@@ -23,7 +23,7 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
     <View style={{gap:20}}>
         <View>
             <Text style={styles.mainLabel}>Recent Types</Text>
-            <Text>Null</Text>
+            <Text style={styles.noLabel}>Available soon</Text>
         </View>
         <View>
             <Text style={styles.mainLabel}>General Types</Text>
@@ -57,23 +57,28 @@ const styles = StyleSheet.create({
         borderRadius:10
     },
     label:{
-        fontSize:12,
+        fontSize:13,
         fontFamily:"MainFont",
-        color: Colors.primaryBgColor.prime
+        color: Colors.primaryBgColor.white
     },
     mainLabel:{
         fontSize:15,
         fontFamily:"MainFont",
-        color: Colors.primaryBgColor.black
+        color: Colors.primaryBgColor.white,
     },
     singleView:{
-        height:80,
-        width:80,
+        height:60,
+        width:90,
         borderWidth:3,
         justifyContent:"center",
-        borderRadius:10,
+        borderRadius:8,
         alignItems:"center",
-        backgroundColor:Colors.primaryBgColor.newPrime,
-        borderColor:Colors.primaryBgColor.prime,
+        backgroundColor:Colors.primaryBgColor.prime,
+        borderColor:Colors.primaryBgColor.dark,
+    },
+    noLabel:{
+        fontSize:14,
+        fontFamily:"MainFont",
+        color:Colors.primaryBgColor.persianRed
     }
 })

@@ -10,8 +10,8 @@ const createCurrentDate = async() => {
   const currDay = date.toISOString().split("T")[0]
   const arr = currDay.split("-")
   const day = arr[2]
-  const month = arr[1]
-  const year = arr[0]
+  const month = "06"
+  const year = "2025"
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]
 }

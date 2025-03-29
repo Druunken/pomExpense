@@ -2,9 +2,11 @@ import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming }  from 'react-native-reanimated'
+import LottieView from 'lottie-react-native'
 
 const TitleInput = ({ state, setState, setIsOnFocus}) => {
   const inputRef = useRef(null)
+  const passedRef = useRef(null)
 
   const [validInput,setValidInput] = useState(false)
   
@@ -17,8 +19,12 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
   }
 
   const onPressDone = () => {
-    if(state.length > 0){
+    if(state.length > 0){5
       setValidInput(true)
+      setTimeout(() => {
+        passedRef.current?.reset()
+        passedRef.current?.play()
+      }, 100);
       backgroundVal.value = withTiming(1, {duration:250})
     }else{
       setValidInput(false)
@@ -48,7 +54,7 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
       borderColor:Colors.primaryBgColor.darkPurple,
       borderWidth:3
     }]}>
-      <TextInput onBlur={() => {
+      <TextInput onPressIn={() => { onPressDone() }} onBlur={() => {
         onPressDone()
       }} onSubmitEditing={() => {
         onPressDone()
@@ -68,7 +74,7 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
       }}></TextInput>
       {validInput && (
         <View style={styles.markDiv}>
-          <Text style={styles.label}>check</Text>
+          <LottieView ref={passedRef} loop={false} autoPlay resizeMode='cover' style={{ width: 20, height:20}} source={require("../assets/lottie/passed_mark.json")}/>
         </View>
       )}
     </Animated.View>

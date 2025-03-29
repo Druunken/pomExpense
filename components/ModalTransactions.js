@@ -363,7 +363,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                 
 
                 <View style={{justifyContent:"center",alignItems:"center", gap:10, paddingBottom:inset.bottom}}>
-                    <CondBtn cond={expenseInputValid || incomeINputValid} type={"confirm"} label={expenseMode ? "Add Expense" : "Add Income"} style={styles.condBtn} onPress={() => {
+                    <CondBtn genreTypes={false} cond={expenseInputValid || incomeINputValid} type={"confirm"} label={expenseMode ? "Add Expense" : "Add Income"} style={styles.condBtn} onPress={() => {
                         const actualVal = numberValidation.convertToNumber(amount)
                         const convertNum = numberValidation.convertToNumber(value)
                         const prevValNum = convertNum
