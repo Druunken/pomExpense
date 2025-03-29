@@ -23,7 +23,7 @@ const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
     const lottieRef = useRef(null)
 
 
-
+ 
   return (
     <View style={styles.container}>
             <Pressable style={[styles.btn,{opacity:opacity,borderColor:brdCol,backgroundColor:secBtn ? Colors.primaryBgColor.brown : Colors.primaryBgColor.chillOrange}]} onPress={onPress} onPressIn={
@@ -40,7 +40,7 @@ const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
 
                 <Image style={styles.icon} resizeMode='contain' source={getImageSource(icon)}></Image>
                 <Text style={{fontSize:20, color:secBtn && "white",fontFamily: secBtn ? "BoldFont" : "MainReg",minWidth:180}}>{label}</Text>
-                <LottieView loop={false} ref={lottieRef} resizeMode='contain' source={require("../assets/lottie/settings_arrow.json")} style={styles.lottieArrow} />
+                <LottieView loop={false} ref={lottieRef} autoPlay resizeMode='contain' source={require("../assets/lottie/settings_arrow.json")} style={styles.lottieArrow} />
             </Pressable>
     </View>
   )

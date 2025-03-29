@@ -3,11 +3,13 @@ import React from 'react'
 import { Colors } from '@/constants/Colors'
 
 
-const CondBtn = ({ label, type, onPress, cond, style }) => {
+const CondBtn = ({ label, type, onPress, cond, style, genreTypes }) => {
   
   return (
     <TouchableOpacity disabled={cond} style={[styles.container,style, type === "confirm" ? styles.confirm : styles.decline, {
-      opacity: cond ? 0.5 : 1
+      opacity: cond ? 0.5 : 1,
+      backgroundColor: genreTypes ? Colors.primaryBgColor.babyBlue : Colors.primaryBgColor.prime,
+      borderColor: genreTypes ? Colors.primaryBgColor.dark : Colors.primaryBgColor.lightPrime,
     }]} onPress={onPress}>
       <Text style={[styles.label, type === "confirm" ? styles.labelConfirm : styles.labelDecline]}>{label}</Text>
     </TouchableOpacity>
@@ -22,7 +24,7 @@ const styles = StyleSheet.create({
         borderColor:Colors.primaryBgColor.lightPrime,
         justifyContent:"center",
         alignItems:"center",
-        borderRadius:10
+        borderRadius:10,
     },
     label:{
 
