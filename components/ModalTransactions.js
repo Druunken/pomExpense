@@ -168,7 +168,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             zIndex:passedIndex.value
         }
     })
-
+    
     const animatedLayout = useAnimatedStyle(() => {
         return{
             transform: [
@@ -177,7 +177,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
             backgroundColor: interpolateColor(
                 layoutBg.value,
                 [0,1],
-                [expenseMode ? Colors.primaryBgColor.newPrimeLight : Colors.primaryBgColor.babyBlue,Colors.primaryBgColor.newPrime]
+                [expenseMode ? Colors.primaryBgColor.lightGray : Colors.primaryBgColor.babyBlue, Colors.primaryBgColor.newPrime]
             ),
             opacity:layoutOp.value
         }
@@ -307,14 +307,23 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     /* Checking for valid form and execute animation */
     /* SWAPPED LOGIC */
     useEffect(() => {
-        if(!expenseInputValid){
+        if(!expenseInputValid && cate !== ""){
             setTimeout(() => {
-                layoutBg.value = withTiming(1, { duration:500 })
+                layoutBg.value = withTiming(1, { duration:1000 })
             }, 250);
         }else if(expenseInputValid){
-            layoutBg.value = withTiming(0, { duration:500 })
+            layoutBg.value = withTiming(0, { duration:1000 })
+        }else if(!expenseMode){
+            layoutBg.value = withTiming(1, { duration:1000 })
         }
     },[expenseInputValid])
+ 
+    useEffect(() => {
+        if(!expenseMode){
+            setSubType("")
+            setCate("")
+        }
+    },[expenseMode])
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
         <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType} />
@@ -335,8 +344,8 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                         <Text style={{fontSize:22,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>{value}</Text> 
                      </Animated.View>
                      <Animated.View style={[animatedCurr, { justifyContent:"center",alignItems:"center" }]}>
-                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}}>Current Balance</Text>
-                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}}>{showChangedValue()}</Text>
+                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.darkPurple : Colors.primaryBgColor.prime}}>Current Balance</Text>
+                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.darkPurple : Colors.primaryBgColor.prime}}>{showChangedValue()}</Text>
                     </Animated.View>
                 </View>
 
@@ -357,7 +366,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
                     {<View style={{gap:5, opacity: expenseMode ? 1 : 0.5}}>
                         <Text></Text>
-                        <GenreButton setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} title={title}/>
+                        <GenreButton setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} setCate={setCate} title={title}/>
                     </View> }
                 </View>
                 
@@ -476,7 +485,6 @@ const styles = StyleSheet.create({
     },
     formDiv:{
         borderRadius:30,
-        backgroundColor:Colors.primaryBgColor.newPrimeLight,
         height:"100%",
         paddingTop:15,
         paddingHorizontal:20

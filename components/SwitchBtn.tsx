@@ -53,7 +53,7 @@ const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
         {label && !lottie ? (
             <Text style={styles.label}>{label} {active}</Text>
         ) : lottie && expenseMode ? (
-            <LottieView autoPlay loop={true} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
+            <LottieView autoPlay loop={true} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/expense_mode_lottie.json")}/>
         ) : (
             <LottieView autoPlay loop={true} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
         )

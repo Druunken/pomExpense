@@ -18,14 +18,20 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
     const getImageSource = (description) => {
 
         switch (description.toLowerCase()) {
-            case "drink":
-            return require("@/assets/imagesMain/categories/drink.jpg");
             case "food":
-            return require("@/assets/imagesMain/categories/food.png");
+            return require("../assets/lottie/food_lottie.json");
+            case "drink":
+            return require("../assets/lottie/drink_lottie");
             case "education":
-            return require("@/assets/imagesMain/categories/education.jpg");
+            return require("../assets/lottie/education_lottie");
+            case "grocerie":
+            return require("../assets/lottie/groceries_lottie.json");
+            case "shopping":
+            return require("../assets/lottie/shopping_bag_lottie.json");
             case "":
-            return require("@/assets/imagesMain/categories/pomDefault.webp");
+            return require("../assets/lottie/settings_lottie.json");
+            case "income":
+            return require("../assets/lottie/income_lottie.json");
         }
     };
 
@@ -100,7 +106,7 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
                      else alert("NOT configurable\nOnly Transactions that made in this month and year are configurable")
                 }}>
                     <View style={[styles.leftDiv]}>
-                        <Image style={styles.image} source={getImageSource(data[i].type)}/>
+                        <LottieView style={styles.image} source={getImageSource(data[i].type)}/>
                         <View>
                             <Text style={[styles.title,{color:data[i].automationType === "income" ? Colors.primaryBgColor.lightPrime : darkmode ? Colors.primaryBgColor.white : Colors.primaryBgColor.black}]}>{isLongVal(data[i].value)}</Text>
                             <View style={{flexDirection:"row",gap:20}}>
@@ -231,7 +237,6 @@ const styles = StyleSheet.create({
     image:{
         width:50,
         height:50,
-        borderRadius:10
     },
     layout:{
         width:"100%",

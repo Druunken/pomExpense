@@ -47,7 +47,7 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
         </View>
         <View style={{}}>
             <Text style={styles.mainLabel}>General Types</Text>
-            <FlatList contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
 
         {/* <View>
@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
         gap:5,
         borderRadius:10,
         flexDirection:"row",
-        flexWrap:"wrap",
         justifyContent:"center",
     },
     label:{
