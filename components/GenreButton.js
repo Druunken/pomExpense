@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native'
 
 import { food, drink, education, shopping, grocerie } from '../constants/GenreTypes.js'
 
-const GenreButton = ({ setVisible, subType, disabled, setState, title, submitted, setSubmitted }) => {
+const GenreButton = ({ setVisible, subType, disabled, setState, title }) => {
 
   const passedRef = useRef(null)
 
@@ -13,7 +13,6 @@ const GenreButton = ({ setVisible, subType, disabled, setState, title, submitted
 
   const triggerMatch = (title) => {
     let validString = title.toLowerCase()
-    setSubmitted(false)
     if(food.includes(validString)) setState("food")
     else if(drink.includes(validString)) setState("drink")
     else if(shopping.includes(validString)) setState("shopping")

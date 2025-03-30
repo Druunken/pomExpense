@@ -45,10 +45,10 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
             <Text style={styles.mainLabel}>Recent Types</Text>
             <Text style={styles.noLabel}>Available soon</Text>
         </View>
-        <View style={{}}>
+        {/* <View style={{}}>
             <Text style={styles.mainLabel}>General Types</Text>
             <FlatList contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
-        </View>
+        </View> */}
 
         {/* <View>
             <Text style={styles.mainLabel}>Food Types</Text>

@@ -15,7 +15,7 @@ import GenreComponent from './GenreComponent.js'
 import { Dimensions } from 'react-native';
 import LottieView from 'lottie-react-native'
 
-const {width,height} = Dimensions.get("window") 
+const { height } = Dimensions.get("window") 
 
 const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, editMode, value, setValue, balanceFade, setEditMode, editId }) => {
     const [amount,setAmount] = useState("")
@@ -318,7 +318,6 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
         <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType} />
-        {/* <Animated.View style={[styles.blurView, animatedBlurView, {}]}></Animated.View> */}
         <Animated.View style={[styles.container,animatedContainer,{paddingTop:inset.top}]}>
             <View style={[styles.passedDiv,{}]}>
                 <Animated.View style={[styles.passedLayout, animatedPassedDiv]}>
@@ -327,7 +326,6 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                 </Animated.View>
             </View>
             <Animated.View style={[styles.formDiv,animatedLayout]}>
-                {/* The placeholder for touch event */}
                 <View onTouchStart={(ev) => pressedLayout(ev)} style={{justifyContent:"center",alignItems:"center"}}>
                     <View style={styles.scrollView}/>
                 </View>
@@ -357,10 +355,10 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                         <NumberInput autoFocus={false} state={amount} setState={setAmount} currency={currency}/>
                     </View>
 
-                    <View style={{gap:5, opacity: expenseMode ? 1 : 0.5}}>
+                    {<View style={{gap:5, opacity: expenseMode ? 1 : 0.5}}>
                         <Text></Text>
-                        <GenreButton submitted={submitted} setSubmitted={setSubmitted} setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} title={title}/>
-                    </View> 
+                        <GenreButton setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} title={title}/>
+                    </View> }
                 </View>
                 
 
