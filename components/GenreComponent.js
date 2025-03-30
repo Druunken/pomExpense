@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import GenreElement from './GenreElement.js'
 import CondBtn from './CondBtn.tsx'
@@ -7,6 +7,8 @@ import { Colors } from '@/constants/Colors.ts'
 
 const GenreComponent = ({ visible, setVisible, setCate, setSubType }) => {
   const inset = useSafeAreaInsets()
+
+
   
   return (
     <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10,opacity: visible ? 1 : 0}]}>

@@ -78,7 +78,7 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
         </View>
       )}
       <View style={styles.iconDiv}>
-        <LottieView style={styles.lottieStyle} resizeMode='contain' source={require("../assets/lottie/title_lottie.json")}/>
+        <LottieView style={styles.lottieStyle} resizeMode='contain' source={require("../assets/lottie/eticett_lottie.json")}/>
       </View>
     </Animated.View>
   )

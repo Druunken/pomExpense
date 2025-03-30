@@ -315,7 +315,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     },[expenseInputValid])
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
-        <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType}/>
+        <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType} />
         {/* <Animated.View style={[styles.blurView, animatedBlurView, {}]}></Animated.View> */}
         <Animated.View style={[styles.container,animatedContainer,{paddingTop:inset.top}]}>
             <View style={[styles.passedDiv,{}]}>
@@ -357,7 +357,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
                     <View style={{gap:5, opacity: expenseMode ? 1 : 0.5}}>
                         <Text></Text>
-                        <GenreButton setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode}/>
+                        <GenreButton setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} title={title}/>
                     </View> 
                 </View>
                 

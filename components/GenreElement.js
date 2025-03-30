@@ -19,6 +19,7 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
         else if(validType === "drink") return require("../assets/lottie/drink_lottie.json")
         else if(validType === "grocerie") return require("../assets/lottie/groceries_lottie.json")
         else if(validType === "education") return require("../assets/lottie/education_lottie.json")
+        else if(validType === "shopping") return require("../assets/lottie/shopping_bag_lottie.json")
         else return require("../assets/lottie/settings_lottie.json")
     }
 

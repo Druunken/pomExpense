@@ -3,18 +3,27 @@ import React, { useEffect, useRef } from 'react'
 import { Colors } from '@/constants/Colors'
 import LottieView from 'lottie-react-native'
 
-const GenreButton = ({ setVisible, subType, disabled }) => {
+const GenreButton = ({ setVisible, subType, disabled, setSubType, title }) => {
 
   const passedRef = useRef(null)
 
   const isSelected = subType.length > 0
+
+  const triggerMatch = (title) => {
+    let validString = title.toLowerCase()
+    console.log(validString)
+    if(validString === "food") setSubType("food")
+    else if(validString === "drink") setSubType("drink")
+    else if(validString === "shopping") setSubType("shopping")
+    else if(validString === "grocerie") setSubType("grocerie")
+    else if(validString === "education") setSubType("education")
+    else return
+  }
+  
   
   useEffect(() => {
-    if(subType.length > 0){
-
-    }else {
-
-    }
+    console.log(subType)
+    if(title !== undefined && title.length !== 0) triggerMatch(title)
   },[subType])
 
   return (
