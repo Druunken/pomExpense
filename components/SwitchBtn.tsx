@@ -50,16 +50,15 @@ const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
 
   return (
     <View style={styles.container}>
-        {/* {label && !lottie ? (
+        {label && !lottie ? (
             <Text style={styles.label}>{label} {active}</Text>
         ) : lottie && expenseMode ? (
-            <LottieView autoPlay loop={true} resizeMode='cover' style={styles.lottieDiv} source={require("../assets/lottie/expense_lottie.json")}/>
+            <LottieView autoPlay loop={true} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
         ) : (
-            <LottieView autoPlay loop={true} resizeMode='cover' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
+            <LottieView autoPlay loop={true} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
         )
             
-        } */}
-        <LottieView autoPlay loop={true} resizeMode='cover' style={styles.lottieDiv} source={require("../assets/lottie/expense_lottie.json")}/>
+        }
             <TouchableOpacity activeOpacity={0.9} onPress={() => {
                 if(setActive === undefined) return
                 setActive(prev => !prev)
@@ -86,8 +85,8 @@ const styles = StyleSheet.create({
         backgroundColor:"white",
     },
     lottieDiv:{
-        width:60,
-        height:60
+        width:120,
+        height:120
     },
     switchBtn:{
         position:"absolute",
