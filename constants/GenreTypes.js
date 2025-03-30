@@ -23,4 +23,13 @@ export const generalTypes = [
     { name:"Drink", type:"drink"},
 ]
 
+export const food = ["pizza","burger","döner","shawarma","dinner","breakfast","brunch","food"]
+export const drink = ["beer","soda","coke","pepsi","matcha","tea","water","beverage","drink"]
+export const education = ["books","pencil","science"]
+export const shopping = ["cloth","clothes","jacket","shirt","shopping"]
+export const grocerie = ["groceries","grocerie","tomato","apple","vegetable","fruit","fruits"]
+
+
+
+
 

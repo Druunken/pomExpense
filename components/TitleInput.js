@@ -4,7 +4,7 @@ import { Colors } from '@/constants/Colors'
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming }  from 'react-native-reanimated'
 import LottieView from 'lottie-react-native'
 
-const TitleInput = ({ state, setState, setIsOnFocus}) => {
+const TitleInput = ({ state, setState, setIsOnFocus, submitted, setSubmitted}) => {
   const inputRef = useRef(null)
   const passedRef = useRef(null)
 
@@ -19,6 +19,7 @@ const TitleInput = ({ state, setState, setIsOnFocus}) => {
   }
 
   const onPressDone = () => {
+    setSubmitted(true)
     if(state.length > 0){5
       setValidInput(true)
       setTimeout(() => {

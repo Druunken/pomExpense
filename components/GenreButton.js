@@ -3,7 +3,9 @@ import React, { useEffect, useRef } from 'react'
 import { Colors } from '@/constants/Colors'
 import LottieView from 'lottie-react-native'
 
-const GenreButton = ({ setVisible, subType, disabled, setSubType, title }) => {
+import { food, drink, education, shopping, grocerie } from '../constants/GenreTypes.js'
+
+const GenreButton = ({ setVisible, subType, disabled, setState, title, submitted, setSubmitted }) => {
 
   const passedRef = useRef(null)
 
@@ -11,20 +13,20 @@ const GenreButton = ({ setVisible, subType, disabled, setSubType, title }) => {
 
   const triggerMatch = (title) => {
     let validString = title.toLowerCase()
-    console.log(validString)
-    if(validString === "food") setSubType("food")
-    else if(validString === "drink") setSubType("drink")
-    else if(validString === "shopping") setSubType("shopping")
-    else if(validString === "grocerie") setSubType("grocerie")
-    else if(validString === "education") setSubType("education")
-    else return
+    setSubmitted(false)
+    if(food.includes(validString)) setState("food")
+    else if(drink.includes(validString)) setState("drink")
+    else if(shopping.includes(validString)) setState("shopping")
+    else if(grocerie.includes(validString)) setState("grocerie")
+    else if(education.includes(validString)) setState("education")
+    else return setState("")
   }
   
   
   useEffect(() => {
-    console.log(subType)
+    console.log(drink.includes(title))
     if(title !== undefined && title.length !== 0) triggerMatch(title)
-  },[subType])
+  },[title])
 
   return (
     <TouchableOpacity disabled={disabled} style={[styles.container, isSelected ? styles.selected : styles.unSelected]} onPress={() => setVisible(true)}>

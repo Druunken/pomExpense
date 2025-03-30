@@ -25,6 +25,8 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     const [subType,setSubType] = useState("")
     const [editDate,setEditDate] = useState("")
 
+    const [submitted,setSubmitted] = useState(false)
+
     const passedLottieRef = useRef(null)
 
     const [genreModalVisible,setGenreModalVisible] = useState(false)
@@ -348,7 +350,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
                         <View style={{}}>
                             <Text style={styles.title}>Title</Text>
                         </View>
-                        <TitleInput state={title} setState={setTitle}/>
+                        <TitleInput state={title} setState={setTitle} submitted={submitted} setSubmitted={setSubmitted}/>
                     </View>
                     <View style={{}}>
                         <Text style={styles.title} >Amount</Text>
@@ -357,7 +359,7 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
 
                     <View style={{gap:5, opacity: expenseMode ? 1 : 0.5}}>
                         <Text></Text>
-                        <GenreButton setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} title={title}/>
+                        <GenreButton submitted={submitted} setSubmitted={setSubmitted} setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} title={title}/>
                     </View> 
                 </View>
                 
