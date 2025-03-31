@@ -319,10 +319,8 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     },[expenseInputValid])
  
     useEffect(() => {
-        if(!expenseMode){
             setSubType("")
             setCate("")
-        }
     },[expenseMode])
   return (
     <Modal animationType="none" transparent={true} visible={visible}>

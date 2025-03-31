@@ -1,8 +1,5 @@
 const convertToNumber = (val) => {
   /* this error is breaking the app. Search for the root problem */
-    if(val !== ""){
-      return 
-    }
     const arr = val.split(".").join("").split("")
 
     if(arr.includes(",")){
