@@ -4,7 +4,7 @@ import { Colors } from '@/constants/Colors'
 import SwitchComponent from '@/components/FilterComponents/SwitchComponent'
 
 const FilterAmount = ({ state, setState}) => {
-  const titles = ["All","MAX","MIN"]
+  const titles = ["All Transactions","Highest Income","Highest Expense"]
   return (
     <View style={styles.container}>
       <SwitchComponent state={state} setState={setState} label={"FilterAmount"} width={25} color={Colors.primaryBgColor.gray} steps={2} titles={titles} />

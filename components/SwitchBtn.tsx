@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet,TouchableOpacity } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
 import db from '../services/serverSide.js'
 import Animated,{ interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
@@ -10,6 +10,7 @@ import LottieView from 'lottie-react-native'
 const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
 
     const leftCircle = useSharedValue(5)
+    const lottieRef = useRef(null)
     const textOpacity = useSharedValue(1)
     const animatedCircleDiv = useAnimatedStyle(() => {
         const backgroundColor = interpolateColor(
@@ -46,6 +47,13 @@ const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
         textOpacity.value = withTiming(0,{duration:30}, () => {
             textOpacity.value = withTiming(1,{duration:250})
         })
+        if(lottieRef.current){
+           console.log("reffed")
+           lottieRef.current?.reset()
+           setTimeout(() => {
+                lottieRef.current?.play()
+           }, 0);
+        }
     },[active])
 
   return (
@@ -53,9 +61,9 @@ const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
         {label && !lottie ? (
             <Text style={styles.label}>{label} {active}</Text>
         ) : lottie && expenseMode ? (
-            <LottieView autoPlay loop={true} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/expense_mode_lottie.json")}/>
+            <LottieView autoPlay={false} loop={false} ref={lottieRef}  resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/expense_mode_lottie.json")}/>
         ) : (
-            <LottieView autoPlay loop={true} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
+            <LottieView autoPlay={false} loop={false}  ref={lottieRef} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
         )
             
         }

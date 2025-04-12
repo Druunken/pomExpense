@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, ImageBackground } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -12,12 +12,24 @@ import numberValidation from '@/services/numberInputValidation'
 import { Colors } from '@/constants/Colors';
 import LottieView from 'lottie-react-native';
 
-const BalanceContainer = ({ value, currency }) => {
+const BalanceContainer = ({ value, currency, setVisibleOverview, visibleOverview}) => {
 
 
+
+
+  const opacityContainer = useSharedValue(0)
+  const indexContainer = useSharedValue(-1)
 
   const balanceOpacity = useSharedValue(1)
   const balanceColor = useSharedValue(1)
+
+
+  const animatedContainer = useAnimatedStyle(() => {
+    return{
+      opacity:opacityContainer.value,
+      zIndex:indexContainer.value,
+    }
+  })
 
   const balanceChangeAnimation = useAnimatedStyle(() =>{
     return {
@@ -31,10 +43,28 @@ const BalanceContainer = ({ value, currency }) => {
       )
     }
   })
-  return (
-    <TouchableOpacity activeOpacity={0.9} style={styles.balanceContainer}>
-            
 
+  const pressHandler = () => {
+    setVisibleOverview(true)
+    
+  }
+
+  useEffect(() => {
+    if(visibleOverview){
+      opacityContainer.value = withTiming(0, { duration: 500})
+      setTimeout(() => {
+        indexContainer.value = -1
+      }, 500);
+    }else{
+      indexContainer.value = 1
+      setTimeout(() => {
+        opacityContainer.value = withTiming(1, { duration: 800})
+      }, 500);
+    }
+  },[visibleOverview])
+  return (
+    <Animated.View  style={[styles.balanceContainer,animatedContainer]} onPress={pressHandler}>
+      <TouchableOpacity activeOpacity={1} onPress={pressHandler} style={{width:"100%",height:"100%"}}>
             <View style={styles.balanceDiv}>
               <View style={styles.balanceLayout}>
                 {/* <Image
@@ -86,7 +116,8 @@ const BalanceContainer = ({ value, currency }) => {
                 </View>
               </View>
             </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </Animated.View>
   )
 }
 

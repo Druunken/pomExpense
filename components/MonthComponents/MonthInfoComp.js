@@ -90,12 +90,12 @@ const MonthInfoComp = ({ month, year}) => {
               }]}>{numberValidation.converToString(Number(totalExpenseMonthVal + incomeMonthVal).toFixed(2))} {currency}</Text>
             </View>
 
-            <View style={styles.infoColumn}>
+           {/*  <View style={styles.infoColumn}>
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Static income</Text>
               <Text style={[styles.infoTotal,{
                 color: Colors.primaryBgColor.prime
               }]}>{numberValidation.converToString(staticIncome)} {currency}</Text>
-            </View>
+            </View> */}
 
             <View style={styles.infoColumn}>
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total Transactions</Text>
@@ -111,37 +111,37 @@ const MonthInfoComp = ({ month, year}) => {
               }]}>{numberValidation.converToString(totalSavingsMonthVal.toFixed(2))} {currency}</Text>
             </View>
 
-            <View style={styles.infoColumn}>
+            {/* <View style={styles.infoColumn}>
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Saving Goal</Text>
               <Text style={[styles.infoTotal,{
                 color: Colors.primaryBgColor.prime
               }]}>{numberValidation.converToString(savingGoalMonthVal > 0 ? savingGoalMonthVal : 0)} {currency}</Text>
-            </View>
+            </View> */}
 
-            <View style={styles.infoColumn}>
+            {/* <View style={styles.infoColumn}>
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Fixed Costs</Text>
               <Text style={[styles.infoTotal,{
                 color: Colors.primaryBgColor.prime
               }]}>{fixedCostAmount} {currency}</Text>
-            </View>
+            </View> */}
 
-            <View style={styles.infoColumn}>
+            {/* <View style={styles.infoColumn}>
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Saving Achieved</Text>
               <Text style={[styles.infoTotal,{
                 color: Colors.primaryBgColor.prime,
                 fontSize:15,
                 textAlign:"center"
               }]}>{goalAchieved}</Text>
-            </View>
+            </View> */}
 
-            <View style={styles.infoColumn}>
+            {/* <View style={styles.infoColumn}>
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Income Processed</Text>
               <Text style={[styles.infoTotal,{
                 color: Colors.primaryBgColor.prime,
                 fontSize:15,
                 textAlign:"center"
               }]}>{incomeProcessed}</Text>
-            </View>
+            </View> */}
 
           </View>
         )}
@@ -159,11 +159,10 @@ export default MonthInfoComp
 
 const styles = StyleSheet.create({
     infoLayout:{
-        flexDirection:"row",
         gap:15,
         padding:10,
-        flexWrap:"wrap",
-        justifyContent:"center"
+        justifyContent:"center",
+        alignItems:"center",
     },
 
     infoColumn:{
@@ -171,9 +170,9 @@ const styles = StyleSheet.create({
     paddingHorizontal:0,
     paddingVertical:10,
     borderRadius:10,
-    width:150,
+    width:"100%",
     alignItems:"center",
-    borderWidth:3,
+    borderWidth:2,
     borderColor:Colors.primaryBgColor.prime
     },
 
@@ -186,6 +185,6 @@ const styles = StyleSheet.create({
     infoTotal:{
         fontFamily:"BoldFont",
         color:Colors.primaryBgColor.white,
-        fontSize:20,
+        fontSize:30,
     },
 })

@@ -38,16 +38,26 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
         </TouchableOpacity>
     )
 
+    useEffect(() => {
+        if(setCate !== "" && lottieRef.current){
+            lottieRef.current?.reset()
+            setTimeout(() => {
+                lottieRef.current?.play()
+            }, 0);
+        }
+    }, [setCate])
+
 
   return (
     <View style={{gap:20}}>
-        <View>
+        {/* <View>
             <Text style={styles.mainLabel}>Recent Types</Text>
             <Text style={styles.noLabel}>Available soon</Text>
-        </View>
+        </View> */}
+
         <View style={{}}>
-            <Text style={styles.mainLabel}>General Types</Text>
-            <FlatList horizontal contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            {/* <Text style={styles.mainLabel}>General Types</Text> */}
+            <FlatList numColumns={3} contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
         </View>
 
         {/* <View>
@@ -73,10 +83,10 @@ export default GenreElement
 const styles = StyleSheet.create({
     container:{
         width:"100%",
-        gap:5,
+        gap:10,
         borderRadius:10,
-        flexDirection:"row",
         justifyContent:"center",
+        paddingLeft:10,
     },
     label:{
         fontSize:13,
@@ -89,14 +99,15 @@ const styles = StyleSheet.create({
         color: Colors.primaryBgColor.white,
     },
     singleView:{
-        height:120,
-        width:150,
-        borderWidth:3,
+        height:80,
+        width:100,
         justifyContent:"center",
         borderRadius:8,
         alignItems:"center",
-        backgroundColor:Colors.primaryBgColor.newPrime,
-        borderColor:Colors.primaryBgColor.dark,
+        backgroundColor:Colors.primaryBgColor.babyBlue,
+        borderColor:Colors.primaryBgColor.prime,
+        marginRight:20,
+
     },
     noLabel:{
         fontSize:14,

@@ -14,7 +14,7 @@ const GenreComponent = ({ visible, setVisible, setCate, setSubType }) => {
     <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10,opacity: visible ? 1 : 0}]}>
       <View style={styles.layout}> 
         <View style={styles.header}>
-          <Text style={styles.label}>Select one</Text>
+          <Text style={styles.label}>Select Type</Text>
         </View>
         <View style={styles.content}>
           <GenreElement setVisible={setVisible} setCate={setCate} setSubType={setSubType}/>
