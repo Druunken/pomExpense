@@ -808,9 +808,11 @@ const createSavingGoal = async(val) => {
     const setData = await connection.runAsync(
       'UPDATE totalBalance SET savingGoalVal = ?, savingGoalActive = TRUE', [val]
     )
+    
     const updateData = await connection.runAsync(
-      'UPDATE monthsProps SET monthsSavingGoalDate = ?, yearsSavingGoalDate = ?, monthsSavingGoalVal = ?',[month,year,val]
+      'UPDATE monthsProps SET monthsSavingGoalDate = ?, yearsSavingGoalDate = ?, monthsSavingGoalVal = ?, monthsSavingGoalWasActive = TRUE',[month,year,val]
     )
+
     if(setData.changes > 0) console.log(`\nCreated a Saving Goal: ${val} \nUpdated saving Goal: ${true} `)
     if(updateData.changes > 0) console.log(`\nSuccesfully Updated Saving Goal Date\nMonth: ${month}\nYear: ${year} `)
   } catch (error) {
@@ -820,6 +822,12 @@ const createSavingGoal = async(val) => {
 
 const getMonthProps = async(month,year) => {
   try {
+    if(month === undefined && year === undefined){
+      const currentDate = await createCurrentDate()
+      month = currentDate[1]
+      year = currentDate[2]
+    }
+
     const connection = await SQLite.openDatabaseAsync('balance.db')
     const data = await connection.getAllAsync(
       `
@@ -1028,7 +1036,7 @@ const getAllData = async(setData,setCurrency,setUsername,setLoadingDone) => {
 const getTransactions = async() => {
   try {
     const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.getAllAsync('SELECT * FROM balance')
+    const data = await connection.getAllAsync('SELECT * FROM balance ORDER BY id DESC LIMIT 20')
     return data;
   } catch (error) {
     console.error(error)
@@ -1172,7 +1180,6 @@ const negativeBalance = async(moneyAmount) => {
 
 const getSingleEntry = async(id) => {
   try {
-    console.log(id)
     const conection = await SQLite.openDatabaseAsync('balance.db')
     const getEntry = await conection.getFirstAsync('SELECT * FROM balance WHERE id = ?',[id])
     
@@ -1620,7 +1627,7 @@ const updateFixedCostsForm = async() => {
   }
 }
 
-const createCostsColumn = async(title,amount,type="Expense") => {
+const createCostsColumn = async(title,amount,type="Fixed Cost") => {
   try {
     const connection = await SQLite.openDatabaseAsync('balance.db')
     const createCostsColumn = await connection.runAsync(

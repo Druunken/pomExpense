@@ -1,6 +1,12 @@
 const convertToNumber = (val) => {
   /* this error is breaking the app. Search for the root problem */
-    const arr = val.split(".").join("").split("")
+    let arr;
+
+    if(typeof val === typeof []){
+      arr = val.join("").split("")
+    }else {
+      arr = val.split(".").join("").split("")
+    }
 
     if(arr.includes(",")){
       

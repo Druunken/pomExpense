@@ -17,6 +17,7 @@ import { Colors } from '@/constants/Colors';
 import HeaderInfo from '@/components/ModalformComponents/HeaderInfo'
 import { incomeActiveContext } from "@/hooks/balanceContext";
 import { usersBalanceContext } from "@/hooks/balanceContext"
+import numberInputValidation from '@/services/numberInputValidation';
 
 const ModalEntryForm = ({ visible, pointer, setPointer }) => {
     const [pointerSeen,setPointerSeen] = useState({})
@@ -26,7 +27,10 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
     const [prevCurrency, setPrevCurrency] = useState("")
     const [prevUsername, setPrevUsername] = useState("")
 
-    const { fixedCostAmount, currency } = useContext(usersBalanceContext)
+    const [savingValid,setSavingValid] = useState(true)
+
+    const { fixedCostAmount, currency, savingVal } = useContext(usersBalanceContext)
+    const { currentIncome } = useContext(incomeActiveContext)
 
     const { automateIncomeDay } = useContext(incomeActiveContext)
 
@@ -67,13 +71,22 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
         }
     }
 
+    useEffect(() => {
+        if((numberInputValidation.convertToNumber(currentIncome) - Math.abs(numberInputValidation.convertToNumber(fixedCostAmount))) < numberInputValidation.convertToNumber(savingVal)){
+            
+            setSavingValid(false)
+        }else {
+            setSavingValid(true)
+        }
+    },[savingVal,currentIncome,fixedCostAmount])
+
   return (
     <View style={{}}>
         <Modal animationType='slide' transparent={true} visible={visible}>
             <View style={[styles.container]}>
                 <View style={[styles.header,{height:Platform.OS === "ios" ? inset.top * 2 : 60}]}>
                     <View style={[styles.headerLayout]}>
-                            {backToOverview && (
+                            {!savingValid && (
                                 <BacktoFinal setPointer={setPointer} />
                             )}
                         {pointer !== 7 && (
@@ -135,7 +148,7 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
                    
                 )}
                 {pointer === 7 && (
-                        <FinalViewForm pointer={pointer} setPointer={setPointer} pointerSeen={pointerSeen} setPointerSeen={setPointerSeen}  prevIncome={prevIncome} prevCurrency={prevCurrency} prevVal={prevVal} prevGoal={prevGoal} prevUsername={prevUsername}/>
+                        <FinalViewForm savingValid={savingValid} pointer={pointer} setPointer={setPointer} pointerSeen={pointerSeen} setPointerSeen={setPointerSeen}  prevIncome={prevIncome} prevCurrency={prevCurrency} prevVal={prevVal} prevGoal={prevGoal} prevUsername={prevUsername}/>
                 )}
             </View>
             </Modal>

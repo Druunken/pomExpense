@@ -21,8 +21,8 @@ export default RoundCheckBtn
 const styles = StyleSheet.create({
     container:{
         backgroundColor:Colors.primaryBgColor.prime,
-        borderRadius:25,
-        width:50,
+        borderRadius:10,
+        width:"100%",
         height:50,
         justifyContent:"center",
         alignItems:"center",
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     },
     btn:{
         borderWidth:2,
-        borderRadius:25,
+        borderRadius:10,
         width:"100%",
         height:"100%",
         justifyContent:"center",

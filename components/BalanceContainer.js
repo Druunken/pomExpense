@@ -78,7 +78,7 @@ const BalanceContainer = ({ value, currency, setVisibleOverview, visibleOverview
                   <View style={[{ flexDirection: "row", alignItems: "center" }]}>
 
                     <Animated.Text style={[styles.balanceText,balanceChangeAnimation]}>
-                      {value}
+                      {numberValidation.converToString(numberValidation.convertToNumber(value).toFixed(2))}
                     </Animated.Text>
 
                     <Text style={styles.currencyText}>

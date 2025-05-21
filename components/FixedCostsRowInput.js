@@ -12,18 +12,21 @@ const FixedCostsRowInput = ({ amount, setAmount, title, setTitle, setShowAdd, fn
     const [titleFocus,setTitleFocus] = useState(false)
   return (
     <View style={styles.container}>
-        <View style={styles.div}>
-            <Text style={styles.titleLabel}>Amount</Text>
-            <NumberInput state={amount} setState={setAmount} secState={false} setIsOnFocus={setIsOnFocus} /> 
-        </View>
-        {!isOnFocus && (
+        <View style={{flex:1,borderWidth:0,justifyContent:"center",gap:30}}>
             <View style={styles.div}>
-                <Text style={styles.titleLabel}>Title</Text>
-                <TitleInput state={title} setState={setTitle} setIsOnFocus={setTitleFocus} />
+                <Text style={styles.titleLabel}>Amount</Text>
+                <NumberInput state={amount} setState={setAmount} secState={false} isOnFocus={isOnFocus} setIsOnFocus={setIsOnFocus} /> 
             </View>
-        )}
+            {!isOnFocus && (
+                <View style={styles.div}>
+                    <Text style={styles.titleLabel}>Title</Text>
+                    <TitleInput state={title} setState={setTitle} isOnFocus={titleFocus} setIsOnFocus={setTitleFocus} />
+                </View>
+            )}
+        </View>
+        <View style={{}}/>
         {!isOnFocus && !titleFocus && (
-            <View style={{flexDirection:"row",gap:10,justifyContent:"center",alignItems:"center"}}>
+            <View style={{flexDirection:"column",gap:10,justifyContent:"center",alignItems:"center",marginBottom:15}}>
                 <RoundCheckBtn setShowAdd={setShowAdd} fn={fn} />
                 <CancelRoundBtn setShowAdd={setShowAdd} />
             </View>

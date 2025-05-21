@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     width:"100%",
     height:"100%",
     zIndex:100,
-    backgroundColor:Colors.primaryBgColor.lightPrime,
+    backgroundColor:Colors.primaryBgColor.black,
     borderRadius:10,
   },
   label:{

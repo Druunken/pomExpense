@@ -6,24 +6,34 @@ import { Colors } from '@/constants/Colors'
 import { usersBalanceContext } from "@/hooks/balanceContext";
 import NumberInput from '../NumberInput'
 import CondBtn from '../CondBtn'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 
 const BalanceForm = ({ setPointer, setPointerSeen, prevVal, setPrevVal, pointerSeen }) => {
   
   const { value,setValue } = useContext(usersBalanceContext)
+  const [numberFocus,setNumberFocus] = useState(false)
+
   const isSeen = pointerSeen[7] !== 1
 
 
   useEffect(() => {
-  },[])
+    console.log(value)
+    if(value === ""){
+      console.log("no value")
+    }else if(value.length > 0){
+      console.log("ok some value here")
+    }
+  },[value])
   return (
       <View style={styles.container}>
         <KeyboardAvoidingView style={styles.keyboardDiv} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100}>
-          <View>
+          <View style={{justifyContent:"center",alignItems:"center"}}>
             <Text style={{color:Colors.primaryBgColor.prime,fontFamily:"BoldFont",fontSize:20}}>Enter your starting balance</Text>
+            <Text style={styles.label}>Count every penny and enter that value right here :)</Text>
           </View>
-          <NumberInput autoFocus={false} state={value} setState={setValue} secState={false} style={styles.input}/>
-          <CondBtn cond={false} label={"Save"} type={"confirm"} onPress={() =>{
+          <NumberInput setIsOnFocus={setNumberFocus} isOnFocus={numberFocus} autoFocus={false} state={value} setState={setValue} secState={false} style={styles.input}/>
+          <CondBtn cond={value === "" ? true : false} label={"Save"} type={"confirm"} onPress={() =>{
               const actualVal = numberValidation.convertToNumber(value)
               const fixedVal = numberValidation.converToString(actualVal)
               setPrevVal(fixedVal)
@@ -53,7 +63,32 @@ export default BalanceForm
 
 const styles = StyleSheet.create({
   container:{
-    flex:1,
+    flex:1
+  },
+  labelContainer:{
+    width:"100%",
+    justifyContent:"center",
+    alignItems:"center",
+    paddingTop:10,
+    position:"absolute",
+    top:0
+  },
+  labelDiv:{
+    paddingHorizontal:50,
+    backgroundColor:Colors.primaryBgColor.prime,
+    width:300,
+    justifyContent:"center",
+    alignItems:"center",
+    paddingTop:8,
+    paddingBottom:15,
+    paddingHorizontal:20,
+    borderRadius:20,
+  },
+  label:{
+    fontFamily:"MainFont",
+    color:Colors.primaryBgColor.babyBlue,
+    fontSize:15,
+    textAlign:"center"
   },
   keyboardDiv:{
     flex:1,

@@ -5,6 +5,7 @@ import { Colors } from '@/constants/Colors'
 import numberValidation from '@/services/numberInputValidation'
 import { usersBalanceContext } from "@/hooks/balanceContext";
 import db from '@/services/serverSide'
+import LottieView from 'lottie-react-native';
 
 
 const MonthInfoComp = ({ month, year}) => {
@@ -34,6 +35,7 @@ const MonthInfoComp = ({ month, year}) => {
         }else{
           setMonthDisplayNullRender(false)
           setTotalExpenseMonthVal(monthProps[0].monthsTotalExpenses)
+          console.log(monthProps[0].monthsTotalExpenses)
           setTotalSavingsMonthVal(monthProps[0].monthsTotalBalance)
           setSavingGoalMonthVal(monthProps[0].monthsSavingGoalVal)
           setTotalTransactionMonth(monthProps[0].monthsTotalTransactions)
@@ -69,26 +71,46 @@ const MonthInfoComp = ({ month, year}) => {
     <View style={styles.infoContainer}>
         {!monthDisplayNullRender && (
             <View style={[styles.infoLayout]}>
-            <View style={styles.infoColumn}>
-              <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total Expenses</Text>
-              <Text style={[styles.infoTotal,{
-                color: totalExpenseMonthVal < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime
-              }]}>{numberValidation.converToString(totalExpenseMonthVal.toFixed(2))} {currency}</Text>
-          </View>
+              <View style={[styles.infoColumn,{flexDirection:"row",justifyContent:"space-evenly",paddingHorizontal:5,backgroundColor:Colors.primaryBgColor.chillOrange,borderColor:Colors.primaryBgColor.chillOrange}]}>
+                <View style={{flexDirection:"row"}}>
+                  <View>
+                    <LottieView  style={styles.lottie} source={(require("../../assets/lottie/income_lottie.json"))}/>
+                  </View>
+                  <View style={{width:50,height:50,borderWidth:0}}>
+                    <Text style={[styles.infoLabel,{fontSize:12,color:Colors.primaryBgColor.black}]}>Percent</Text>
+                  </View>
+                </View>
+                <View>
+                  <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total Expenses</Text>
+                  <Text style={[styles.infoTotal,{
+                    color: totalExpenseMonthVal < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.black
+                  }]}>{totalExpenseMonthVal === 0 ? "0,00" : numberValidation.converToString(totalExpenseMonthVal.toFixed(2))} {currency}</Text>
+                </View>
+              </View>
 
-          <View style={styles.infoColumn}>
-              <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total income</Text>
-              <Text style={[styles.infoTotal,{
-                color: Colors.primaryBgColor.prime
-              }]}>{numberValidation.converToString(incomeMonthVal)} {currency}</Text>
-            </View>
+              <View style={[styles.infoColumn,{flexDirection:"row",justifyContent:"space-evenly",paddingHorizontal:5}]}>
+                <View style={{flexDirection:"row"}}>
+                  <View>
+                    <LottieView  style={styles.lottie} source={(require("../../assets/lottie/income_lottie.json"))}/>
+                  </View>
+                  <View style={{width:50,height:50,borderWidth:0}}>
+                    <Text style={[styles.infoLabel,{fontSize:12,color:Colors.primaryBgColor.black}]}>Percent</Text>
+                  </View>
+                </View>
+                <View>
+                  <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total income</Text>
+                  <Text style={[styles.infoTotal,{
+                    color: Colors.primaryBgColor.prime
+                  }]}>{incomeMonthVal === 0 ? "0,00" : numberValidation.converToString(incomeMonthVal.toFixed(2))} {currency}</Text>
+                </View>
+              </View>
 
-            <View style={styles.infoColumn}>
-              <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total</Text>
-              <Text style={[styles.infoTotal,{
-                color: totalExpenseMonthVal + incomeMonthVal < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime
-              }]}>{numberValidation.converToString(Number(totalExpenseMonthVal + incomeMonthVal).toFixed(2))} {currency}</Text>
-            </View>
+              <View style={[styles.infoColumn,{flexDirection:"row",justifyContent:"space-evenly",paddingHorizontal:5}]}>
+                <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total</Text>
+                <Text style={[styles.infoTotal,{
+                  color: totalExpenseMonthVal + incomeMonthVal < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime
+                }]}>{totalExpenseMonthVal + incomeMonthVal === 0 ? "0,00" : numberValidation.converToString(Number(totalExpenseMonthVal + incomeMonthVal).toFixed(2))} {currency}</Text>
+              </View>
 
            {/*  <View style={styles.infoColumn}>
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Static income</Text>
@@ -108,7 +130,7 @@ const MonthInfoComp = ({ month, year}) => {
               <Text style={[styles.infoLabel,{color:Colors.primaryBgColor.black}]}>Total Savings</Text>
               <Text style={[styles.infoTotal,{
                 color: Colors.primaryBgColor.prime
-              }]}>{numberValidation.converToString(totalSavingsMonthVal.toFixed(2))} {currency}</Text>
+              }]}>{totalSavingsMonthVal === 0 ? "0,00" : numberValidation.converToString(totalSavingsMonthVal.toFixed(2))} {currency}</Text>
             </View>
 
             {/* <View style={styles.infoColumn}>
@@ -164,7 +186,10 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
     },
-
+    lottie:{
+      width:50,
+      height:50
+    },
     infoColumn:{
     backgroundColor:Colors.primaryBgColor.babyBlue,
     paddingHorizontal:0,

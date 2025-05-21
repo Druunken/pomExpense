@@ -1,24 +1,22 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import numberValidation from '@/services/numberInputValidation'
+import { usersBalanceContext } from "@/hooks/balanceContext"
 import db from '@/services/serverSide'
 import { Colors } from '@/constants/Colors'
 import NumberInput from '../NumberInput'
 import CondBtn from '../CondBtn'
 
 const SavingForm = ({ setPointer, pointerSeen, setPointerSeen, prevIncome, setPrevGoal, prevGoal }) => {
-  const [savingGoalVal,setSavingGoalVal] = useState("")
+  const { fixedCostAmount, savingVal, setSavingVal } = useContext(usersBalanceContext)
   const incomeNum = numberValidation.convertToNumber(prevIncome)
-  const isNull = numberValidation.convertToNumber(savingGoalVal) === 0
-  const isBigger = numberValidation.convertToNumber(savingGoalVal) >= incomeNum
+  const isNull = numberValidation.convertToNumber(savingVal) === 0
+  const isBigger = numberValidation.convertToNumber(savingVal) > incomeNum - Math.abs(numberValidation.convertToNumber(fixedCostAmount))
   const [isOnFocus,setIsOnFocus] = useState(false)
   const validationInput = isNull || isBigger
   const isSeen = pointerSeen[7] !== 1
   
 
-  useEffect(() => {
-    console.log("here")
-  },[isOnFocus])
 
   return (
     <View style={styles.container}>
@@ -27,23 +25,29 @@ const SavingForm = ({ setPointer, pointerSeen, setPointerSeen, prevIncome, setPr
         <Text style={{color:Colors.primaryBgColor.prime,fontFamily:"BoldFont",fontSize:20}}>Enter a Saving Goal</Text>
       </View>
       <View style={styles.validationDiv}>
-        {isBigger && (
-          <Text style={{fontSize:25,color:Colors.primaryBgColor.brown,textAlign:"center"}}>The Goal should be Under {numberValidation.converToString(incomeNum)}</Text>
+        {isOnFocus && (
+          <View style={{justifyContent:"center",alignItems:"center"}}>
+            <Text style={{color:Colors.primaryBgColor.white,fontFamily:"MainFont",fontSize:15}}>This Goal must be under</Text>
+            <Text style={{color:Colors.primaryBgColor.newPrime,fontFamily:"MainFont",fontSize:25}}>{numberValidation.converToString(incomeNum - Math.abs(numberValidation.convertToNumber(fixedCostAmount)))}</Text>
+          </View>
         )}
       </View>
       {!isOnFocus && (
-        <View style={{justifyContent:"center",alignItems:"center"}}>
-          <Text style={{color:Colors.primaryBgColor.white,fontFamily:"MainFont",fontSize:15}}>This Feature will be reseted on the first calendar day. You will be asked for a new Goal!</Text>
-          <Text style={{color:"gray",fontFamily:"MainFont",fontSize:14,marginTop:50}}>It will help you to keep a solid goal</Text>
+        <View style={{justifyContent:"center",alignItems:"center",borderWidth:0}}>
+          <View style={{justifyContent:"center",alignItems:"center"}}>
+            <Text style={{color:Colors.primaryBgColor.white,fontFamily:"MainFont",fontSize:15}}>This Goal should be under</Text>
+            <Text style={{color:Colors.primaryBgColor.newPrime,fontFamily:"BoldFont",fontSize:25}}>{numberValidation.converToString(incomeNum - Math.abs(numberValidation.convertToNumber(fixedCostAmount)))}</Text>
+          </View>
+          <Text style={{color:"gray",fontFamily:"MainFont",fontSize:14,marginTop:50}}>It will help you to keep a solid saving over time</Text>
           <Text style={{color:Colors.primaryBgColor.babyBlue,fontFamily:"MainFont",fontSize:14}}>Still, you should Enjoy:)</Text>
         </View>
       )}
         
-      <NumberInput setIsOnFocus={setIsOnFocus} state={savingGoalVal} setState={setSavingGoalVal} secState={false} style={styles.input} onPress={() => {}}/>
+      <NumberInput isOnFocus={isOnFocus} setIsOnFocus={setIsOnFocus} state={savingVal} setState={setSavingVal} secState={false} style={styles.input} onPress={() => {}}/>
 
       <View style={{flexDirection:"row",gap:10}}>
         <CondBtn cond={validationInput} label={"Save"} type={"confirm"} onPress={() =>{
-          const actualVal = numberValidation.convertToNumber(savingGoalVal)
+          const actualVal = numberValidation.convertToNumber(savingVal)
           const fixed = numberValidation.converToString(actualVal)
           db.createSavingGoal(actualVal)
           if(pointerSeen[7] === 1){

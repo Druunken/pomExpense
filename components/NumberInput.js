@@ -1,7 +1,7 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
-import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming, withRepeat  } from 'react-native-reanimated'
 import LottieView from 'lottie-react-native'
 
 // on fully submitting the input the text will stay in place and will make some margin between val and currency
@@ -20,12 +20,16 @@ const NumberInput = ({
     onPress,
     autoFocus,
     setIsOnFocus,
-    currency
+    currency,
+    isOnFocus
 }) => {
     const [invalid,setInvalid] = useState(false)
     const [validInput,setValidInput] = useState(false)
 
+
+    const borderVal = useSharedValue(0)
     const passedRef = useRef(null)
+    const indicatorOp = useSharedValue(0)
     /* const [input,setState] = useState("") */
 
 
@@ -256,7 +260,18 @@ const NumberInput = ({
           backgroundVal.value,
           [0,1],
           [Colors.primaryBgColor.white,Colors.primaryBgColor.prime]
+        ),
+        borderColor: interpolateColor(
+                borderVal.value,
+                [0,1],
+                [Colors.primaryBgColor.white,Colors.primaryBgColor.darkPurple]
         )
+      }
+    })
+
+    const animatedIndicator = useAnimatedStyle(() => {
+      return {
+        opacity:indicatorOp.value
       }
     })
 
@@ -277,10 +292,19 @@ const NumberInput = ({
     useEffect(() => {
       setState("")
     },[])
+
+    useEffect(() => {
+        if(isOnFocus){
+          borderVal.value = withRepeat(withTiming(1,{ duration:1000  }), -1, true )
+          indicatorOp.value = withRepeat(withTiming(1,{ duration:1000  }), -1, true )
+        }else{
+          borderVal.value = withTiming(0, { duration: 450 })
+        }
+      },[isOnFocus])
   return (
     <View style={styles.container}>
-      <Animated.View style={[animatedStyle,{borderRadius:10,borderColor:Colors.primaryBgColor.darkPurple,
-            borderWidth:3}]}>
+      <Animated.View style={[animatedStyle,{borderRadius:10,
+            borderWidth:5}]}>
         <TouchableOpacity onPress={() => {
           backgroundVal.value = withTiming(0, { duration: 250 })
           inputFocus()
@@ -290,9 +314,15 @@ const NumberInput = ({
           <Text placeholderTextColor={"black"} placeholder={"0,00"} style={[styles.txtFillStyle, {
             color: validInput ? Colors.primaryBgColor.white : Colors.primaryBgColor.black
           }]}>{txtValidation()}</Text>
+          {isOnFocus && state.length > 0 && (
+            <Animated.View style={[animatedIndicator,{borderWidth:1,borderColor:"black",height:35,width:1}]}/>
+          )}
           <Text placeholderTextColor={"black"} placeholder={"0,00"} style={[styles.txtStyle, {
             color: validInput ? Colors.primaryBgColor.white : Colors.primaryBgColor.black
           }]}>{placeHolderValidation()}</Text>
+          {isOnFocus && state.length < 1 && (
+            <Animated.View style={[animatedIndicator,{borderWidth:1,borderColor:"black",height:35,width:1}]}/>
+          )}
           <Text style={{fontFamily:"MainFont",fontSize:17}}>{currency}</Text>
         </TouchableOpacity>
       </Animated.View>

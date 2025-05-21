@@ -25,7 +25,8 @@ interface BalanceContextType {
     setUsername: React.Dispatch<React.SetStateAction<string>>
     fixedCostAmount: string
     setFixedCostAmount: React.Dispatch<React.SetStateAction<string>>
-
+    savingVal: string
+    setSavingVal: React.Dispatch<React.SetStateAction<string>>
     markedDates : object
     setMarkedDates: React.Dispatch<React.SetStateAction<object>>
 }
@@ -58,6 +59,8 @@ const defaultBalanceContextType: BalanceContextType = {
     setFixedCostAmount: () => {},
     markedDates: {},
     setMarkedDates: () => {}, 
+    savingVal: "",
+    setSavingVal: () => {},
 
 }
 
@@ -112,6 +115,7 @@ export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
     const [value, setValue] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [fixedCostAmount, setFixedCostAmount] = useState<string>("0,00");
+    const [savingVal,setSavingVal] = useState<string>("0,00")
     const [markedDates,setMarkedDates] = useState<object>({})
 
     const setMarkingPoints = async() => {
@@ -145,15 +149,18 @@ export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
             const getValue = await db.getBalance()
             const getUsername = await db.getUsername()
             const getCosts = await db.getTotalCosts()
+            const getSavingVal = await db.getSavingGoal()
             setMarkingPoints()
             
             const convertStr = numberInputValidation.converToString(getValue)
             const costsStr = numberInputValidation.converToString(getCosts)
+            const savingStr = numberInputValidation.converToString(getSavingVal)
 
             setCurrency(getCurrency)
             setValue(convertStr)
             setUsername(getUsername)
             setFixedCostAmount(costsStr)
+            setSavingVal(savingStr)
         } catch (error) {
             console.error("BALANCE CONTEXT")
         }
@@ -177,6 +184,8 @@ export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
             setFixedCostAmount,
             markedDates,
             setMarkedDates,
+            savingVal,
+            setSavingVal
         }}>
             {children}
         </usersBalanceContext.Provider>

@@ -1,16 +1,17 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
-import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming }  from 'react-native-reanimated'
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withRepeat, withTiming }  from 'react-native-reanimated'
 import LottieView from 'lottie-react-native'
 
-const TitleInput = ({ state, setState, setIsOnFocus }) => {
+const TitleInput = ({ state, setState, setIsOnFocus, isOnFocus }) => {
   const inputRef = useRef(null)
   const passedRef = useRef(null)
 
   const [validInput,setValidInput] = useState(false)
   
   const backgroundVal = useSharedValue(0)
+  const borderVal = useSharedValue(0)
 
   const handlePress = () => {
     if(inputRef.current){
@@ -41,6 +42,11 @@ const TitleInput = ({ state, setState, setIsOnFocus }) => {
         backgroundVal.value,
         [0,1],
         [Colors.primaryBgColor.white,Colors.primaryBgColor.prime]
+      ),
+      borderColor: interpolateColor(
+        borderVal.value,
+        [0,1],
+        [Colors.primaryBgColor.white,Colors.primaryBgColor.darkPurple]
       )
     }
   })
@@ -48,13 +54,20 @@ const TitleInput = ({ state, setState, setIsOnFocus }) => {
   useEffect(() => {
     onPressDone()
   }, [])
+
+  useEffect(() => {
+    if(isOnFocus){
+      borderVal.value = withRepeat(withTiming(1,{ duration:800  }), -1, true )
+    }else{
+      borderVal.value = withTiming(0, { duration: 450 })
+    }
+  },[isOnFocus])
   
   return (
     <Animated.View style={[styles.container, animatedView, {
-      borderColor:Colors.primaryBgColor.darkPurple,
-      borderWidth:3
+      borderWidth:5,
     }]}>
-      <TextInput onPressIn={() => { onPressDone() }} onBlur={() => {
+      <TextInput autoCorrect={false} onPressIn={() => { onPressDone() }} onBlur={() => {
         onPressDone()
       }} onSubmitEditing={() => {
         onPressDone()
@@ -70,6 +83,8 @@ const TitleInput = ({ state, setState, setIsOnFocus }) => {
       }} autoFocus={false} clearTextOnFocus style={[styles.titleInput, {
         color: validInput ? Colors.primaryBgColor.white : Colors.primaryBgColor.black
       }]} placeholder='...' value={state} onChangeText={(txt) =>{
+        /* limit the length to 18 characters */ 
+        if(state.length > 17) return setState(txt.split("").splice(0,18).join(""))
         setState(txt)
       }}></TextInput>
       {validInput && (

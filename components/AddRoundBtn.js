@@ -9,7 +9,7 @@ const AddRoundBtn = ({ onPress, setShowAdd }) => {
         <TouchableOpacity onPress={() => {
             setShowAdd(true)
         }} style={styles.btn} >
-            <Icon size={30} color={Colors.primaryBgColor.black} name='add' />
+            <Icon size={30} color={Colors.primaryBgColor.newPrimeLight} name='add' />
         </TouchableOpacity>
     </View>
   )
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         borderWidth:2,
-        borderColor:Colors.primaryBgColor.prime
+        borderColor:Colors.primaryBgColor.newPrime
     },
     btn:{
         borderWidth:2,

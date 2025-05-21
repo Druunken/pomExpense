@@ -18,6 +18,7 @@ const FinalViewForm = ({
 
     const { setValue, currency, fixedCostAmount } = useContext(usersBalanceContext)
 
+
     const [isGoalBig,setIsGoalBig] = useState(incomeNum <= goalNum)
 
     const incomeNum = inputConverter.convertToNumber(prevIncome)
@@ -36,6 +37,8 @@ const FinalViewForm = ({
         })
       },[])
 
+
+
   return (
     <View style={styles.container}>
         <FinalView onPress={() => setPointer(1)} label={"Currency"} item={currency}  bgColor={Colors.primaryBgColor.brown} frColor={Colors.primaryBgColor.prime} />
@@ -48,7 +51,6 @@ const FinalViewForm = ({
        <View style={styles.warnDiv}>
             <Text style={styles.warnLabel} >{isGoalBig ? "Saving Goal is to high" : ""}</Text>
        </View>
-        
         <View style={{justifyContent:"center",alignItems:"center"}}>
             <TouchableOpacity disabled={isGoalBig} style={[styles.finishBtn,{opacity:isGoalBig ? 0.5 : 1}]} onPress={() => {
                 setPointer(8)

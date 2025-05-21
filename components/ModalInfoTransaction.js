@@ -12,6 +12,7 @@ const ModalInfoTransaction = ({ id, visible, setVisible }) => {
     const [date,setDate] = useState("")
     const [name,setName] = useState("")
     const [type,setType] = useState("")
+    const [transactionType,setTransactionType] = useState("")
 
     const fetchData = async(id) => {
         try {
@@ -22,7 +23,11 @@ const ModalInfoTransaction = ({ id, visible, setVisible }) => {
             setDate(data.date)
             setType(data.type)
             setAmount(fixedNum)
-            
+
+            if(data.balanceType === "minus") setTransactionType("Expense")
+            else if(data.balanceType === "none") setTransactionType("Income")
+            else setTransactionType(data.balanceType)
+        
         } catch (error) {
             console.error(error)
         }
@@ -46,9 +51,9 @@ const ModalInfoTransaction = ({ id, visible, setVisible }) => {
 
                 </View>
                 <Text style={styles.title}>Information</Text>
-                <View style={{gap:30}}>
+                <View style={{gap:15,marginTop:15}}>
                     <View style={styles.infoDiv}>
-                        <Text style={styles.label}>Name</Text>
+                        <Text style={styles.label}>Title</Text>
                         <Text style={styles.val}>{name}</Text>
                     </View>
 
@@ -66,6 +71,10 @@ const ModalInfoTransaction = ({ id, visible, setVisible }) => {
                         <Text style={styles.label}>Type</Text>
                         <Text style={styles.val}>{type}</Text>
                     </View>
+                    <View style={styles.infoDiv}>
+                        <Text style={styles.label}>Transaction type</Text>
+                        <Text style={styles.val}>{transactionType}</Text>
+                    </View>
                 </View>
             </View>
         </View>
@@ -80,7 +89,8 @@ const styles = StyleSheet.create({
         width:"100%",
         height:"100%",
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        paddingHorizontal:15
     },
     infoDiv:{
         justifyContent:"center",
@@ -89,21 +99,23 @@ const styles = StyleSheet.create({
     },
     val:{
         fontSize:20,
-        color:Colors.primaryBgColor.lightGray,
+        color:Colors.primaryBgColor.black,
         fontFamily:"MainFont"
     },
     title:{
         fontSize:30,
-        color:Colors.primaryBgColor.babyBlue,
+        color:Colors.primaryBgColor.black,
         fontFamily:"MainFont",
         textAlign:"center"
     },
     content:{
-        backgroundColor:'rgba(0, 0, 0, 0.9)',
+        backgroundColor:Colors.primaryBgColor.newPrimeLight,
         width:"100%",
         height:500,
         borderRadius:10,
         padding:13,
+        borderWidth:2,
+        borderColor:Colors.primaryBgColor.black
 
     },  
     exitDiv:{
@@ -111,6 +123,8 @@ const styles = StyleSheet.create({
         zIndex:100,
         left:10,
         top:10,
+        backgroundColor:"black",
+        borderRadius:10
     },
     label:{
         fontSize:25,

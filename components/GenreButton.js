@@ -7,7 +7,7 @@ import Animated , { useAnimatedStyle, withTiming } from 'react-native-reanimate
 import { food, drink, education, shopping, grocerie } from '../constants/GenreTypes.js'
 import { interpolateColor, useSharedValue } from 'react-native-reanimated'
 
-const GenreButton = ({ setVisible, subType, disabled, setState, title, setCate }) => {
+const GenreButton = ({ setVisible, subType, disabled, setState, title, setCate, onPress }) => {
 
   const passedRef = useRef(null)
   const foodRef = useRef(null)
@@ -88,7 +88,10 @@ const GenreButton = ({ setVisible, subType, disabled, setState, title, setCate }
   },[validState])
 
   return (
-    <TouchableOpacity disabled={disabled}  onPress={() => setVisible(true)}>
+    <TouchableOpacity disabled={disabled}  onPress={() => {
+      setVisible(true)
+      onPress()
+    }}>
       <Animated.View style={[styles.container, isSelected ? styles.selected : styles.unSelected, animatedStyle]}>
       {isSelected ? (
         <>

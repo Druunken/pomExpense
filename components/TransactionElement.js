@@ -6,14 +6,15 @@ import { Colors } from '@/constants/Colors';
 import db from '@/services/serverSide'
 import numberValidation from '@/services/numberInputValidation'
 import LottieView from 'lottie-react-native';
+import { router } from 'expo-router';
 
 const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode, setEditId, setInfoModal, darkmode, dayView, givinData }) => {
 
     const { value,setValue, setMarkedDates } = useContext(usersBalanceContext)
-    const [data,setData] = useState({})
-    const [date,setDate] = useState([])
     const [isExisting,setIsExisting] = useState(true)
     const [initilaizedData,setInitilaizedData] = useState(false)
+    const [dataIsBig,setDataIsBig] = useState(false)
+    const [renderedItem,setRenderedItem] = useState([])
 
     const getImageSource = (description) => {
 
@@ -32,6 +33,9 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
             return require("../assets/lottie/settings_lottie.json");
             case "income":
             return require("../assets/lottie/income_lottie.json");
+
+            default :
+            return require("../assets/lottie/settings_lottie.json")
         }
     };
 
@@ -53,37 +57,41 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
         }else return title
     }
 
-    const displayData = () => {
+    const displayData = async() => {
         let elements = []
-        if(data === undefined) return
-        for(let i = data.length - 1; i >= 0; i--){
-            const isValuePositive = data[i].moneyValue > 0
-            const getCorrectDate = data[i].date.split("-")
+        const fetchIt = await db.getTransactions()
+        const date = await db.createCurrentDate()
+        
+        if(fetchIt.length > 19) setDataIsBig(true)
+
+        for(let i = 0; i < fetchIt.length; i++){
+            const isValuePositive = fetchIt[i].moneyValue > 0
+            const getCorrectDate = fetchIt[i].date.split("-")
             const year = getCorrectDate[0]
             const month = getCorrectDate[1]
             const day = getCorrectDate[2]
 
+            console.log(i)
 
             const isToday = year === date[2] && month === date[1] && day === date[0]
-
             elements.push(
-                <TouchableOpacity key={data[i].id} style={styles.layout} onPress={() => {
+                <TouchableOpacity key={fetchIt[i].id} style={styles.layout} onPress={() => {
                     setInfoModal(true)
-                    setInfoId(data[i].id)
+                    setInfoId(fetchIt[i].id)
                 }} onLongPress={() => {
-                    if(month === date[1] && year === date[2] && data[i].automationType === "none"){
+                    if(month === date[1] && year === date[2] && fetchIt[i].automationType === "none"){
                         Alert.alert("Balance", "balance editor", [
                             { text: "Cancel", onPress: () => console.log("cancel"), style: "cancel" },
                             {
                               text: "Delete",
                               onPress: async() => {
-                                await db.deleteSingleEntrie(data[i].id,data[i].moneyValue,data[i].balanceType === "plus" ? true : false);
+                                await db.deleteSingleEntrie(fetchIt[i].id,fetchIt[i].moneyValue,fetchIt[i].balanceType === "plus" ? true : false);
                                 const correctVal = await getBal()
                                 setMarkedDates((prev) =>{
                                     let copy = prev
-                                    const amount = copy[data[i].date].amount
-                                    if(copy[data[i].date]){
-                                        copy[data[i].date].amount = amount - data[i].moneyValue
+                                    const amount = copy[fetchIt[i].date].amount
+                                    if(copy[fetchIt[i].date]){
+                                        copy[fetchIt[i].date].amount = amount - fetchIt[i].moneyValue
                                     }
                                     return copy
                                 })
@@ -97,79 +105,98 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
                               onPress: () => {
                                 setVisibleModal(true)
                                 setEditMode(true)
-                                setEditId(data[i].id)
+                                setEditId(fetchIt[i].id)
                                 setInfoId(0)
                               },
                             },
                           ]);
-                    }else if(data[i].automationType === "income") alert("This is not configurable!")
+                    }else if(fetchIt[i].automationType === "income") alert("This is not configurable!")
                      else alert("NOT configurable\nOnly Transactions that made in this month and year are configurable")
                 }}>
                     <View style={[styles.leftDiv]}>
-                        <LottieView style={styles.image} source={getImageSource(data[i].type)}/>
+                        <LottieView autoPlay={false} loop={false} style={styles.image} source={getImageSource(fetchIt[i].type)}/> 
                         <View>
-                            <Text style={[styles.title,{color:data[i].automationType === "income" ? Colors.primaryBgColor.lightPrime : darkmode ? Colors.primaryBgColor.white : Colors.primaryBgColor.black}]}>{isLongVal(data[i].value)}</Text>
+                            <Text style={[styles.title,{color:fetchIt[i].automationType === "income" ? Colors.primaryBgColor.lightPrime : darkmode ? Colors.primaryBgColor.white : Colors.primaryBgColor.black}]}>{isLongVal(fetchIt[i].value)}</Text>
                             <View style={{flexDirection:"row",gap:20}}>
                                 <View style={styles.dateDiv}>
-                                    <Text style={styles.dateLabel}>{isToday ? "today" : data[i].date}</Text>
+                                    <Text style={styles.dateLabel}>{isToday ? "today" : fetchIt[i].date}</Text>
                                 </View>
                                 <View style={styles.genreDiv}>
-                                    <Text style={styles.genreLabel}>{data[i].subType}</Text>
+                                    <Text style={styles.genreLabel}>{fetchIt[i].subType}</Text>
                                 </View>
                             </View>
                         </View>
                     </View>
                     <View style={styles.valueDiv}>
-                        <Text style={[styles.valueLabel,{color: isValuePositive ? Colors.primaryBgColor.prime : Colors.primaryBgColor.persianRed}]}>{numberValidation.converToString(data[i].moneyValue)}</Text>
+                        <Text style={[styles.valueLabel,{color: isValuePositive ? Colors.primaryBgColor.prime : Colors.primaryBgColor.persianRed}]}>{numberValidation.converToString(fetchIt[i].moneyValue)}</Text>
                         <Text style={styles.currencyLabel}>{currency}</Text>
                     </View>
                 </TouchableOpacity>
             )
         }
-        return elements
+        setInitilaizedData(true)
+            
+        if(fetchIt.length < 1) setIsExisting(false)
+        else setIsExisting(true)
+
+        setRenderedItem(elements)
     }
 
-    const fetchData = async() => {
+    /* const fetchData = async() => {
         try {
+            console.log("new data here")
             const getData = await db.getTransactions()
             const getDate = await db.createCurrentDate()
             setData(getData)
             setDate(getDate)
-            setInitilaizedData(true)
-            if(getData.length < 1) setIsExisting(false)
-            else setIsExisting(true)
+            
         } catch (error) {
             setInitilaizedData(false)
             console.error("Error while fetching getAllData()",error)
         }
+    } */
+
+    const viewMoreHandle = () =>{
+        console.log("route to Transactions History with the date")
+        router.push("/transactions")
     }
 
     if(!dayView){
         useEffect(() => {
-            fetchData()
+            displayData()
         },[value])
     
         useEffect(() => {
-            fetchData()
+            displayData()
         },[])
     }else{dayView}{
         useEffect(() => {
-            setData(givinData)
+            console.log(givinData)
+            /* setRenderedItem(givinData) */
             setInitilaizedData(true)
         },[])
         useEffect(() => {
-            setData(givinData)
+            console.log(givinData)
+            /* setRenderedItem(givinData) */
             setInitilaizedData(true)
         },[givinData])
     }
+
     
   return (
     <View style={[styles.container,/* darkmode && styles.containerDark */]}>
         <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollDiv,styles.scrollDarkDiv]}>
-            {initilaizedData && displayData()}
+            {renderedItem}
             {!isExisting && (
                 <View style={{width:"100%",height:"100%",justifyContent:"center",alignItems:"center",marginTop:80}}>
                     <LottieView autoPlay loop source={require("../assets/lottie/settings_lottie.json")} style={styles.noDataLottie} />
+                </View>
+            )}
+            {dataIsBig && (
+                <View style={{width:"100%",alignItems:"center",justifyContent:"center",marginTop:10}}>
+                    <TouchableOpacity style={styles.btn} onPress={viewMoreHandle}>
+                        <Text style={styles.label}>View more</Text>
+                    </TouchableOpacity>
                 </View>
             )}
         </ScrollView>
@@ -187,6 +214,17 @@ const styles = StyleSheet.create({
         gap:7,
         justifyContent:"center",
         alignItems:"center",
+    },
+    btn:{
+        width:"100%",
+        height:45,
+        backgroundColor:Colors.primaryBgColor.prime,
+        borderRadius:10,
+        justifyContent:"center",
+        alignItems:"center",
+        borderWidth:3,
+        borderColor:Colors.primaryBgColor.white
+
     },
     genreDiv:{
         borderWidth:1,
@@ -250,7 +288,9 @@ const styles = StyleSheet.create({
 
     },
     label:{
-
+        fontSize:15,
+        fontFamily:"MainFont",
+        color:Colors.primaryBgColor.white
     },
     title:{
         fontSize:20,

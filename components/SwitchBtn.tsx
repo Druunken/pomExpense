@@ -1,17 +1,33 @@
 import { View, Text, StyleSheet,TouchableOpacity } from 'react-native'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, {useEffect, useRef } from 'react'
 import { Colors } from '@/constants/Colors'
-import db from '../services/serverSide.js'
 import Animated,{ interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
-import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors'
-import { incomeActiveContext } from '@/hooks/balanceContext.tsx'
 import LottieView from 'lottie-react-native'
 
-const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
+const SwitchBtn = ({ label,active,setActive,lottie,expenseMode,amountBiggerThanRem }) => {
 
     const leftCircle = useSharedValue(5)
     const lottieRef = useRef(null)
     const textOpacity = useSharedValue(1)
+    const notifX = useSharedValue(150)
+    const notifOp = useSharedValue(0)
+    const expenseLottieX = useSharedValue(0)
+    const expenseLottieOp = useSharedValue(0)
+
+    const animatedNotif = useAnimatedStyle(() => {
+        return{
+            transform:[{ translateX: notifX.value}],
+            opacity: notifOp.value
+        }
+    })
+
+    const animatedLottie = useAnimatedStyle(() => {
+        return{
+            transform:[{ translateX: expenseLottieX.value}],
+            opacity: expenseLottieOp.value
+        }
+    })
+
     const animatedCircleDiv = useAnimatedStyle(() => {
         const backgroundColor = interpolateColor(
             leftCircle.value,
@@ -56,14 +72,46 @@ const SwitchBtn = ({ label,active,setActive,lottie,expenseMode }) => {
         }
     },[active])
 
+
+    useEffect(() => {   
+        if(amountBiggerThanRem){
+            console.log("bigger than rem")
+            notifOp.value = withTiming(1,{ duration:250})
+            notifX.value = withSpring(0,{ damping:16})
+
+            expenseLottieOp.value = withTiming(0, { duration: 250 })
+            expenseLottieX.value = withSpring(-150, {damping: 16})
+        }else{
+            notifOp.value = withTiming(0,{ duration:250})
+            notifX.value = withSpring(150,{ damping:16})
+
+            expenseLottieOp.value = withTiming(1, { duration: 250 })
+            expenseLottieX.value = withSpring(0, {damping: 16})
+        }
+    },[amountBiggerThanRem])
+    /*  Create a notification if amountBiggerthanRem is true */
+    // create a smooth animation between the lottie and the text notification
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{width:"100%"}]}>
         {label && !lottie ? (
             <Text style={styles.label}>{label} {active}</Text>
         ) : lottie && expenseMode ? (
-            <LottieView autoPlay={false} loop={false} ref={lottieRef}  resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/expense_mode_lottie.json")}/>
+            <View style={[{borderWidth:0,width:"100%"}]}>
+                <Animated.View style={[animatedLottie,{opacity:amountBiggerThanRem ? 0 : 1,position:"absolute",justifyContent:"center",alignItems:"center",width:"100%"}]}>
+                    <LottieView autoPlay={false} loop={false} ref={lottieRef}  resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/expense_mode_lottie.json")}/>
+                </Animated.View>
+                <View style={[{opacity:amountBiggerThanRem ? 1 : 0,width:"100%",height:120,justifyContent:"center",alignItems:"center"}]}>
+                    <Animated.View style={[animatedNotif,{position:"absolute",justifyContent:"center",alignItems:"center",height:120}]}>
+                        <Text style={styles.label}>Notice:</Text>
+                        <Text style={[styles.label,{textAlign:"center",color:Colors.primaryBgColor.black}]}>This amount is exceeding the limit of saving goal!</Text>
+                    </Animated.View>
+                </View>
+            </View>
+            
         ) : (
-            <LottieView autoPlay={false} loop={false}  ref={lottieRef} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
+            <>
+                <LottieView autoPlay={false} loop={false}  ref={lottieRef} resizeMode='contain' style={styles.lottieDiv} source={require("../assets/lottie/income_lottie.json")}/>
+            </>
         )
             
         }
