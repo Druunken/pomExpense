@@ -5,6 +5,7 @@ import { BalanceProvider, IncomeProvider, usersBalanceContext } from "../hooks/b
 import { AppInitializationProvider } from '../hooks/appContext'
 import * as SplashScreen from 'expo-splash-screen';
 import db from '../services/serverSide'
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 export default function RootLayout() {
@@ -42,16 +43,18 @@ export default function RootLayout() {
 
 
   return (
-    <AppInitializationProvider>
-      <IncomeProvider>
-        <BalanceProvider>
-          <Stack>
-            <Stack.Screen name="(main)" options={{ headerShown: false, animation:"none"}}  />
-            <Stack.Screen name="index" options={{ headerShown: false,statusBarStyle:"dark"}}/>
-            <Stack.Screen name="auth"/>
-          </Stack>
-        </BalanceProvider>
-      </IncomeProvider>
-    </AppInitializationProvider>
+    <SafeAreaProvider>
+      <AppInitializationProvider>
+        <IncomeProvider>
+          <BalanceProvider>
+            <Stack>
+              <Stack.Screen name="(main)" options={{ headerShown: false, animation:"none"}}  />
+              <Stack.Screen name="index" options={{ headerShown: false,statusBarStyle:"dark"}}/>
+              <Stack.Screen name="auth"/>
+            </Stack>
+          </BalanceProvider>
+        </IncomeProvider>
+      </AppInitializationProvider>
+    </SafeAreaProvider>
   );
 }

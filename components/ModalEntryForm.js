@@ -2,6 +2,7 @@ import { KeyboardAvoidingView, Modal, StyleSheet, Text, View, Platform, StatusBa
 import React, { useEffect, useState, useContext } from 'react'
 import Animated, {useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming} from "react-native-reanimated";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 import CurrencyForm from '@/components/ModalformComponents/CurrencyForm'
 import BalanceForm from '@/components/ModalformComponents/BalanceForm'
 import IncomeForm from '@/components/ModalformComponents/IncomeForm'
@@ -70,6 +71,11 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
 
         }
     }
+    /* useEffect(() => {
+        if(visible){
+            SystemNavigationBar.setNavigationColor('transparent',"dark","navigation");
+        }
+    },[visible]) */
 
     useEffect(() => {
         if((numberInputValidation.convertToNumber(currentIncome) - Math.abs(numberInputValidation.convertToNumber(fixedCostAmount))) < numberInputValidation.convertToNumber(savingVal)){

@@ -50,6 +50,9 @@ const NumberInput = ({
     }
 
     const balanceInputValidation = (txt) => {
+      console.log(txt)
+      if(txt.includes(".")) return
+
       const len = txt.length
       const validInput = /^[\d,\.]*$/.test(txt)
       const dottOrComm = txt[len - 1] === "." || txt[len - 1] === ","
@@ -96,7 +99,7 @@ const NumberInput = ({
       if (validInput){
 
         const sliced = txt.split("").slice(punctInd).length
-
+  
         if(len < 1) overFour = false
 
         if(txt.includes(",,") || (txt[0] === ",")) return

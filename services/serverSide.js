@@ -4,6 +4,8 @@ import { Alert } from 'react-native'
 import currencyFile from '../services/currencies.js'
 import { router } from 'expo-router';
 
+const db = SQLite.openDatabaseSync("balance.db")
+
 
 const createCurrentDate = async() => {
   const date = new Date
@@ -91,15 +93,14 @@ const convertCurrency = async(currency,currencCurrency) => {
     const currMonth = currDate[1]
     const currYear = currDate[2]
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.getAllAsync(
+    const data = await db.getAllAsync(
       'SELECT * FROM balance'
     )
-    const totalBalance = connection.getAllAsync(
+    const totalBalance = db.getAllAsync(
       'SELECT * FROM totalBalance '
     )
 
-    /* const monthProps = await connection.getFirstAsync(
+    /* const monthProps = await db.getFirstAsync(
       `
       SELECT monthsTotalBalance, monthsIncomeVal, monthsSavingGoalVal, monthsTotalExpenses FROM monthsProps
       WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?
@@ -113,7 +114,7 @@ const convertCurrency = async(currency,currencCurrency) => {
     if(userChoice === "convert"){
       const getConverter = setCurrencyConverter(currency,currencCurrency)
 
-      const updateMonthProps = await connection.runAsync(
+      const updateMonthProps = await db.runAsync(
         `
         UPDATE monthsProps
         SET 
@@ -130,7 +131,7 @@ const convertCurrency = async(currency,currencCurrency) => {
 
       for(let i = 0; i < data.length; i++){
         let currIndex = (data[i].moneyValue * getConverter)
-        const updateValue = await connection.runAsync(
+        const updateValue = await db.runAsync(
           `UPDATE balance SET moneyValue = ? WHERE id = ?`,[currIndex,data[i].id]
         )
         /* console.log("changes:",updateValue.changes)
@@ -142,11 +143,11 @@ const convertCurrency = async(currency,currencCurrency) => {
       const convertTotalBalance = await balanceData[0].value * getConverter
 
       console.log(convertTotalBalance)
-      const valueUpdate = await connection.runAsync(
+      const valueUpdate = await db.runAsync(
         'UPDATE totalBalance SET value = ? ', [convertTotalBalance]
       )
 
-      const currencyUpdate = await connection.runAsync(
+      const currencyUpdate = await db.runAsync(
         'UPDATE totalBalance SET currency = ?', [currency]
       )
 
@@ -157,7 +158,7 @@ const convertCurrency = async(currency,currencCurrency) => {
       }
 
     } else if(userChoice === "keep"){
-      const update = await connection.runAsync(
+      const update = await db.runAsync(
         'UPDATE totalBalance SET currency = ?', [currency]
       )
       if(update.changes > 0){
@@ -174,31 +175,30 @@ const convertCurrency = async(currency,currencCurrency) => {
 
 const newOpening = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
 
-    const createBalance = await connection.runAsync(
+    const createBalance = await db.runAsync(
       `
       CREATE TABLE IF NOT EXISTS balance (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, moneyValue INTEGER, type TEXT NOT NULL, subType TEXT, balanceType TEXT NOT NULL, date TEXT, year TEXT, month TEXT, day TEXT, automationType TEXT);`
     )
-    const checkBalance = await connection.getFirstAsync(
+    const checkBalance = await db.getFirstAsync(
       'SELECT name FROM sqlite_master WHERE type="table" AND name="balance"'
     )
     if(checkBalance.name) console.log("Table balance exists!")
     else console.log("Table balance doesn't exists")
 
-    const createFixedCosts = await connection.runAsync(
+    const createFixedCosts = await db.runAsync(
       ` 
       CREATE TABLE IF NOT EXISTS fixedCosts (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, moneyValue INTEGER, type TEXT);`
     )
 
-    const checkCosts = await connection.getFirstAsync(
+    const checkCosts = await db.getFirstAsync(
       'SELECT name FROM sqlite_master WHERE type="table" AND name="fixedCosts"'
     )
 
     if(checkCosts.name) console.log("Table fixedCosts exists!")
     else console.log("Table fixedCosts doesn't exists")
 
-    const createMonths = await connection.runAsync(
+    const createMonths = await db.runAsync(
       `
       CREATE TABLE IF NOT EXISTS monthsProps(
       id INTEGER PRIMARY KEY,
@@ -221,30 +221,30 @@ const newOpening = async() => {
       )`
     )
 
-    const checkMonths = await connection.getFirstAsync(
+    const checkMonths = await db.getFirstAsync(
       'SELECT name FROM sqlite_master WHERE type="table" AND name="monthsProps"'
     )
 
     if(checkMonths.name) console.log("Table monthsProps exists!")
     else console.log("Table monthsProps doesn't exists")
 
-    const createTotalBalance = await connection.runAsync(
+    const createTotalBalance = await db.runAsync(
       `
       CREATE TABLE IF NOT EXISTS totalBalance (id INTEGER PRIMARY KEY, value INTEGER, firstLaunch BOOLEAN, currency TEXT, username TEXT, incomeVal INTEGER, savingGoalVal INTEGER, savingGoalActive BOOLEAN, automateIncomeDay TEXT, automateIncomeActive BOOLEAN, totalFixedCosts INTEGER, fixedCostsActive BOOLEAN);`
     )
 
-    const checkTotalBalance = await connection.getFirstAsync(
+    const checkTotalBalance = await db.getFirstAsync(
       'SELECT name FROM sqlite_master WHERE type="table" AND name="totalBalance"'
     )
 
     if(checkTotalBalance.name){
       console.log("Table totalBalance exists!")
-      const checkRow = await connection.getAllAsync(
+      const checkRow = await db.getAllAsync(
         'SELECT * FROM totalBalance'
       )
 
       if(checkRow.length < 1){
-        const insertColumnBalance = await connection.runAsync(
+        const insertColumnBalance = await db.runAsync(
           'INSERT INTO totalBalance(value, firstLaunch, incomeVal, savingGoalVal, savingGoalActive, automateIncomeDay, automateIncomeActive, totalFixedCosts, fixedCostsActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [0,true,0,0,false,null,null,false,0,false]
         )
         if(insertColumnBalance.changes > 0) console.log("Insert Row into totalBalance")
@@ -254,7 +254,7 @@ const newOpening = async() => {
     }
     else console.log("Table totalBalance doesn't exists")
 
-    const getAllTables = await connection.getAllAsync(
+    const getAllTables = await db.getAllAsync(
       'SELECT name FROM sqlite_master WHERE type="table"'
     )
     if(getAllTables.length === 5) return true
@@ -267,16 +267,16 @@ const newOpening = async() => {
 
 const deleteTable = async() => {
     try {
-      const connection = await SQLite.openDatabaseAsync('balance.db')
-      
-      
-      
-      const rmTotalBalance = await connection.runAsync('DROP TABLE IF EXISTS totalBalance')
-      const rmTransactions = await connection.runAsync('DROP TABLE IF EXISTS balance')
-      const rmMonthsProps = await connection.runAsync('DROP TABLE IF EXISTS monthsProps')
-      const rmFixedCosts = await connection.runAsync('DROP TABLE IF EXISTS fixedCosts')
 
-      const getAllTables = await connection.getAllAsync(
+      
+      
+      
+      const rmTotalBalance = await db.runAsync('DROP TABLE IF EXISTS totalBalance')
+      const rmTransactions = await db.runAsync('DROP TABLE IF EXISTS balance')
+      const rmMonthsProps = await db.runAsync('DROP TABLE IF EXISTS monthsProps')
+      const rmFixedCosts = await db.runAsync('DROP TABLE IF EXISTS fixedCosts')
+
+      const getAllTables = await db.getAllAsync(
         'SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"'
       );
   
@@ -295,10 +295,10 @@ const deleteTable = async() => {
 
   /* const createTable = async() => {
     try {
-      const connection = await SQLite.openDatabaseAsync('balance.db') 
+ 
       console.log(connection)
-      await connection.execAsync('PRAGMA journal_mode = WAL');
-      const create = await connection.runAsync(
+      await db.execAsync('PRAGMA journal_mode = WAL');
+      const create = await db.runAsync(
         `
         CREATE TABLE IF NOT EXISTS balance (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, moneyValue INTEGER, type TEXT NOT NULL, balanceType TEXT NOT NULL, date TEXT, year TEXT, month TEXT, day TEXT, automationType TEXT);`
       )
@@ -306,7 +306,7 @@ const deleteTable = async() => {
       if(create.changes > 0) console.log("Succesfully created table 'balance'")
       else console.log("failed to create table 'balance'")
 
-      const createFixedCosts = await connection.runAsync(
+      const createFixedCosts = await db.runAsync(
         `
         CREATE TABLE IF NOT EXISTS fixedCosts (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, moneyValue INTEGER, type TEXT);`
       )
@@ -314,7 +314,7 @@ const deleteTable = async() => {
       if(createFixedCosts.changes > 0) console.log("Created Table 'fixedCosts'")
       else console.log("Failed to create table 'fixedCosts'")
 
-      const createMonthsProps = await connection.runAsync(
+      const createMonthsProps = await db.runAsync(
         `
         CREATE TABLE IF NOT EXISTS monthsProps(
         id INTEGER PRIMARY KEY,
@@ -340,14 +340,14 @@ const deleteTable = async() => {
       else console.log("Failed to create table 'monthsProps'")
       
 
-      const createBalance = await connection.runAsync(
+      const createBalance = await db.runAsync(
         `
         CREATE TABLE IF NOT EXISTS totalBalance (id INTEGER PRIMARY KEY, value INTEGER, firstLaunch BOOLEAN, currency TEXT, username TEXT, incomeVal INTEGER, savingGoalVal INTEGER, savingGoalActive BOOLEAN, automateIncomeDay TEXT, automateIncomeActive BOOLEAN, totalFixedCosts INTEGER, fixedCostsActive BOOLEAN);`
       )
 
       if(createBalance.changes > 0){
 
-        const insertColumnBalance = await connection.runAsync(
+        const insertColumnBalance = await db.runAsync(
           'INSERT INTO totalBalance(value, firstLaunch, incomeVal, savingGoalVal, savingGoalActive, automateIncomeDay, automateIncomeActive, totalFixedCosts, fixedCostsActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [0,true,0,0,false,null,null,false,0,false]
         )
   
@@ -373,19 +373,19 @@ const deleteTable = async() => {
       const currMonth = currDate[1]
       const currYear = currDate[2]
 
-      const connection = await SQLite.openDatabaseAsync('balance.db')
 
-      const updateMonthProps = await connection.runAsync(
+
+      const updateMonthProps = await db.runAsync(
         'UPDATE monthsProps SET monthsIncomeVal = ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ? ',[moneyVal,currMonth,currDay]
       )
-      const updateMainTable = await connection.runAsync(
+      const updateMainTable = await db.runAsync(
         'UPDATE totalBalance SET incomeVal = ?',[moneyVal]
       )
       if(updateMonthProps.changes > 0) console.log("Succesfully updated monthsProps current month:",moneyVal)
       if(updateMainTable.changes > 0) console.log('Succesfully updated totalBalance:',moneyVal)
       else console.log("failed INSERTION")
     } catch (error) {
-      console.error(error) 
+      console.error(error,"updateMonthsIncomeVal") 
       
     }
   }
@@ -402,9 +402,9 @@ const deleteTable = async() => {
 
   /* const createMonthsProps = async() => {
     try {
-      const connection = await SQLite.openDatabaseAsync('balance.db')
 
-      const createTable = await connection.execAsync(
+
+      const createTable = await db.execAsync(
         `PRAGMA journal_mode = WAL;
         CREATE TABLE IF NOT EXISTS monthsProps(
         id INTEGER PRIMARY KEY,
@@ -430,27 +430,27 @@ const deleteTable = async() => {
 
   const getMonthsTransactions = async(month,year,getOnlyEx,getOnlyInc) => {
     try {
-      const connection = await SQLite.openDatabaseAsync('balance.db')
-      const debugD = await connection.getAllAsync('SELECT * FROM balance')
-      const data = await connection.getAllAsync(
+
+      const debugD = await db.getAllAsync('SELECT * FROM balance')
+      const data = await db.getAllAsync(
         'SELECT * FROM balance WHERE month = ? AND year = ?',[month,year]
       )
       if(getOnlyEx){
-        const exOnly = await connection.getAllAsync(
+        const exOnly = await db.getAllAsync(
           'SELECT * FROM balance WHERE month = ? AND year = ? AND balanceType = "minus"',[month,year]
         )
         return exOnly
       }
 
       if(getOnlyInc){
-        const incOnly = await connection.getAllAsync(
+        const incOnly = await db.getAllAsync(
           'SELECT * FROM balance WHERE month = ? AND year = ? AND balanceType = "plus"',[month,year]
         )
         return incOnly
       }
       return data
     } catch (error) {
-      console.error(error)
+      console.error(error,"getMonthsTransactions")
     }
   }
   // this should set on a fresh start of the app
@@ -460,13 +460,13 @@ const deleteTable = async() => {
       const currMonth = currDate[1]
       const currYear = currDate[2]
 
-      const connection = await SQLite.openDatabaseAsync('balance.db')
 
-      const alreadyExists = await connection.getAllAsync('SELECT * FROM monthsProps')
+
+      const alreadyExists = await db.getAllAsync('SELECT * FROM monthsProps')
       
       // ensure it will create only one current month Prop column
       if(alreadyExists.length < 1){
-        const setMonth = await connection.runAsync(
+        const setMonth = await db.runAsync(
           `INSERT INTO monthsProps(
           monthsIncomeDate, yearsIncomeDate, monthsIncomeVal, monthsSavingGoalVal,monthsTotalTransactions,monthsTotalExpenses, monthsIncomeAutomateProcessed, monthsTotalBalance, monthsStaticIncomeVal,monthProcessed 
           ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) `,[currMonth,currYear,0,0,0,0,false,0,0,false]
@@ -474,7 +474,6 @@ const deleteTable = async() => {
 
         if(setMonth.changes > 0) console.log(`\nSuccesfully Updated CurrentMonthProp\nMonth: ${currMonth}\nYear: ${currYear}`)
       } else console.log("a current month column already exists!")
-      
 
     } catch (error) {
       console.error(error)
@@ -489,10 +488,10 @@ const deleteTable = async() => {
       const currYear = currDate[2]
 
 
-      const connection = await SQLite.openDatabaseAsync('balance.db')
+
 
       // check if current month column exists
-      const currMonthExists = await connection.getAllAsync(
+      const currMonthExists = await db.getAllAsync(
         `
         SELECT * FROM monthsProps
         WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?
@@ -503,7 +502,7 @@ const deleteTable = async() => {
       if(currMonthExists.length < 1){
 
         // check for previous month if it's already processed and exclude the current Month we are currently in
-        const notProcessedMonth = await connection.getAllAsync(
+        const notProcessedMonth = await db.getAllAsync(
           'SELECT * FROM monthsProps WHERE monthProcessed = FALSE AND NOT (monthsIncomeDate = ? AND yearsIncomeDate = ?)',[currMonth,currYear]
         ) 
     
@@ -519,9 +518,9 @@ const deleteTable = async() => {
           */
 
           //get data of table "totalBalance"
-          const tableTotalBalance = await connection.getFirstAsync('SELECT value, incomeVal, savingGoalVal, automateIncomeActive, automateIncomeDay, totalFixedCosts, fixedCostsActive FROM totalBalance')
-          const valuesOfUnProcessed = await connection.getFirstAsync('SELECT * FROM monthsProps WHERE monthProcessed = FALSE AND NOT (monthsIncomeDate = ? AND yearsIncomeDate = ?)',[currMonth,currYear])
-          const costsColumns = await connection.getAllAsync('SELECT * FROM fixedCosts')
+          const tableTotalBalance = await db.getFirstAsync('SELECT value, incomeVal, savingGoalVal, automateIncomeActive, automateIncomeDay, totalFixedCosts, fixedCostsActive FROM totalBalance')
+          const valuesOfUnProcessed = await db.getFirstAsync('SELECT * FROM monthsProps WHERE monthProcessed = FALSE AND NOT (monthsIncomeDate = ? AND yearsIncomeDate = ?)',[currMonth,currYear])
+          const costsColumns = await db.getAllAsync('SELECT * FROM fixedCosts')
           
           const incomeMain = tableTotalBalance.incomeVal
           const savingVal = tableTotalBalance.savingGoalVal
@@ -562,7 +561,7 @@ const deleteTable = async() => {
               
               const goalAchieved = (valuesOfUnProcessed.monthsIncomeVal - valuesOfUnProcessed.monthsSavingGoalVal) >= valuesOfUnProcessed.monthsTotalExpenses
 
-              const updateUnprocessedMonth = await connection.runAsync(
+              const updateUnprocessedMonth = await db.runAsync(
                 `
                 UPDATE monthsProps 
                 SET 
@@ -582,7 +581,7 @@ const deleteTable = async() => {
               )
               if(incomeWasProcessed < 1){              
                 const literal = `0${numMonth}`
-                const insertColumn = await connection.runAsync(
+                const insertColumn = await db.runAsync(
                   'INSERT INTO balance(value, moneyValue, type, balanceType, date, year, month, day, automationType) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',["Income Automation",incomeMain,"Income","plus",`${numYear}-${numMonth < 10 ? literal : numMonth}-${incomeDay}`,numYear,numMonth < 10 ? literal : numMonth.toString(),incomeDay,"income"]
                 )
 
@@ -618,7 +617,7 @@ const deleteTable = async() => {
 
               if(costsActive > 0){
                 for(let i = 0; i < costsLen; i++){
-                  const insertCostsColumn = await connection.runAsync(
+                  const insertCostsColumn = await db.runAsync(
                     `
                     INSERT INTO balance(value, moneyValue, type, balanceType, date, year, month, day, automationType) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                     `,[costsColumns[i].value,-costsColumns[i].moneyValue,costsColumns[i].type,"minus",`${numYear}-${numMonth < 10 ? literal : numMonth}-${"01"}`,numYear,numMonth < 10 ? literal : numMonth.toString(),"01","expense"]
@@ -627,20 +626,20 @@ const deleteTable = async() => {
                   else console.log("Failed to insert FC")
                 }
   
-                const updateBalance = await connection.runAsync(
+                const updateBalance = await db.runAsync(
                   'UPDATE totalBalance SET value = value - ?',[costsVal]
                 )
                 if(updateBalance.changes > 0) console.log("Updated balance",costsVal)
                 else console.log("Failed to update balance",costsVal)
               }
 
-              const createMonth = await connection.runAsync(
+              const createMonth = await db.runAsync(
                 `INSERT INTO monthsProps(
                 monthsIncomeDate, yearsIncomeDate, monthsIncomeVal, monthsSavingGoalVal,monthsTotalTransactions,monthsTotalExpenses, monthsIncomeAutomateProcessed, monthsTotalBalance, monthsStaticIncomeVal, monthProcessed 
                 ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) `,[numMonth < 10 ? `0${numMonth}`: numMonth,numYear.toString(),incomeMain,savingVal,1 + validationCostsTransaction,costsVal,true,lastBalance + (incomeMain * (balanceCounts + 1) + validCosts),staticIncome,true]
               )
 
-              const insertColumn = await connection.runAsync(
+              const insertColumn = await db.runAsync(
                 'INSERT INTO balance(value, moneyValue, type, balanceType, date, year, month, day, automationType) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',["Income Automation",incomeMain,"Income","plus",`${numYear}-${numMonth < 10 ? literal : numMonth}-${incomeDay}`,numYear,numMonth < 10 ? literal : numMonth.toString(),incomeDay,"income"]
               )
               if(insertColumn.changes > 0) console.log("New balance column added")
@@ -682,7 +681,7 @@ const deleteTable = async() => {
 
               if(costsActive > 0){
                 for(let i = 0; i < costsLen; i++){
-                  const insertCostsColumn = await connection.runAsync(
+                  const insertCostsColumn = await db.runAsync(
                     `
                     INSERT INTO balance(value, moneyValue, type, balanceType, date, year, month, day, automationType) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                     `,[costsColumns[i].value,-costsColumns[i].moneyValue,costsColumns[i].type,"minus",`${numYear}-${numMonth < 10 ? literal : numMonth}-${"01"}`,numYear,numMonth < 10 ? literal : numMonth.toString(),"01","expense"]
@@ -690,14 +689,14 @@ const deleteTable = async() => {
                   if(insertCostsColumn.changes > 0) console.log("Inserted FC line:",i+1)
                   else console.log("Failed to insert FC")
                 }
-                const updateBalance = await connection.runAsync(
+                const updateBalance = await db.runAsync(
                   'UPDATE totalBalance SET value = value - ?',[costsVal]
                 )
                 if(updateBalance.changes > 0) console.log("Updated balance",costsVal)
                 else console.log("Failed to update balance",costsVal)
               }
 
-              const createMonth = await connection.runAsync(
+              const createMonth = await db.runAsync(
                 `INSERT INTO monthsProps(
                 monthsIncomeDate, yearsIncomeDate, monthsIncomeVal, monthsSavingGoalVal,monthsTotalTransactions,monthsTotalExpenses, monthsIncomeAutomateProcessed, monthsTotalBalance, monthsStaticIncomeVal, monthProcessed 
                 ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) `,[currNumMonth < 10 ? `0${currNumMonth}` : currNumMonth,currNumYear.toString(),incomeCheck,savingVal,validation + validationCostsTransaction,costsVal,operateIncomeDay,updateColumnBal,staticIncome,false]
@@ -705,7 +704,7 @@ const deleteTable = async() => {
 
               if(incomeCheck){
                 const literal = `0${numMonth}`
-                const insertColumn = await connection.runAsync(
+                const insertColumn = await db.runAsync(
                   'INSERT INTO balance(value, moneyValue, type, balanceType, date, year, month, day, automationType) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',["Income Automation",incomeMain,"Income","plus",`${numYear}-${numMonth < 10 ? literal : numMonth}-${incomeDay}`,numYear,numMonth < 10 ? literal : numMonth.toString(),incomeDay,"income"]
                 )
                 if(insertColumn.changes > 0) console.log("New balance column added")
@@ -715,7 +714,7 @@ const deleteTable = async() => {
               if(createMonth.changes > 0) console.log("Succesfully created Current Month")
               else console.log("Failed to create Current month")
 
-              const updateMainBalance = await connection.runAsync(
+              const updateMainBalance = await db.runAsync(
                 'UPDATE totalBalance SET value = ?',[updateColumnBal]
               )
 
@@ -734,8 +733,8 @@ const deleteTable = async() => {
         console.log('Current Month already Exists...\nChecking IncomeActive and SavingGoal...')
 
 
-        const tableTotalBalance = await connection.getFirstAsync('SELECT * FROM totalBalance')
-        const autoIncomeMonth = await connection.getFirstAsync('SELECT * FROM monthsProps WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[currMonth,currYear])
+        const tableTotalBalance = await db.getFirstAsync('SELECT * FROM totalBalance')
+        const autoIncomeMonth = await db.getFirstAsync('SELECT * FROM monthsProps WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[currMonth,currYear])
 
         const incomeMain = tableTotalBalance.incomeVal
         const savingVal = tableTotalBalance.savingGoalVal
@@ -751,7 +750,7 @@ const deleteTable = async() => {
           const goalAchieved = (incomeMain - savingVal) >= autoIncomeMonth.monthsTotalExpenses
 
           // Update balance
-          const updateBalance = await connection.runAsync(
+          const updateBalance = await db.runAsync(
             'UPDATE totalBalance SET value = value + ?',[incomeMain]
           )
 
@@ -760,7 +759,7 @@ const deleteTable = async() => {
         
           // Update Saving Goal
           if(autoIncomeMonth.monthsSavingGoalWasActive > 0){
-            const updateSavingGoal = await connection.runAsync(
+            const updateSavingGoal = await db.runAsync(
               'UPDATE monthsProps SET monthsSavingGoalPassed = ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[goalAchieved,currMonth,currYear]
             )
 
@@ -769,7 +768,7 @@ const deleteTable = async() => {
           }
 
           // Update monthsIncomeAutomateProcessed AND incomeVal
-          const updateMonthsAutomation = await connection.runAsync(
+          const updateMonthsAutomation = await db.runAsync(
             'UPDATE monthsProps SET monthsIncomeAutomateProcessed = TRUE, monthsTotalBalance = monthsTotalBalance + ?, monthsIncomeVal = monthsIncomeVal + ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[incomeMain,incomeMain,currMonth,currYear]
           )
           
@@ -788,8 +787,7 @@ const deleteTable = async() => {
 
 const getSpecificMonthsBalance = async(month,year) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const balanceData = await connection.getFirstAsync(
+    const balanceData = await db.getFirstAsync(
       'SELECT monthsTotalBalance FROM monthsProps WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[month,year]
     )
     console.log(balanceData)
@@ -804,12 +802,11 @@ const createSavingGoal = async(val) => {
     const date = await createCurrentDate()
     const month = date[1]
     const year = date[2]
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const setData = await connection.runAsync(
+    const setData = await db.runAsync(
       'UPDATE totalBalance SET savingGoalVal = ?, savingGoalActive = TRUE', [val]
     )
     
-    const updateData = await connection.runAsync(
+    const updateData = await db.runAsync(
       'UPDATE monthsProps SET monthsSavingGoalDate = ?, yearsSavingGoalDate = ?, monthsSavingGoalVal = ?, monthsSavingGoalWasActive = TRUE',[month,year,val]
     )
 
@@ -828,8 +825,7 @@ const getMonthProps = async(month,year) => {
       year = currentDate[2]
     }
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.getAllAsync(
+    const data = await db.getAllAsync(
       `
       SELECT * FROM monthsProps
       WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?`,[month,year]
@@ -842,11 +838,10 @@ const getMonthProps = async(month,year) => {
 
 const deactiveSavingGoal = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const updateTotalbalance = await connection.runAsync(
+    const updateTotalbalance = await db.runAsync(
       `UPDATE totalBalance SET savingGoalActive = FALSE`
     )
-    const updateMonthProps = await connection.runAsync(
+    const updateMonthProps = await db.runAsync(
       `UPDATE monthsProps SET monthsSavingGoalWasActive = FALSE`
     )
 
@@ -864,8 +859,7 @@ const updateMonthsBalance = async(val) => {
     const month = currDate[1]
     const year = currDate[2]
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const setData = await connection.runAsync(
+    const setData = await db.runAsync(
       `
       UPDATE monthsProps
       SET monthsTotalBalance = ?
@@ -877,15 +871,14 @@ const updateMonthsBalance = async(val) => {
     else console.log("Failed to Update MonthsBalance")
     
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateMonthsBalance")
   }
 }
 
 const updateMonthsProperties = async(month,year) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
 
-    const updateMonthsProps = await connection.runAsync(
+    const updateMonthsProps = await db.runAsync(
       `
       UPDATE monthsProps
       SET monthsIncomeAutomateProcessed = TRUE,
@@ -897,7 +890,7 @@ const updateMonthsProperties = async(month,year) => {
       `,[month,year]
     )
 
-    const depositIncome = await connection.runAsync(
+    const depositIncome = await db.runAsync(
       'UPDATE totalBalance SET value = value + incomeVal',
     )
 
@@ -907,19 +900,18 @@ const updateMonthsProperties = async(month,year) => {
     if(updateMonthsProps.changes > 0) console.log('Succesfully updated monthsProps!!!')
     else console.log("Something off buddy")
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateMonthsProperties")
   }
 }
 
 const getCurrentMonthsProps = async(msg,month,year) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const monthData = await connection.getFirstAsync(
+    const monthData = await db.getFirstAsync(
       'SELECT * FROM monthsProps WHERE monthsIncomeDate = ? AND yearsIncomeDate = ? ',[month,year]
     )
     return console.log(msg,monthData)
   } catch (error) {
-    console.error(error)
+    console.error(error,"getCurrentMonthsProps")
   }
 }
 
@@ -932,15 +924,14 @@ const getCurrentMonthsProps = async(msg,month,year) => {
     const month = currDate[1]
     const year = currDate[2]
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const automateActive = await connection.getFirstAsync(
+    const automateActive = await db.getFirstAsync(
       `
       SELECT automateIncomeActive FROM totalBalance
       `
     )
     // if automation active then check if its processed or not
     if(automateActive.automateIncomeActive > 0){
-      const checkProcess = await connection.getFirstAsync(
+      const checkProcess = await db.getFirstAsync(
         `
         SELECT monthsIncomeAutomateProcessed FROM monthsProps
         WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?
@@ -957,8 +948,8 @@ const getCurrentMonthsProps = async(msg,month,year) => {
 
       // if false check if the current day match with the automateIncomeDay 
       else {
-        const checkAutmateDay = await connection.getFirstAsync('SELECT automateIncomeDay FROM totalBalance')
-        const checkAutomateMonth = await connection.getFirstAsync('SELECT monthsIncomeDate, yearsIncomeDate FROM monthsProps')
+        const checkAutmateDay = await db.getFirstAsync('SELECT automateIncomeDay FROM totalBalance')
+        const checkAutomateMonth = await db.getFirstAsync('SELECT monthsIncomeDate, yearsIncomeDate FROM monthsProps')
 
         // if they equal that means we have to add up to balance the incomeVal and update each properties below
         if(Number(checkAutmateDay.automateIncomeDay) === Number(day)){
@@ -998,11 +989,10 @@ const createIncomeAutomation = async(day) => {
     if(currDay === day){
       flag = true
     }
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const setData = await connection.runAsync(
+    const setData = await db.runAsync(
       'UPDATE totalBalance SET automateIncomeDay = ?, automateIncomeActive = ?',[day, true]
     )
-    const updateMonthPropDate = await connection.runAsync(
+    const updateMonthPropDate = await db.runAsync(
       'UPDATE monthsProps SET monthsIncomeDate = ?, yearsIncomeDate = ?, monthsSavingGoalWasActive = ?, monthsIncomeAutomateProcessed = ? ',[currMonth,currYear,true,true]
     )
     if(setData.changes > 0) console.log(`\nCreated an IncomeAutomation : ${true} \nAutomation Income day: ${day}`)
@@ -1014,10 +1004,9 @@ const createIncomeAutomation = async(day) => {
 
 const getAllData = async(setData,setCurrency,setUsername,setLoadingDone) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
 
-    const data = await connection.getAllAsync('SELECT * FROM balance')
-    const balance = await connection.getAllAsync('SELECT * FROM totalBalance')
+    const data = await db.getAllAsync('SELECT * FROM balance')
+    const balance = await db.getAllAsync('SELECT * FROM totalBalance')
 
     if(!data) return console.log("Error fetching data")
     
@@ -1029,14 +1018,13 @@ const getAllData = async(setData,setCurrency,setUsername,setLoadingDone) => {
     
     return balance
   } catch (error) {
-    console.error(error) 
+    console.error(error,"getAllData") 
   }
 }
 
 const getTransactions = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.getAllAsync('SELECT * FROM balance ORDER BY id DESC LIMIT 20')
+    const data = await db.getAllAsync('SELECT * FROM balance ORDER BY id DESC LIMIT 20')
     return data;
   } catch (error) {
     console.error(error)
@@ -1046,8 +1034,7 @@ const getTransactions = async() => {
 //fetch only the day with the selected string ex.'2024-10-19'
 const getMoneyDay = async(date) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const selectDayData = await connection.getAllAsync(
+    const selectDayData = await db.getAllAsync(
       'SELECT * FROM balance WHERE date = ?', [date]
     )
     let res = 0;
@@ -1057,32 +1044,30 @@ const getMoneyDay = async(date) => {
     }
     console.log(res)
   } catch (error) {
-    console.error(error)
+    console.error(error,"getMoneyDay")
   }
 }
 
 const usersFirstLaunch = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const valid = await connection.getFirstAsync(
+    const valid = await db.getFirstAsync(
       'SELECT firstLaunch FROM totalBalance'
     )
     return valid.firstLaunch
   } catch (error) {
-    console.error(error)
+    console.error(error,"usersFirstLaunch")
   }
 } 
 
 const updateUserVisited = async(cond) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const update = await connection.runAsync(
+    const update = await db.runAsync(
       'UPDATE totalBalance SET firstLaunch = ?', [cond]
     )
 
     console.log(`First launch: ${cond}`)
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateUserVisited")
   }
 }
 
@@ -1095,15 +1080,14 @@ const positiveBalance = async(moneyAmount,freshAcc) => {
     const year = currDate[2]
     const fixedAmount = Number(moneyAmount.toFixed(2))
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
 
     if(!freshAcc || freshAcc === undefined){
-      const balanceChange = await connection.runAsync('UPDATE totalBalance SET value =  value + ?', [fixedAmount])
+      const balanceChange = await db.runAsync('UPDATE totalBalance SET value =  value + ?', [fixedAmount])
 
-      const selectMonth = await connection.getFirstAsync(
+      const selectMonth = await db.getFirstAsync(
         'SELECT * FROM monthsProps'
       )
-      const updateMonthsProps = await connection.runAsync(
+      const updateMonthsProps = await db.runAsync(
         `
         UPDATE monthsProps 
         SET
@@ -1120,12 +1104,12 @@ const positiveBalance = async(moneyAmount,freshAcc) => {
       if(updateMonthsProps.changes > 0) console.log(`New positive balance at monthProps: ${fixedAmount}`)
       else console.log("Failed to Update Balance: positiveBalance,updateMonthsProps")
     }else if(freshAcc){
-      const balanceChange = await connection.runAsync('UPDATE totalBalance SET value =  ?', [fixedAmount])
+      const balanceChange = await db.runAsync('UPDATE totalBalance SET value =  ?', [fixedAmount])
 
-      const selectMonth = await connection.getFirstAsync(
+      const selectMonth = await db.getFirstAsync(
         'SELECT * FROM monthsProps'
       )
-      const updateMonthsProps = await connection.runAsync(
+      const updateMonthsProps = await db.runAsync(
         `
         UPDATE monthsProps 
         SET
@@ -1144,7 +1128,7 @@ const positiveBalance = async(moneyAmount,freshAcc) => {
 
     
   } catch (error) {
-    console.error(error)
+    console.error(error,"positiveBalance")
   }
 }
 const negativeBalance = async(moneyAmount) => {
@@ -1156,9 +1140,8 @@ const negativeBalance = async(moneyAmount) => {
     const year = currDate[2]
     const fixedAmount = Number(moneyAmount.toFixed(2))
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const balanceChange = await connection.runAsync('UPDATE totalBalance SET value =  value + ?', [fixedAmount])
-    const updateMonthsProps = await connection.runAsync(
+    const balanceChange = await db.runAsync('UPDATE totalBalance SET value =  value + ?', [fixedAmount])
+    const updateMonthsProps = await db.runAsync(
       `
       UPDATE monthsProps 
       SET monthsTotalExpenses = monthsTotalExpenses + ?, 
@@ -1174,26 +1157,24 @@ const negativeBalance = async(moneyAmount) => {
     if(updateMonthsProps.changes > 0) console.log(`New positive balance at monthProps: ${fixedAmount}`)
       else console.log("Failed to Update Balance: positiveBalance,updateMonthsProps")
   } catch (error) {
-    console.error(error)
+    console.error(error,"negativeBalance")
   }
 }
 
 const getSingleEntry = async(id) => {
   try {
-    const conection = await SQLite.openDatabaseAsync('balance.db')
-    const getEntry = await conection.getFirstAsync('SELECT * FROM balance WHERE id = ?',[id])
+    const getEntry = await db.getFirstAsync('SELECT * FROM balance WHERE id = ?',[id])
     
     return getEntry
   } catch (error) {
-    console.error(error)
+    console.error(error,"getSingleEntry")
   }
 }
 
 const updateCurrency = async(el,cond) => {
   try {
     console.log(el)
-    const connection = await SQLite.openDatabaseAsync("balance.db")
-    const update = await connection.runAsync(
+    const update = await db.runAsync(
       'UPDATE totalBalance SET currency = ?', [el]
     )
     if(cond) return
@@ -1201,14 +1182,13 @@ const updateCurrency = async(el,cond) => {
       alertMsg("Currency Update","Succesfull updated.")
     }
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateCurrency")
     alertMsg('Error',"Something Failed")
   }
 }
 const updateUsername = async(el,cond) => {
   try {
-    const connection = await SQLite.openDatabaseAsync("balance.db")
-    const update = await connection.runAsync(
+    const update = await db.runAsync(
       'UPDATE totalBalance SET username = ?', [el]
     )
     if(cond) return
@@ -1216,7 +1196,7 @@ const updateUsername = async(el,cond) => {
       alertMsg("Username Update","Succesfull updated.")
     }
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateUsername")
     alertMsg('Error',"Something Failed")
   }
 }
@@ -1226,7 +1206,7 @@ const updateBalance = async(id,value,moneyValue,type) => {
     const connetion = await SQLite.openDatabaseAsync('balance.db')
     await connetion.runAsync(`UPDATE balance SET value = ?, moneyValue = ?, type = ? WHERE id = ?`,[value,moneyValue,type,id])
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateBalance")
   }
 }
 
@@ -1234,13 +1214,12 @@ const updateBalance = async(id,value,moneyValue,type) => {
 
 const getBalance = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const balance = await connection.getFirstAsync('SELECT value FROM totalBalance')
+    const balance = await db.getFirstAsync('SELECT value FROM totalBalance')
 
     
     return balance.value
   } catch (error) {
-    console.error(error)
+    console.error(error,"get Balance")
   }
 }
 
@@ -1255,8 +1234,7 @@ const saveData = async(value,moneyValue,type,subType,balanceType,automationType)
 
     const fixedAmount = Number(moneyValue.toFixed(2))
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.runAsync('INSERT INTO balance(value, moneyValue, type, subType, balanceType, date, year, month, day, automationType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[value,fixedAmount,type,subType,balanceType,fullDate,year,month,day,automationType])
+    const data = await db.runAsync('INSERT INTO balance(value, moneyValue, type, subType, balanceType, date, year, month, day, automationType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[value,fixedAmount,type,subType,balanceType,fullDate,year,month,day,automationType])
 
     if(data.changes > 0){
       console.log(`\nvalue: ${value}\nmoneyValue: ${fixedAmount}\ntype: ${type}\nbalanceType: ${balanceType}\ndate: ${fullDate}\nyear: ${year}\nmonth: ${month}\nday: ${day}`)
@@ -1279,12 +1257,11 @@ const createIncome = async(val,day) => {
 
     const validationIncomeDay = Number(day) <= Number(currDay)
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
 
-    const setData = await connection.runAsync(
+    const setData = await db.runAsync(
       'UPDATE totalBalance SET incomeVal = ?, automateIncomeDay = ?, automateIncomeActive = ?',[val,day,true]
     )
-    const updateMonthProps = await connection.runAsync(
+    const updateMonthProps = await db.runAsync(
       'UPDATE monthsProps SET monthsStaticIncomeVal = ?, monthsIncomeAutomateProcessed = ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[
         val,
         validationIncomeDay,
@@ -1303,9 +1280,8 @@ const createIncome = async(val,day) => {
 }
 
 const checkCurrentDayAutomation = async(day) => {
-  try {
-    const connection = await SQLite.openDatabaseAsync('balance.db') 
-    const automateDay = await connection.runAsync(
+  try { 
+    const automateDay = await db.runAsync(
       'SELECT automateIncomeDay FROM totalBalance'
     )
 
@@ -1316,28 +1292,26 @@ const checkCurrentDayAutomation = async(day) => {
 }
 
 const disableIncomeAutomation = async() => {
-  try {
-    const connection = await SQLite.openDatabaseAsync('balance.db') 
-    const automateDay = await connection.runAsync(
+  try { 
+    const automateDay = await db.runAsync(
       'UPDATE totalBalance SET automateIncomeActive = ?',[false]
     )
 
     if(automateDay.changes > 0) console.log(`Disabled Income Automation`) 
   } catch (error) {
-    
+    console.log(error,"disableIncomeAutomation")
   }
 }
 
 
 const removeSavingGoal = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const rmData = await connection.runAsync(
+    const rmData = await db.runAsync(
       'UPDATE savingGoalVal = 0, savingGoalActive = FALSE'
     )
     if(rmData.changes > 0) return console.log('Turned off SavingGoal method')
   } catch (error) {
-    console.error(error) 
+    console.error(error,"removeSavingGoal") 
   }
 }
 
@@ -1346,7 +1320,6 @@ const updateTransaction = async(value,moneyValue,type,prevMoneyValue,expenseMode
     const currentDate = await createCurrentDate()
     const month = currentDate[1]
     const year = currentDate[2]
-    const connection = await SQLite.openDatabaseAsync('balance.db')
 
     let dynamicChar = ""
 
@@ -1379,7 +1352,7 @@ const updateTransaction = async(value,moneyValue,type,prevMoneyValue,expenseMode
 
     const isExpenseMode = expenseMode === "minus" ? true : false
 
-    const updateTrans = await connection.runAsync(
+    const updateTrans = await db.runAsync(
       `
       UPDATE balance 
       SET
@@ -1398,7 +1371,7 @@ const updateTransaction = async(value,moneyValue,type,prevMoneyValue,expenseMode
 
     // Update MonthsProps
 
-    const updateMonthsProps = await connection.runAsync(
+    const updateMonthsProps = await db.runAsync(
       `
       UPDATE monthsProps
       SET
@@ -1411,7 +1384,7 @@ const updateTransaction = async(value,moneyValue,type,prevMoneyValue,expenseMode
     if(updateMonthsProps.changes > 0) console.log("Update monthsProps",val,dynamicChar)
     else console.log("Failed to update monthsProps")
     // Update totalBalance
-    const updateTotalBalance = await connection.runAsync(
+    const updateTotalBalance = await db.runAsync(
       `
       UPDATE totalBalance
       SET
@@ -1422,7 +1395,7 @@ const updateTransaction = async(value,moneyValue,type,prevMoneyValue,expenseMode
     if(updateTotalBalance.changes > 0) console.log("Updated totalBalance",val,dynamicChar)
     return val
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateTransaction")
   }
 }
 
@@ -1433,12 +1406,11 @@ const deleteSingleEntrie = async(id,moneyAmount,positive) => {
     const month = currDate[1]
     const year = currDate[2]
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const method = await connection.getFirstAsync(`DELETE FROM balance WHERE id = ?`, id)
+    const method = await db.getFirstAsync(`DELETE FROM balance WHERE id = ?`, id)
 
     if(positive){
-      const balanceIncomeUpdate = await connection.runAsync('UPDATE totalBalance SET value =  value - ?', [moneyAmount])
-      const updateIncome = await connection.runAsync(
+      const balanceIncomeUpdate = await db.runAsync('UPDATE totalBalance SET value =  value - ?', [moneyAmount])
+      const updateIncome = await db.runAsync(
         `
         UPDATE monthsProps 
         SET
@@ -1456,9 +1428,9 @@ const deleteSingleEntrie = async(id,moneyAmount,positive) => {
       else console.log("Failed to Update Balance: deleteSingleEntry")
     }else if(!positive){  
       console.log(typeof moneyAmount,moneyAmount,"DEBUG HEREEE")
-      const balanceExpenseUpdate = await connection.runAsync('UPDATE totalBalance SET value =  value - ?', [moneyAmount])
+      const balanceExpenseUpdate = await db.runAsync('UPDATE totalBalance SET value =  value - ?', [moneyAmount])
 
-      const updateExpense = await connection.runAsync(
+      const updateExpense = await db.runAsync(
         `
         UPDATE monthsProps 
         SET
@@ -1479,14 +1451,13 @@ const deleteSingleEntrie = async(id,moneyAmount,positive) => {
     else console.log("Succesfully dropped column..")
 
   } catch (error) {
-    console.error(error)
+    console.error(error,"deleteSingleEntrie")
   }
 }
 
 const getUsername = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.getFirstAsync(
+    const data = await db.getFirstAsync(
       'SELECT username FROM totalBalance'
     )
     return data.username
@@ -1497,34 +1468,31 @@ const getUsername = async() => {
 
 const getCurrency = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.getFirstAsync(
+    const data = await db.getFirstAsync(
       'SELECT currency FROM totalbalance'
     )
     return data.currency
   } catch (error) {
-    console.error(error)
+    console.error(error,"getCurrency")
   }
 }
 
 const checkSavingGoal = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const checkStatus = await connection.getFirstAsync('SELECT savingGoalActive FROM totalBalance')
+    const checkStatus = await db.getFirstAsync('SELECT savingGoalActive FROM totalBalance')
     if(checkStatus.savingGoalActive > 0) return true
     else return false
   } catch (error) {
-    console.error(error)
+    console.error(error,"checkSavingGoal")
   }
 }
 const checkIncome = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const checkStatus = await connection.getFirstAsync('SELECT automateIncomeActive FROM totalbalance')
+    const checkStatus = await db.getFirstAsync('SELECT automateIncomeActive FROM totalbalance')
     if(checkStatus.automateIncomeActive > 0) return true
     else return false
   } catch (error) {
-    console.error(error)
+    console.error(error,"checkIncome")
   }
 }
 
@@ -1535,9 +1503,8 @@ const updateIncome = async(cond,amount,day,incomeProcess) => {
     const currDate = await createCurrentDate()
     const currMonth = currDate[1]
     const currYear = currDate[2]
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const updateIncomeActive = await connection.runAsync('UPDATE totalBalance SET automateIncomeActive = ?, incomeVal = ?, automateIncomeDay = ?',[cond,amount,day])
-    const updateCurrentMonth = await connection.runAsync('UPDATE monthsProps SET monthsIncomeAutomateProcessed = ?, monthsStaticIncomeVal = ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[incomeProcess,amount,currMonth,currYear])
+    const updateIncomeActive = await db.runAsync('UPDATE totalBalance SET automateIncomeActive = ?, incomeVal = ?, automateIncomeDay = ?',[cond,amount,day])
+    const updateCurrentMonth = await db.runAsync('UPDATE monthsProps SET monthsIncomeAutomateProcessed = ?, monthsStaticIncomeVal = ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[incomeProcess,amount,currMonth,currYear])
 
     if(updateIncomeActive.changes > 0){
       console.log(`\nSuccesfully Updated\nincome automation: ${cond}\nincomeVal: ${amount}`)
@@ -1558,26 +1525,24 @@ const updateIncome = async(cond,amount,day,incomeProcess) => {
 const getIncome = async() => {
   try {
     // check if its active and then check the value
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const getValue = await connection.getFirstAsync('SELECT incomeVal FROM totalBalance')
+    const getValue = await db.getFirstAsync('SELECT incomeVal FROM totalBalance')
 
     return getValue.incomeVal
 
   } catch (error) {
-    console.error(error)
+    console.error(error,"getIncome")
   }
 }
 
 const getSavingGoal = async() => {
   try {
     // check if its active and then check the value
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const getValue = await connection.getFirstAsync('SELECT savingGoalVal FROM totalBalance')
+    const getValue = await db.getFirstAsync('SELECT savingGoalVal FROM totalBalance')
 
     return getValue.savingGoalVal
 
   } catch (error) {
-    console.error(error)
+    console.error(error,"getSavingGoal")
   }
 }
 
@@ -1588,9 +1553,8 @@ const updateSavingGoal = async(cond,amount) => {
     const currMonth = currDate[1]
     const currYear = currDate[2]
 
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const updateIncomeActive = await connection.runAsync('UPDATE totalBalance SET savingGoalActive = ?, savingGoalVal = ?',[cond,amount])
-    const updateCurrentMonth = await connection.runAsync('UPDATE monthsProps SET monthsSavingGoalVal = ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[amount,currMonth,currYear])
+    const updateIncomeActive = await db.runAsync('UPDATE totalBalance SET savingGoalActive = ?, savingGoalVal = ?',[cond,amount])
+    const updateCurrentMonth = await db.runAsync('UPDATE monthsProps SET monthsSavingGoalVal = ? WHERE monthsIncomeDate = ? AND yearsIncomeDate = ?',[amount,currMonth,currYear])
     
     if(updateIncomeActive.changes > 0){
       console.log(`\nSuccesfully Updated\nSaving goal automation: ${cond}\nsavingVal: ${amount}`)
@@ -1607,68 +1571,70 @@ const updateSavingGoal = async(cond,amount) => {
 
 const incomeDay = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const getDay = await connection.getFirstAsync('SELECT automateIncomeDay FROM totalBalance')
+    const getDay = await db.getFirstAsync('SELECT automateIncomeDay FROM totalBalance')
 
     return getDay.automateIncomeDay
   } catch (error) {
-    console.error(error)
+    console.error(error,"incomeDay")
   }
 }
 
 const updateFixedCostsForm = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const update = await connection.runAsync(
+    const update = await db.runAsync(
       ''
     )
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateFixedCostsForm")
   }
 }
 
+
 const createCostsColumn = async(title,amount,type="Fixed Cost") => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const createCostsColumn = await connection.runAsync(
+    const createCostsColumn = await db.runAsync(
       'INSERT INTO fixedCosts(value, moneyValue, type) VALUES(?, ?, ?)',[title,amount,type]
     )
     if(createCostsColumn.changes > 0) console.log(`\nCreated Column in fixedCosts\nTitle: ${title}\nAmount: ${amount}\ntype:${type}`)
     else console.log("Failed to create Costs column")
 
-    const updateTotalBalance = await connection.runAsync(
+    const updateTotalBalance = await db.runAsync(
       'UPDATE totalBalance SET totalFixedCosts = totalFixedCosts - ?',[amount]
     )
-    if(updateTotalBalance.changes > 0) console.log("Updated totalFixedCosts table totalBalance")
-    else console.log("Failed to Update totalFixedCosts table totalBalance")
+    if(updateTotalBalance.changes > 0) {
+      console.log("Updated totalFixedCosts table totalBalance")
+      return true
+    }
+    else {
+      console.log("Failed to Update totalFixedCosts table totalBalance")
+      return false
+    }
   } catch (error) {
-    console.error(error)
+    console.error(error,"createCostsColumn")
   }
 }
 
 const deleteCostsColumn = async(id,amount) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const deleteColumn = await connection.runAsync(
+    const deleteColumn = await db.runAsync(
       'DELETE FROM fixedCosts WHERE id = ?',[id]
     )
     if(deleteColumn.changes > 0) console.log('Deleted column in fixedCosts ID:',id)
     else console.log('Failed to delete fixedCosts column ID:',id)
 
-    const updateTotalBalance = await connection.runAsync(
+    const updateTotalBalance = await db.runAsync(
       'UPDATE totalBalance SET totalFixedCosts = totalFixedCosts + ?',[amount]
     )
     if(updateTotalBalance.changes > 0) console.log("Updated totalFixedCosts table totalBalance")
     else console.log("Failed to Update totalFixedCosts table totalBalance")
   } catch (error) {
-    console.error(error)
+    console.error(error,"deleteCostsColumn")
   }
 }
 
 const updateCostsColumn = async(id,amount,title,type) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const updateColumn = await connection.runAsync(
+    const updateColumn = await db.runAsync(
       `
       UPDATE
       SET
@@ -1681,116 +1647,109 @@ const updateCostsColumn = async(id,amount,title,type) => {
     if(updateColumn.changes > 0) console.log('Succesfully Update fixedCosts Column ID:',id)
     else console.log('Failed to update fixedCosts column ID:',id)
   } catch (error) {
-    console.error(error)
+    console.error(error,"updateCostsColumn")
   }
 }
 
 const getAllCosts = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const getCosts = await connection.getAllAsync(
+    const getCosts = await db.getAllAsync(
       'SELECT * FROM fixedCosts'
     )
     console.log(getCosts)
     return getCosts
   } catch (error) {
-    console.error(error)
+    console.error(error,"getAllCosts")
   }
 }
 
 // DELETE all columns in fixedCosts
 const deleteAllCosts = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const delAll = await connection.runAsync(
+    const delAll = await db.runAsync(
       'DELETE FROM fixedCosts'
     )
     if(delAll.changes > 0) console.log("DELETED all from fixedCosts")
     else console.log("Failed to DELETE ALL in fixedCosts")
 
-    const resetID = await connection.runAsync(
+    const resetID = await db.runAsync(
       'DELETE FROM sqlite_sequence WHERE name = "fixedCosts"'
     )
     if(resetID.changes > 0) console.log("RESET ID sucessfull")
     else console.log("Failed to reset ID sequence")
 
-    const updateTotalBalance = await connection.runAsync(
+    const updateTotalBalance = await db.runAsync(
       'UPDATE totalBalance SET totalFixedCosts = 0'
     )
     if(updateTotalBalance.changes > 0) console.log("RESETED table totalBalance to 0")
     else console.log("Failed to RESET table totalBalance")
   } catch (error) {
-    console.error(error)
+    console.error(erro,"deleteAllCosts")
   }
 }
 
 const getTotalCosts = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const total = await connection.getFirstAsync(
+    const total = await db.getFirstAsync(
       'SELECT totalFixedCosts FROM totalBalance'
     )
     return total.totalFixedCosts
   } catch (error) {
-    console.error(error)
+    console.error(error,"getTotalCosts")
   }
 }
 
 const activateCosts = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const updateTotalBalance = await connection.runAsync(
+    const updateTotalBalance = await db.runAsync(
       'UPDATE totalBalance SET fixedCostsActive = TRUE'
     )
     if(updateTotalBalance.changes > 0) console.log("fixedCosts is ACTIVE in totalBalance")
     else console.log("Failed to activate fixedCosts in totalBalance")
 
-    const updateMonthsProps = await connection.runAsync(
+    const updateMonthsProps = await db.runAsync(
       'UPDATE monthsProps SET monthsFixedCostsActive = TRUE'
     )
     if(updateMonthsProps.changes > 0) console.log("fixedCosts is ACTIVE in monthsProps")
     else console.log("Failed to activate fixedCosts in monthsProps")
   } catch (error) {
-    console.error(error)
+    console.error(error,"activateCosts")
   }
 }
 
 const deactiveCosts = async() => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const updateTotalBalance = await connection.runAsync(
+    const updateTotalBalance = await db.runAsync(
       'UPDATE totalBalance SET fixedCostsActive = FALSE'
     )
     if(updateTotalBalance.changes > 0) console.log("fixedCosts is UNACTIVE in totalBalance")
     else console.log("Failed to activate fixedCosts in totalBalance")
 
-    const updateMonthsProps = await connection.runAsync(
+    const updateMonthsProps = await db.runAsync(
       'UPDATE monthsProps SET monthsFixedCostsActive = FALSE'
     )
     if(updateMonthsProps.changes > 0) console.log("fixedCosts is UNACTIVE in monthsProps")
     else console.log("Failed to activate fixedCosts in monthsProps")
 
   } catch (error) {
-    console.error(error)
+    console.error(error,"deactiveCosts")
   }
 }
 
 const getDayTrans = async(dateString) => {
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const data = await connection.getAllAsync(
+    const data = await db.getAllAsync(
       'SELECT * FROM balance WHERE date = ?',[dateString]
     )
     return data
   } catch (error) {
-    console.error(error)
+    console.error(error,"getDayTrans")
   }
 }
 
 /* const updateTotalCosts = async(amount) =>{
   try {
-    const connection = await SQLite.openDatabaseAsync('balance.db')
-    const updateCosts = await connection.runAsync(
+    const updateCosts = await db.runAsync(
       'UPDATE SET totalFixedCosts = totalFixedCosts - ?',[amount]
     )
   } catch (error) {
@@ -1800,13 +1759,13 @@ const getDayTrans = async(dateString) => {
 
   const getAllMonths = async() => {
     try {
-      const connection = await SQLite.openDatabaseAsync('balance.db')
-      const data = await connection.getAllAsync(
+
+      const data = await db.getAllAsync(
         'SELECT * FROM monthsProps'
       )
       return data
     } catch (error) {
-      console.error(error)
+      console.error(error,"getAllMonths")
     }
   }
 
@@ -1824,8 +1783,8 @@ const getDayTrans = async(dateString) => {
       let validateAmount = filterAmount ? `ORDER BY moneyValue ASC`: `ORDER BY moneyValue DESC`
       if(filterAmount === null) validateAmount = ''
 
-      const connection = await SQLite.openDatabaseAsync('balance.db')
-      const getData = await connection.getAllAsync(
+
+      const getData = await db.getAllAsync(
         `
         SELECT * FROM balance
         WHERE
@@ -1839,7 +1798,7 @@ const getDayTrans = async(dateString) => {
 
       return getData
     } catch (error) {
-      console.error(error)
+      console.error(error,"dynamicQuery")
     }
   }
 

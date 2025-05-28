@@ -1,9 +1,9 @@
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import Animated, {  Extrapolation, interpolate, interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from 'react-native-reanimated'
 import {CalendarList} from 'react-native-calendars';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler'
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors } from '@/constants/Colors'
 import CategorieBtn from '@/components/CategorieBtn';
@@ -27,7 +27,6 @@ const transactions = () => {
 
   const insets = useSafeAreaInsets()
 
-  const effectiveHeigth = SCREEN_HEIGHT - insets.top - insets.bottom
   const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + insets.top + 50
 
 
@@ -86,7 +85,7 @@ const transactions = () => {
     if(balanceContainerY.value > -SCREEN_HEIGHT / 1.5){
       scrollTo(-SCREEN_HEIGHT / 2.7)
     }else if(balanceContainerY.value < -SCREEN_HEIGHT / 1.5){
-      scrollTo(MAX_TRANSLATE_Y)
+      scrollTo(MAX_TRANSLATE_Y - insets.top)
     }
   })
 
@@ -131,7 +130,7 @@ const transactions = () => {
   }
 
   useEffect(() => {
-    scrollTo(-SCREEN_HEIGHT + insets.top + 50)
+    scrollTo(-SCREEN_HEIGHT + insets.top)
   },[])
 
   useEffect(() => {
@@ -150,8 +149,13 @@ const transactions = () => {
     
   <GestureHandlerRootView>  
     <View style={styles.container}>
+      <View style={{height:insets.top,alignItems:"center",paddingHorizontal:50,flexDirection:"row",backgroundColor:Colors.primaryBgColor.prime,width:"100%",justifyContent:"space-between"}}>
+        <Text style={[styles.infoLabel,{color:"black"}]}>Year</Text>
+        <Text style={[styles.infoLabel,{color:"black"}]}>2025</Text>
+      </View>
+      <StatusBar hidden={true}/>
         <Animated.View style={[styles.dateContainer, animatedDateBackground, {zIndex:0}]}>
-          <SafeAreaView>
+          
           <View style={styles.calendarContainer}>
             <CalendarList
             horizontal={true}
@@ -212,14 +216,13 @@ const transactions = () => {
             }}
             />
           </View>
-          </SafeAreaView>
         </Animated.View>
 
           <GestureDetector gesture={gesture}>
           <Animated.View  style={[styles.modalBalanceContainer,animatedBalanceContainer,{backgroundColor:"black",borderRadius:13}]}>
             <View style={[{width:80,height:5,backgroundColor:Colors.primaryBgColor.prime,marginTop:10,justifyContent:"center",alignSelf:"center",borderRadius:5}]}/>
               <View style={styles.balanceContainer}>
-              <HeaderComp/>
+              {/* <HeaderComp/> */}
             {/* {dayPressed && !swiped && (
               <TouchableOpacity style={styles.btnBack} onPress={() => setDayPressed(false)} >
                 <Text style={styles.btnLabel}>Back to Month</Text>

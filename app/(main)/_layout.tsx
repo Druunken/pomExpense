@@ -18,12 +18,6 @@ const _layout = () => {
 
   const [settingsRef,setSettingsRef] = useState(null)
   const [transactionsRef,setTransactionsRef] = useState(null)
-  const route = useRoute()
-
-
-  useEffect(() => {
-    console.log(route.path)
-  }, [route.name])
 
   return (
     <Tabs   safeAreaInsets={{bottom:0}}  screenOptions={{ tabBarStyle:{

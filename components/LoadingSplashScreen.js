@@ -3,16 +3,19 @@ import React, { useEffect } from 'react'
 import LottieView from 'lottie-react-native'
 import { Colors } from '@/constants/Colors'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import Index from '@/app'
 
 const LoadingSplashScreen = ({ title, visible }) => {
 
     const opacityVal = useSharedValue(0)
+    const indexVal = useSharedValue(-1)
     const layoutX = useSharedValue(150)
 
 
     const animatedStyle = useAnimatedStyle(() => {
         return{
-            opacity:opacityVal.value
+            opacity:opacityVal.value,
+            zIndex:indexVal.value
         }
     })
     const animatedLayout = useAnimatedStyle(() => {
@@ -26,7 +29,8 @@ const LoadingSplashScreen = ({ title, visible }) => {
     useEffect(() => {
         if(visible){
             opacityVal.value = withTiming(1,{ duration: 250 })
-            layoutX.value = withSpring(0)
+            indexVal.value = withTiming(1,{ duration: 250 })
+            layoutX.value = withSpring(-1)
         }
     },[visible])
   return (

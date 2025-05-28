@@ -1,6 +1,8 @@
-import { View, Text, SafeAreaView, StyleSheet, Alert, Modal, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Alert, Modal, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'expo-router';
+
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Colors } from '../../constants/Colors.ts'
 
@@ -102,121 +104,126 @@ const settings = () => {
   return (
     <View style={styles.container}>
       {showUsername && (
+        <View>
         <Modal visible={modalVisible}>
           <UserInput label={currentUsername} type={"username"} onPress={() => {
             setModalVisible(false)
 
           }}  />
         </Modal>
+        </View>
       )}
       {showCurrency && (
+        <View>
         <Modal visible={modalCurrVisible}>
           <UserInput label={currrentCurrency} type={"currency"} onPress={() => {
             setModalCurrVisible(false)
           }}  />
         </Modal>
+        </View>
       )}
       {showIncome && (
+        <View>
         <Modal visible={modalVisible}>
             <UserInput label={currentIncome} type={"income"} onPress={() => {
               setModalVisible(false)
 
             }}  />
         </Modal>
+        </View>
       )}
       {showSavingGoal && (
+        <View>
         <Modal visible={modalVisible}>
             <UserInput label={currentGoal} type={"savingGoal"} onPress={() => {
               setModalVisible(false)
             }}  />
         </Modal>
+        </View>
       )}
 
       <SafeAreaView style={[styles.layout,{backgroundColor:Colors.primaryBgColor.newPrime}]}>
-        <View style={{alignItems:"center",marginBottom:10}}>
-          <Text style={{fontSize:30,fontFamily:"MainFont"}}>Settings</Text>
-        </View>
-      <ScrollView contentContainerStyle={styles.mainOptions} >
-        <Text style={styles.settingsLabel}>Appearance</Text>
-        <Buttons secBtn={false} icon={""} onPress={() => alert("Available soon")} label={"Change Theme"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
-        <Text style={styles.settingsLabel}>Profile</Text>
-        <Buttons 
-          secBtn={false} icon={""} 
-          onPress={() => {
-            setShowUsername(true)
-            setShowSavingGoal(false)
-            setShowIncome(false)
-            setModalVisible(true)
-          }}
-          label={"Change Name"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
-        <Text style={styles.settingsLabel}>Accounting settings</Text>
-        <Buttons 
-          secBtn={false} 
-          icon={""} 
-          onPress={() => {
-            setShowCurrency(true)
-            setShowIncome(false)
-            setShowSavingGoal(false)
-            setModalCurrVisible(true)
-          }}
-          label={"Change Currency"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
-        <Buttons 
-          secBtn={false} 
-          icon={""} 
-          onPress={() => {
-            setShowIncome(true)
-            setShowUsername(false)
-            setShowSavingGoal(false)
-            setModalVisible(true)
-          }}
-          label={"Change Income"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+        <ScrollView contentContainerStyle={styles.mainOptions} keyboardShouldPersistTaps="always" scrollEnabled={true} showsHorizontalScrollIndicator onScroll={() => console.log("pressed")}>
+          <Text style={styles.settingsLabel}>Appearance</Text>
+          <Buttons secBtn={false} icon={""} onPress={() => alert("Available soon")} label={"Change Theme"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+          <Text style={styles.settingsLabel}>Profile</Text>
+          <Buttons 
+            secBtn={false} icon={""} 
+            onPress={() => {
+              setShowUsername(true)
+              setShowSavingGoal(false)
+              setShowIncome(false)
+              setModalVisible(true)
+            }}
+            label={"Change Name"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+          <Text style={styles.settingsLabel}>Accounting settings</Text>
+          <Buttons 
+            secBtn={false} 
+            icon={""} 
+            onPress={() => {
+              setShowCurrency(true)
+              setShowIncome(false)
+              setShowSavingGoal(false)
+              setModalCurrVisible(true)
+            }}
+            label={"Change Currency"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+          <Buttons 
+            secBtn={false} 
+            icon={""} 
+            onPress={() => {
+              setShowIncome(true)
+              setShowUsername(false)
+              setShowSavingGoal(false)
+              setModalVisible(true)
+            }}
+            label={"Change Income"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
 
-        <Buttons 
-          secBtn={false} 
-          icon={""} 
-          onPress={() => {
-            setShowSavingGoal(true)
-            setShowIncome(false)
-            setShowUsername(false)
-            setModalVisible(true)
-          }}
-          label={"Change Saving Goal"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+          <Buttons 
+            secBtn={false} 
+            icon={""} 
+            onPress={() => {
+              setShowSavingGoal(true)
+              setShowIncome(false)
+              setShowUsername(false)
+              setModalVisible(true)
+            }}
+            label={"Change Saving Goal"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
 
-        <Buttons 
-          secBtn={false} 
-          icon={""} 
-          onPress={() => {
-            alert("Available soon")
-          }}
-          label={"Change Fixed Costs"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
-        <Text style={styles.settingsLabel}>App service</Text>
-        <Buttons 
-          secBtn={false} 
-          icon={""} 
-          onPress={() => {
-            alert("Available soon")
-          }}
-          label={"Reset Balance"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+          <Buttons 
+            secBtn={false} 
+            icon={""} 
+            onPress={() => {
+              alert("Available soon")
+            }}
+            label={"Change Fixed Costs"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
+          <Text style={styles.settingsLabel}>App service</Text>
+          <Buttons 
+            secBtn={false} 
+            icon={""} 
+            onPress={() => {
+              alert("Available soon")
+            }}
+            label={"Reset Balance"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
 
 
-        <Buttons secBtn={true} icon={""} label={"Reset App"} brdCol={Colors.primaryBgColor.persianRed} onPress={() => {
-          Alert.alert(
-            'Reset App',
-            `This will literally reset everything.\n All data will be lost!`,
-            [
-              {text: "Cancel", style:"cancel"},
-              {text: "Reset", style:"destructive",onPress:async() => {
-                const handleFn = await handleReset()
-                if(handleFn)
-                setTimeout(()=>{
-                  router.push("/")
-                },4000)
-              }}
-            ]
-          );
-          }}></Buttons>
-      </ScrollView>
-      <LoadingSplashScreen title={"Reseting Application..."} visible={loadingSplash} />
+          <Buttons secBtn={true} icon={""} label={"Reset App"} brdCol={Colors.primaryBgColor.persianRed} onPress={() => {
+            Alert.alert(
+              'Reset App',
+              `This will literally reset everything.\n All data will be lost!`,
+              [
+                {text: "Cancel", style:"cancel"},
+                {text: "Reset", style:"destructive",onPress:async() => {
+                  const handleFn = await handleReset()
+                  if(handleFn)
+                  setTimeout(()=>{
+                    router.push("/")
+                  },4000)
+                }}
+              ]
+            );
+            }}></Buttons>
+        </ScrollView>
+        <LoadingSplashScreen title={"Reseting Application..."} visible={loadingSplash} />
       </SafeAreaView>
     </View>
   )
@@ -226,13 +233,14 @@ const settings = () => {
 const styles = StyleSheet.create({
   container:{
     position:"relative",
+    flex:1
   },
   mainOptions:{
     paddingHorizontal:20,
     paddingBottom:80,
     },
   layout:{
-    height:"100%",
+    flex:1
   },
   footer:{
     marginTop:10,

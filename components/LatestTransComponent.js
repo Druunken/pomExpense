@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Colors } from '@/constants/Colors'
 import TransactionElement from '@/components/TransactionElement'
 import { usersBalanceContext } from "@/hooks/balanceContext";
+import { Dimensions } from 'react-native';
+
+const screenHeight = Dimensions.get("window").height
 
 const LatestTransComponent = ({ setVisibleModal, setEditMode, setEditId, setInfoModal, setInfoId }) => {
 
@@ -11,6 +14,13 @@ const LatestTransComponent = ({ setVisibleModal, setEditMode, setEditId, setInfo
         username,setUsername,
     } = useContext(usersBalanceContext)
 
+
+    const [availableHeight,setAvailableHeight] = useState(350)
+
+    useEffect(() => {
+        /* hardcorded val 500 */
+        setAvailableHeight(screenHeight - 500)
+    },[])
   return (
     <View style={styles.container}>
         {/* <View style={{alignItems:"center",justifyContent:"center",marginBottom:5}} >
@@ -21,7 +31,7 @@ const LatestTransComponent = ({ setVisibleModal, setEditMode, setEditId, setInfo
             <Text style={{ fontFamily: "MainLight" }}>{username}</Text>
         </View>
 
-        <View style={styles.latestTransDiv}>
+        <View style={[styles.latestTransDiv,{height:availableHeight}]}>
             <TransactionElement setInfoId={setInfoId} setInfoModal={setInfoModal} setEditId={setEditId} setVisibleModal={setVisibleModal} setEditMode={setEditMode} currency={currency}/>
         </View>
     </View>
@@ -38,7 +48,6 @@ const styles = StyleSheet.create({
         paddingVertical:10,
     },
     latestTransDiv:{
-        height: 350,
         paddingHorizontal: 15,
     },
     header:{

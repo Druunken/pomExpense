@@ -62,7 +62,7 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
         const fetchIt = await db.getTransactions()
         const date = await db.createCurrentDate()
         
-        if(fetchIt.length > 19) setDataIsBig(true)
+        if(fetchIt.length > 13) setDataIsBig(true)
 
         for(let i = 0; i < fetchIt.length; i++){
             const isValuePositive = fetchIt[i].moneyValue > 0
@@ -70,8 +70,6 @@ const TransactionElement = ({  setInfoId, currency, setVisibleModal, setEditMode
             const year = getCorrectDate[0]
             const month = getCorrectDate[1]
             const day = getCorrectDate[2]
-
-            console.log(i)
 
             const isToday = year === date[2] && month === date[1] && day === date[0]
             elements.push(
@@ -209,7 +207,7 @@ const styles = StyleSheet.create({
     container:{
         alignItems:"center",
         marginTop:10,
-        height:330,
+        height:"100%",
         paddingHorizontal:12,
         gap:7,
         justifyContent:"center",
@@ -218,12 +216,12 @@ const styles = StyleSheet.create({
     btn:{
         width:"100%",
         height:45,
-        backgroundColor:Colors.primaryBgColor.prime,
+        backgroundColor:Colors.primaryBgColor.lightPrime,
         borderRadius:10,
         justifyContent:"center",
         alignItems:"center",
-        borderWidth:3,
-        borderColor:Colors.primaryBgColor.white
+        borderWidth:2,
+        borderColor:Colors.primaryBgColor.gray
 
     },
     genreDiv:{
@@ -290,7 +288,7 @@ const styles = StyleSheet.create({
     label:{
         fontSize:15,
         fontFamily:"MainFont",
-        color:Colors.primaryBgColor.white
+        color:Colors.primaryBgColor.black
     },
     title:{
         fontSize:20,

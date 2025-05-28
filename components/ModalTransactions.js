@@ -380,123 +380,125 @@ const ModalTransactions = ({ visible, setVisible, expenseMode, setExpenseMode, e
     },[titleInputFocus])
 
    return (
-    <Modal animationType="none" transparent={true} visible={visible}>
-        <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType} />
-        <Animated.View style={[styles.container,animatedContainer,{paddingTop:inset.top}]}>
-            <View style={[styles.passedDiv,{}]}>
-                <Animated.View style={[styles.passedLayout, animatedPassedDiv]}>
-                    <LottieView ref={passedLottieRef} autoPlay loop={false} style={{ width: 80, height:80,borderRadius:20}} resizeMode='cover' source={require("../assets/lottie/check_mark_lottie.json")}/>
-                    <Text style={{fontFamily:"MainFont",color:"white",fontSize:13}}>Complete 100%</Text>
-                </Animated.View>
-            </View>
-            <Animated.View style={[styles.formDiv,animatedLayout]}>
-                <View onTouchStart={(ev) => pressedLayout(ev)} style={{justifyContent:"center",alignItems:"center"}}>
-                    <View style={styles.scrollView}/>
-                </View>
-                <View style={[styles.infoDiv,{}]}>
-                    <Animated.View style={[animatedPrev,styles.prevView,{flexDirection:"row",gap:20}]}>
-                        <View style={styles.headerDivInfo}>
-                            <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>Previous Balance: </Text>  
-                            <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>{numberInputValidation.converToString(numberInputValidation.convertToNumber(value).toFixed(2))}</Text> 
-                        </View>
-                        <View style={styles.headerDivInfo}>
-                            <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>Remaing Amount:</Text>
-                            <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>{remainingAmount}$</Text>
-                        </View>
-                     </Animated.View>
-                     <Animated.View style={[animatedCurr, { justifyContent:"center",alignItems:"center" }]}>
-                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.darkPurple : Colors.primaryBgColor.prime}}>Current Balance</Text>
-                    <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.darkPurple : Colors.primaryBgColor.prime}}>{showChangedValue()}</Text>
+    <View style={{}}>
+        <Modal animationType="none" transparent={true} visible={visible}>
+            <GenreComponent visible={genreModalVisible} setVisible={setGenreModalVisible} setCate={setCate} setSubType={setSubType}/>
+            <Animated.View style={[styles.container,animatedContainer,{paddingTop:inset.top}]}>
+                <View style={[styles.passedDiv,{}]}>
+                    <Animated.View style={[styles.passedLayout, animatedPassedDiv]}>
+                        <LottieView ref={passedLottieRef} autoPlay loop={false} style={{ width: 80, height:80,borderRadius:20}} resizeMode='cover' source={require("../assets/lottie/check_mark_lottie.json")}/>
+                        <Text style={{fontFamily:"MainFont",color:"white",fontSize:13}}>Complete 100%</Text>
                     </Animated.View>
                 </View>
-                <View style={[styles.layout,{}]}>
-                <KeyboardAvoidingView style={{borderWidth:0,flex:1}} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={500}>
-                    <View style={{alignItems:"center"}}>
-                        <SwitchBtn  amountBiggerThanRem={amountBiggerThanRem && !alreadyMissed} active={expenseMode} setActive={editMode ? undefined : setExpenseMode} lottie={true} expenseMode={expenseMode}/>
+                <Animated.View style={[styles.formDiv,animatedLayout]}>
+                    <View onTouchStart={(ev) => pressedLayout(ev)} style={{justifyContent:"center",alignItems:"center"}}>
+                        <View style={styles.scrollView}/>
                     </View>
-                    {!numberInputFocus && (
-                        <View style={{}}>
-                            <View style={{}}>
-                                <Text style={styles.title}>Title</Text>
+                    <View style={[styles.infoDiv,{}]}>
+                        <Animated.View style={[animatedPrev,styles.prevView,{flexDirection:"row",gap:20}]}>
+                            <View style={styles.headerDivInfo}>
+                                <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>Previous Balance: </Text>  
+                                <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>{numberInputValidation.converToString(numberInputValidation.convertToNumber(value).toFixed(2))}</Text> 
                             </View>
-                            <TitleInput setIsOnFocus={setTitleInputFocus} isOnFocus={titleInputFocus} state={title} setState={setTitle} submitted={submitted} setSubmitted={setSubmitted}/>
+                            <View style={styles.headerDivInfo}>
+                                <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>Remaing Amount: </Text>
+                                <Text style={{fontSize:15,fontFamily:"MainFont",color:Colors.primaryBgColor.gray}}>{remainingAmount}$</Text>
+                            </View>
+                        </Animated.View>
+                        <Animated.View style={[animatedCurr, { justifyContent:"center",alignItems:"center" }]}>
+                        <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.darkPurple : Colors.primaryBgColor.prime}}>Current Balance</Text>
+                        <Text style={{fontSize:35,fontFamily:"MainFont",color:isValueChanged() && expenseMode ? Colors.primaryBgColor.darkPurple : Colors.primaryBgColor.prime}}>{showChangedValue()}</Text>
+                        </Animated.View>
+                    </View>
+                    <View style={[styles.layout,{}]}>
+                    <KeyboardAvoidingView style={{borderWidth:0,flex:1}} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={500}>
+                        <View style={{alignItems:"center"}}>
+                            <SwitchBtn  amountBiggerThanRem={amountBiggerThanRem && !alreadyMissed} active={expenseMode} setActive={editMode ? undefined : setExpenseMode} lottie={true} expenseMode={expenseMode}/>
                         </View>
-                    )}
-                    <Animated.View style={animatedNumberInput}>
-                        <Text style={styles.title} >Amount</Text>
-                        <NumberInput isOnFocus={numberInputFocus} setIsOnFocus={setNumberInputFocus} autoFocus={false} state={amount} setState={setAmount} currency={currency}/>
-                    </Animated.View>
-                    </KeyboardAvoidingView>
-                    {<View style={{gap:5, opacity: expenseMode ? 1 : 0.5,marginBottom:15}}>
-                        <Text></Text>
-                        <GenreButton onPress={() => {
-                            setTitleInputFocus(false)
-                            setNumberInputFocus(false)
-                        }} setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} setCate={setCate} title={title}/>
-                    </View> }
-                </View>
-                
-
-                <View style={{justifyContent:"center",alignItems:"center", gap:10, paddingBottom:inset.bottom}}>
-                    <CondBtn genreTypes={false} cond={expenseInputValid || incomeINputValid} type={"confirm"} label={expenseMode ? "Add Expense" : "Add Income"} style={styles.condBtn} onPress={() => {
-                        const actualVal = numberValidation.convertToNumber(amount)
-                        const convertNum = numberValidation.convertToNumber(value)
-                        const prevValNum = convertNum
-                        
-                        const isBiggerVal = actualVal > prevAmount ? actualVal - prevAmount : prevAmount - actualVal
-                        const isBiggerBool = actualVal > prevAmount ? true : false
-                        const addNum = isBiggerBool ? prevValNum + isBiggerVal : prevValNum - isBiggerVal
-                        const epxenseBigVal = actualVal > prevAmount ? actualVal + prevAmount : prevAmount - actualVal
-
-                        
-                        if(expenseMode && !editMode) {
-                            const calcEx = (prevValNum - actualVal).toFixed(2)
-                            const convertCalcEx = numberValidation.converToString(calcEx)
-                            db.saveData(title, -actualVal, cate, subType, "minus","none");
-                            db.negativeBalance(-actualVal);
-                            if(convertCalcEx){
-                                setValue(convertCalcEx)
-                            }
-                            updateMarkedDates(actualVal,true,false)
-                        }
-                        else if(!expenseMode && !editMode) {
-                            const calcIn = (prevValNum + actualVal).toFixed(2)
-                            const convertCalcEx = numberValidation.converToString(calcIn)
-                            
-                            db.saveData(title, actualVal, "income", "plus","none");
-                            db.positiveBalance(actualVal);
-                            if(convertCalcEx){
-                                setValue(convertCalcEx)
-                            }
-                            updateMarkedDates(actualVal,false,false)
-
-                        } else if(expenseMode && editMode) {
-                            const calcEdEx = (prevValNum - epxenseBigVal).toFixed(2)
-                            const convertCalcEdEx = numberValidation.converToString(calcEdEx)
-
-                            db.updateTransaction(title, actualVal, cate, prevAmount, "minus",editId)
-                            if(convertCalcEdEx){
-                                setValue(convertCalcEdEx)
-                            }
-                            updateMarkedDates(epxenseBigVal,true,true)
-                        } else if(!expenseMode && editMode){
-                            const calcEdIn = addNum.toFixed(2)
-                            const convertCalcEdIn = numberValidation.converToString(calcEdIn)
-
-                            db.updateTransaction(title, actualVal, cate, prevAmount, "plus",editId)
-                            setValue(convertCalcEdIn) 
-                            updateMarkedDates(addNum,false,true)
-                        }
-
-
-                        //reset
-                        formExecution("form")
-                    }}/>
+                        {!numberInputFocus && (
+                            <View style={{}}>
+                                <View style={{}}>
+                                    <Text style={styles.title}>Title</Text>
+                                </View>
+                                <TitleInput setIsOnFocus={setTitleInputFocus} isOnFocus={titleInputFocus} state={title} setState={setTitle} submitted={submitted} setSubmitted={setSubmitted}/>
+                            </View>
+                        )}
+                        <Animated.View style={animatedNumberInput}>
+                            <Text style={styles.title} >Amount</Text>
+                            <NumberInput isOnFocus={numberInputFocus} setIsOnFocus={setNumberInputFocus} autoFocus={false} state={amount} setState={setAmount} currency={currency}/>
+                        </Animated.View>
+                        </KeyboardAvoidingView>
+                        {<View style={{gap:5, opacity: expenseMode ? 1 : 0.5,marginBottom:15}}>
+                            <Text></Text>
+                            <GenreButton onPress={() => {
+                                setTitleInputFocus(false)
+                                setNumberInputFocus(false)
+                            }} setVisible={setGenreModalVisible} subType={subType} disabled={!expenseMode} setState={setSubType} setCate={setCate} title={title}/>
+                        </View> }
+                    </View>
                     
-                </View> 
+
+                    <View style={{justifyContent:"center",alignItems:"center", gap:10, paddingBottom:inset.bottom}}>
+                        <CondBtn genreTypes={false} cond={expenseInputValid || incomeINputValid} type={"confirm"} label={expenseMode ? "Add Expense" : "Add Income"} style={styles.condBtn} onPress={() => {
+                            const actualVal = numberValidation.convertToNumber(amount)
+                            const convertNum = numberValidation.convertToNumber(value)
+                            const prevValNum = convertNum
+                            
+                            const isBiggerVal = actualVal > prevAmount ? actualVal - prevAmount : prevAmount - actualVal
+                            const isBiggerBool = actualVal > prevAmount ? true : false
+                            const addNum = isBiggerBool ? prevValNum + isBiggerVal : prevValNum - isBiggerVal
+                            const epxenseBigVal = actualVal > prevAmount ? actualVal + prevAmount : prevAmount - actualVal
+
+                            
+                            if(expenseMode && !editMode) {
+                                const calcEx = (prevValNum - actualVal).toFixed(2)
+                                const convertCalcEx = numberValidation.converToString(calcEx)
+                                db.saveData(title, -actualVal, cate, subType, "minus","none");
+                                db.negativeBalance(-actualVal);
+                                if(convertCalcEx){
+                                    setValue(convertCalcEx)
+                                }
+                                updateMarkedDates(actualVal,true,false)
+                            }
+                            else if(!expenseMode && !editMode) {
+                                const calcIn = (prevValNum + actualVal).toFixed(2)
+                                const convertCalcEx = numberValidation.converToString(calcIn)
+                                
+                                db.saveData(title, actualVal, "income", "plus","none");
+                                db.positiveBalance(actualVal);
+                                if(convertCalcEx){
+                                    setValue(convertCalcEx)
+                                }
+                                updateMarkedDates(actualVal,false,false)
+
+                            } else if(expenseMode && editMode) {
+                                const calcEdEx = (prevValNum - epxenseBigVal).toFixed(2)
+                                const convertCalcEdEx = numberValidation.converToString(calcEdEx)
+
+                                db.updateTransaction(title, actualVal, cate, prevAmount, "minus",editId)
+                                if(convertCalcEdEx){
+                                    setValue(convertCalcEdEx)
+                                }
+                                updateMarkedDates(epxenseBigVal,true,true)
+                            } else if(!expenseMode && editMode){
+                                const calcEdIn = addNum.toFixed(2)
+                                const convertCalcEdIn = numberValidation.converToString(calcEdIn)
+
+                                db.updateTransaction(title, actualVal, cate, prevAmount, "plus",editId)
+                                setValue(convertCalcEdIn) 
+                                updateMarkedDates(addNum,false,true)
+                            }
+
+
+                            //reset
+                            formExecution("form")
+                        }}/>
+                        
+                    </View> 
+                </Animated.View>
             </Animated.View>
-        </Animated.View>
-    </Modal>
+        </Modal>
+    </View>
   )
 }
 

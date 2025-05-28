@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, Image } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React,{useRef, useState} from 'react'
 import { Colors } from '@/constants/Colors';
 import LottieView from 'lottie-react-native';
@@ -26,7 +26,7 @@ const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
  
   return (
     <View style={styles.container}>
-            <Pressable style={[styles.btn,{opacity:opacity,borderColor:brdCol,backgroundColor:secBtn ? Colors.primaryBgColor.brown : Colors.primaryBgColor.chillOrange}]} onPress={onPress} onPressIn={
+            <TouchableOpacity style={[styles.btn,{opacity:opacity,borderColor:brdCol,backgroundColor:secBtn ? Colors.primaryBgColor.brown : Colors.primaryBgColor.chillOrange}]} onPress={onPress} onPressIn={
                 () => {
                     setOpacity(0.3)
                     lottieRef.current?.reset()
@@ -37,11 +37,10 @@ const Buttons = ({icon,label,onPress,brdCol,secBtn}) => {
                 setOpacity(1)
             }}
             >
-
                 <Image style={styles.icon} resizeMode='contain' source={getImageSource(icon)}></Image>
                 <Text style={{fontSize:20, color:secBtn && "white",fontFamily: secBtn ? "BoldFont" : "MainReg",minWidth:180}}>{label}</Text>
                 <LottieView loop={false} ref={lottieRef} autoPlay resizeMode='contain' source={require("../assets/lottie/settings_arrow.json")} style={styles.lottieArrow} />
-            </Pressable>
+            </TouchableOpacity>
     </View>
   )
 }
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
         width:30,
         height:30,
         borderRadius:20,
-        opacity:0
+        opacity:1
     },
     lottieArrow:{
       width:40,

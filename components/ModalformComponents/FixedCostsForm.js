@@ -10,6 +10,7 @@ import { Colors } from '@/constants/Colors'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import db from '@/services/serverSide'
 import numberInputValidation from '@/services/numberInputValidation'
+import { create } from 'react-test-renderer'
 
 const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
   const [showAdd,setShowAdd] = useState(false)
@@ -23,10 +24,9 @@ const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
 
   const addRow = async() => {
     const num = inputConverter.convertToNumber(amount)
-    await db.createCostsColumn(title,num,"Fixed Cost")
-    const getData = await db.getMonthProps()
-    console.log(getData)
-    getAllItems()
+    const created = await db.createCostsColumn(title,num,"Fixed Cost")
+    /* const getData = await db.getMonthProps() */
+    if(created) getAllItems()
   }
 
   const deleteRow = async(id,amount) => {
@@ -48,7 +48,6 @@ const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
     try {
       const data = await db.getAllCosts()
       setData(data)
-      displayElements()
 
     } catch (error) {
       console.error(error)

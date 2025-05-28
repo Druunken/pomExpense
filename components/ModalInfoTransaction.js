@@ -39,46 +39,48 @@ const ModalInfoTransaction = ({ id, visible, setVisible }) => {
     },[id])
 
   return (
-    <Modal transparent visible={visible} animationType='slide' >
-        <View style={styles.container}>
-            <View style={styles.content}>
-                <View style={styles.exitDiv}>
+    <View>
+        <Modal transparent visible={visible} animationType='slide' >
+            <View style={styles.container}>
+                <View style={styles.content}>
+                    <View style={styles.exitDiv}>
 
-                    <TouchableOpacity onPress={() => {setVisible(false)}} >
-                        <Icon size={40} color={"white"} name={"close"}/>
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={() => {setVisible(false)}} >
+                            <Icon size={40} color={"white"} name={"close"}/>
+                        </TouchableOpacity>
 
 
-                </View>
-                <Text style={styles.title}>Information</Text>
-                <View style={{gap:15,marginTop:15}}>
-                    <View style={styles.infoDiv}>
-                        <Text style={styles.label}>Title</Text>
-                        <Text style={styles.val}>{name}</Text>
                     </View>
+                    <Text style={styles.title}>Information</Text>
+                    <View style={{gap:15,marginTop:15}}>
+                        <View style={styles.infoDiv}>
+                            <Text style={styles.label}>Title</Text>
+                            <Text style={styles.val}>{name}</Text>
+                        </View>
 
-                    <View style={styles.infoDiv}>
-                        <Text style={styles.label}>Amount</Text>
-                        <Text style={styles.val}>{amount}</Text>
-                    </View>
+                        <View style={styles.infoDiv}>
+                            <Text style={styles.label}>Amount</Text>
+                            <Text style={styles.val}>{amount}</Text>
+                        </View>
 
-                    <View style={styles.infoDiv}>
-                        <Text style={styles.label}>Date</Text>
-                        <Text style={styles.val}>{date}</Text>
-                    </View>
+                        <View style={styles.infoDiv}>
+                            <Text style={styles.label}>Date</Text>
+                            <Text style={styles.val}>{date}</Text>
+                        </View>
 
-                    <View style={styles.infoDiv}>
-                        <Text style={styles.label}>Type</Text>
-                        <Text style={styles.val}>{type}</Text>
-                    </View>
-                    <View style={styles.infoDiv}>
-                        <Text style={styles.label}>Transaction type</Text>
-                        <Text style={styles.val}>{transactionType}</Text>
+                        <View style={styles.infoDiv}>
+                            <Text style={styles.label}>Type</Text>
+                            <Text style={styles.val}>{type}</Text>
+                        </View>
+                        <View style={styles.infoDiv}>
+                            <Text style={styles.label}>Transaction type</Text>
+                            <Text style={styles.val}>{transactionType}</Text>
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
-    </Modal>
+        </Modal>
+    </View>
   )
 }
 

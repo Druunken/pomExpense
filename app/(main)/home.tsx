@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import ModalTransactions from '@/components/ModalTransactions'
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 import { Colors } from "@/constants/Colors";
 import Animated, {
@@ -32,7 +33,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 // ** *** TECHNICAL SOLUTIONS *** ** //
 
 // ** *** DESIGN SOLUTIONS *** ** //
-
 const home = () => {
 
 
@@ -102,16 +102,17 @@ const home = () => {
 
   return (
     <Animated.View style={[styles.container,animatedContainer]}>
-      {/* <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" /> */}
-     {/*  <ImageBackground style={styles.pomBg}source={require("@/assets/imagesMain/pompomBg.png")}/> */}
+      <StatusBar translucent backgroundColor={"transparent"} barStyle="dark-content"/>
+      <StatusBar hidden={true} />
+      {/* <ImageBackground style={styles.pomBg}source={require("@/assets/imagesMain/pompomBg.png")}/> */}
       <SafeAreaView style={{paddingTop: Platform.OS === "android" && insets.top}}>
         <OverviewComponent visibleOverview={visibleOverview} setVisibleOverview={setVisibleOverview}/>
         <Animated.View style={[containerStyle]}>
-        <ModalTransactions editId={editId} balanceFade={balanceFade} value={value} setValue={setValue} editMode={editMode} setEditMode={setEditMode} expenseMode={expenseMode} setExpenseMode={setExpenseMode} visible={visibleModal} setVisible={setVisibleModal}/>
-        <ModalInfoTransaction id={infoId} visible={infoModal} setVisible={setInfoModal}/>
-        <BalanceContainer currency={currency} value={value} setVisibleOverview={setVisibleOverview} visibleOverview={visibleOverview}/>
-        <AddTransactionBtn setVisibleModal={setVisibleModal}/>
-        <LatestTransComponent setInfoId={setInfoId} setInfoModal={setInfoModal} setEditId={setEditId} setEditMode={setEditMode} setVisibleModal={setVisibleModal}/>
+          <ModalTransactions editId={editId} balanceFade={balanceFade} value={value} setValue={setValue} editMode={editMode} setEditMode={setEditMode} expenseMode={expenseMode} setExpenseMode={setExpenseMode} visible={visibleModal} setVisible={setVisibleModal}/>
+          <ModalInfoTransaction id={infoId} visible={infoModal} setVisible={setInfoModal}/>
+          <BalanceContainer currency={currency} value={value} setVisibleOverview={setVisibleOverview} visibleOverview={visibleOverview}/>
+          <AddTransactionBtn setVisibleModal={setVisibleModal}/>
+          <LatestTransComponent setInfoId={setInfoId} setInfoModal={setInfoModal} setEditId={setEditId} setEditMode={setEditMode} setVisibleModal={setVisibleModal}/>
         </Animated.View>
       </SafeAreaView>
     </Animated.View>

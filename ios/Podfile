@@ -13,10 +13,8 @@ install! 'cocoapods',
 
 prepare_react_native_project!
 
-target 'PomPomExpense' do
+target 'PomPom' do
   use_expo_modules!
-  pod 'lottie-ios', '4.5.0'
-
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];

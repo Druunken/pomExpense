@@ -1,11 +1,11 @@
-import { Text, View, StyleSheet, ImageBackground, TouchableOpacity, SafeAreaView, Platform, StatusBar } from "react-native";
+import { Text, View, StyleSheet, ImageBackground, TouchableOpacity, Platform, StatusBar } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {interpolateColor, useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming} from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 import Mainpom from '../assets/icons/pompomFriends.svg'
 import  db  from '../services/serverSide.js'
@@ -18,14 +18,11 @@ import AnimatedViewComp from '../components/AnimatedViewComp.js'
 
 // ** ** Build splash Art
 // ** ** **  Make the layout responsive throught out devices ** ** ** //
-
-
 export default function Index() {
   const { 
     automateIncomeDay,setAutomateIncomeDay,
     currentIncome,setCurrentIncome
   } = useContext(incomeActiveContext)
-
   const {
     firstLaunch,setFirstLaunch
   } = useContext(AppInitializationContext)
@@ -276,7 +273,7 @@ export default function Index() {
     try {
       const updateLaunch = await db.updateUserVisited(false)
     } catch (error) {
-      console.error(error)
+      console.error(error,"haapppend here")
     }
   }
 
@@ -285,9 +282,9 @@ export default function Index() {
     if(!firstLaunch){
       progress.value = withTiming(1,{duration:1000})
       setTimeout(() => {
-        asyncUpdateFirstLaunch()
         router.push("/(main)/home")
       },11000)
+      asyncUpdateFirstLaunch()
     }
   },[firstLaunch])
  
@@ -325,10 +322,10 @@ export default function Index() {
     try {
       const balance = await db.getBalance()
       const convert = numberValidation.converToString(balance)
-
+      const checkMonth = await db.InitialiseMonthsProps()
       setValue(convert)
     } catch (error) {
-      console.error(error)
+      console.error(error,"setBalance")
     }
   }
   
@@ -354,22 +351,26 @@ export default function Index() {
   useEffect(() => {
     if(firstLaunch){
       db.createDefaultMonthsProps()
-
       setPointer(1)
       setCurrency("")
       setValue("")
     }else{
-      setBalance()
-      db.InitialiseMonthsProps()
+      /* setBalance() */
     }
   },[])
 
-  const insets = useSafeAreaInsets()
+  useEffect(() => {
+      if(modalVisible) SystemNavigationBar.setNavigationColor(Colors.primaryBgColor.lightPrime,"light","navigation");
+      else SystemNavigationBar.setNavigationColor("transparent","dark","navigation");
+
+  }, [modalVisible])
+
+  const insets = useSafeAreaInsets() 
 
   return (
 
       <Animated.View style={[animatedBackground,{flex:1,position:"relative",backgroundColor:Colors.primaryBgColor.white}]}>
-        
+        <StatusBar translucent backgroundColor={modalVisible ? Colors.primaryBgColor.lightPrime : "transparent"} barStyle="dark-content"/>
         {/* <AnimatedViewComp/> */}
         {!firstLaunch && (
           <AnimatedSplashScreen/>
