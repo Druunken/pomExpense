@@ -102,7 +102,6 @@ const home = () => {
 
   return (
     <Animated.View style={[styles.container,animatedContainer]}>
-      <StatusBar translucent backgroundColor={"transparent"} barStyle="dark-content"/>
       <StatusBar hidden={true} />
       {/* <ImageBackground style={styles.pomBg}source={require("@/assets/imagesMain/pompomBg.png")}/> */}
       <SafeAreaView style={{paddingTop: Platform.OS === "android" && insets.top}}>

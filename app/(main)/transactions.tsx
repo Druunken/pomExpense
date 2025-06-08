@@ -1,9 +1,12 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import Animated, {  Extrapolation, interpolate, interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from 'react-native-reanimated'
+import Animated, {  Extrapolation, interpolate, interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import {CalendarList} from 'react-native-calendars';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler'
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
+import TransactionDataComponent from '../../components/TransactionDataComponent.js'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import { Colors } from '@/constants/Colors'
 import CategorieBtn from '@/components/CategorieBtn';
@@ -13,7 +16,10 @@ import { usersBalanceContext, incomeActiveContext } from "@/hooks/balanceContext
 import MonthInfoComp from '@/components/MonthComponents/MonthInfoComp.js'
 import DayView from '@/components/MonthComponents/DayView'
 import numberInputValidation from '@/services/numberInputValidation';
-import HeaderComp from '@/components/MonthComponents/HeaderComp'
+import FilterTransactionComp from '../../components/FilterTransactionComp.js'
+import FilterNavComp from '../../components/FilterNavComp.js'
+
+import SecondNavComp from '../../components/SecondNavComp.js'
 
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
@@ -27,12 +33,15 @@ const transactions = () => {
 
   const insets = useSafeAreaInsets()
 
-  const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + insets.top + 50
+  const MAX_TRANSLATE_Y = -SCREEN_HEIGHT  + 50
 
 
   const [swiped,setSwiped] = useState(false)
   const [dateStringPressed,setDayStringPressed] = useState("")
   const [dayPressed,setDayPressed] = useState(false)
+
+  const [searchPressed,setSearchPressed] = useState(false)
+  const [filterPressed,setFilterPressed] = useState(false)
 
   const { currency,value,markedDates } = useContext(usersBalanceContext)
   const { automateIncomeDay } = useContext(incomeActiveContext)
@@ -40,11 +49,87 @@ const transactions = () => {
   const [currentMonth,setCurrentMonth] = useState("")
   const [currentYear,setCurrentYear] = useState("")
 
-  const [tabs,setTabs] = useState("linear")
+  const [tabs,setTabs] = useState("week")
 
 
+  const mainNavContainerOp = useSharedValue(1)
+  const mainNavContainerIndex = useSharedValue(1)
+  const mainNavContainerX = useSharedValue(0)
+  
+  const secondNavContainerOp = useSharedValue(0)
+  const secondNavContainerIndex = useSharedValue(0)
+  const secondNavContainerHeight = useSharedValue(0)
+  const secondNavBG = useSharedValue(0)
+
+  const filterNavOp = useSharedValue(0)
+  const filterInd = useSharedValue(0)
+  const filterX = useSharedValue(-80)
+  const filterBg = useSharedValue(0)
+  const filterHeight = useSharedValue(45)
+  const filterMargin = useSharedValue(80)
+
+  const allNavOp =  useSharedValue(1)
+  const allNavIndex = useSharedValue(1)
+
+  const searchNavOp = useSharedValue(0)
+  const searchNavIndex = useSharedValue(0)
+  const searchNavX = useSharedValue(-50)
 
   const balanceContainerY = useSharedValue(0)
+
+  const animatedFilterNav = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      filterBg.value,
+      [0,1],
+      [Colors.primaryBgColor.gray,Colors.primaryBgColor.darkPurple]
+    )
+    return{
+      opacity: filterNavOp.value,
+      zIndex: filterInd.value,
+      transform: [{ translateX: filterX.value }],
+      backgroundColor: backgroundColor,
+      height: filterHeight.value,
+      marginTop: filterMargin.value
+    }
+  })
+
+  const animatedMainNav = useAnimatedStyle(() => {
+    return{
+      opacity: mainNavContainerOp.value,
+      zIndex: mainNavContainerIndex.value,
+      transform: [{ translateX: mainNavContainerX.value }]
+    }
+  })
+
+  const animatedSecondNav = useAnimatedStyle(() => {
+    return {
+      opacity: secondNavContainerOp.value,
+      zIndex: secondNavContainerIndex.value,
+    }
+  })
+
+  const animatedAllNav = useAnimatedStyle(() => {
+    return {
+      opacity: allNavOp.value,
+      zIndex: allNavIndex.value,
+      transform: [{ translateX: mainNavContainerX.value }]
+    }
+  })
+
+  const animatedSearchNav = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      secondNavBG.value,
+      [0,1],
+      [Colors.primaryBgColor.dark,Colors.primaryBgColor.gray]
+    )
+    return {
+      opacity: searchNavOp.value,
+      zIndex: searchNavIndex.value,
+      transform: [{ translateX: searchNavX.value }],
+      height: secondNavContainerHeight.value,
+      backgroundColor: backgroundColor
+    }
+  })
 
   const animatedBalanceContainer = useAnimatedStyle(() => {
     const borderRadius = interpolate(
@@ -56,7 +141,7 @@ const transactions = () => {
     const backgroundColor = interpolateColor(
       balanceContainerY.value,
       [MAX_TRANSLATE_Y + 100,-300],
-      ["black",Colors.primaryBgColor.prime],
+      [Colors.primaryBgColor.newPrime,Colors.primaryBgColor.black],
     )
 
     return {
@@ -129,8 +214,67 @@ const transactions = () => {
     setDayPressed(true)
   }
 
+  const navAllPressHandler = () => {
+
+    /*  this will handle the press on the all nav press */
+    /*  if pressed on All this will animate the navs to disapear and show only
+
+          searchbar
+          filters
+          an x button to close the nav mode
+
+    */
+    if(tabs === "all"){
+      /* Main Screen */
+      mainNavContainerOp.value = withTiming(1,{ duration:500 })
+      mainNavContainerIndex.value = 1
+      mainNavContainerX.value = withSpring(0)
+      allNavIndex.value = 1
+      allNavOp.value = withTiming(1,{ duration:500 })
+
+
+      /* Second Screen */
+      secondNavContainerOp.value = withTiming(0,{ duration:500 })
+      setTimeout(() => {
+        secondNavContainerIndex.value = -3
+        filterInd.value = -3
+      }, 500);
+      searchNavX.value = withTiming(-50,{ duration:500 })
+      secondNavContainerHeight.value = withTiming(0,{ duration: 500 })
+      filterNavOp.value = withTiming(0, { duration:500 })
+      filterX.value = withTiming(-80,{ duration:500 })
+      setTabs("week")
+    }else {
+      /* MAIN Screen */
+      mainNavContainerOp.value = withTiming(0,{ duration:500 })
+      mainNavContainerX.value = withTiming(300, { duration: 500 })
+      allNavOp.value = withTiming(0,{ duration:500 })
+
+      setTimeout(() => {
+        mainNavContainerIndex.value = -3
+      }, 500);
+      setTimeout(() => {
+        allNavIndex.value = -3
+      }, 500);
+
+      /* Second Screen */
+      secondNavContainerHeight.value = withTiming(80,{ duration: 500 })
+      secondNavContainerIndex.value = 1
+      secondNavContainerOp.value = withTiming(1,{ duration:500 })
+      searchNavIndex.value = 1
+      searchNavOp.value = withTiming(1,{ duration:500 }) 
+      searchNavX.value = withSpring(0)
+      filterInd.value = 1
+      filterNavOp.value = withTiming(1,{ duration:500 })
+      filterX.value = withSpring(0, { damping:13})
+      setTabs("all")
+    }
+   
+  }
+
   useEffect(() => {
-    scrollTo(-SCREEN_HEIGHT + insets.top)
+    /* scrollTo(-SCREEN_HEIGHT / 2.6) */
+    scrollTo(-SCREEN_HEIGHT)
   },[])
 
   useEffect(() => {
@@ -144,16 +288,42 @@ const transactions = () => {
       runOnJS(setSwiped)(true);
     }
   }, [balanceContainerY]);
+
+  useEffect(() => {
+    if(searchPressed){
+      secondNavContainerHeight.value = withSpring(45)
+      secondNavBG.value = withTiming(1,{ duration: 250 })
+      filterMargin.value = withSpring(55)
+    }else{
+      secondNavContainerHeight.value = withSpring(80)
+      secondNavBG.value = withTiming(0,{ duration: 250 })
+      filterMargin.value = withSpring(90)
+    }
+  },[searchPressed])
+
+  useEffect(() => {
+
+    /* 
+      if Filter has gotten any succesfull search than change to purple
+
+      if no search found then change to another chosen color 
+    */
+
+    if(filterPressed){
+      filterBg.value = withTiming(1,{ duration: 500 })
+      filterHeight.value = withTiming(450, { duration: 500 })
+    }else {
+      filterBg.value = withTiming(0,{ duration: 500 })
+      filterHeight.value = withTiming(45, { duration: 500 })
+    }
+  },[filterPressed])
   
   return (
     
   <GestureHandlerRootView>  
+    <SafeAreaView>
     <View style={styles.container}>
-      <View style={{height:insets.top,alignItems:"center",paddingHorizontal:50,flexDirection:"row",backgroundColor:Colors.primaryBgColor.prime,width:"100%",justifyContent:"space-between"}}>
-        <Text style={[styles.infoLabel,{color:"black"}]}>Year</Text>
-        <Text style={[styles.infoLabel,{color:"black"}]}>2025</Text>
-      </View>
-      <StatusBar hidden={true}/>
+      <StatusBar hidden={true} />
         <Animated.View style={[styles.dateContainer, animatedDateBackground, {zIndex:0}]}>
           
           <View style={styles.calendarContainer}>
@@ -169,9 +339,9 @@ const transactions = () => {
               textDayFontWeight: '300',
               textMonthFontWeight: 'bold',
               textDayHeaderFontWeight: '300',
-              textDayFontSize: 15,
-              textMonthFontSize: 20,
-              textDayHeaderFontSize: 14,
+              textDayFontSize: 12,
+              textMonthFontSize: 15,
+              textDayHeaderFontSize: 12,
               weekVerticalMargin:10,
             }}
             pagingEnabled
@@ -203,7 +373,7 @@ const transactions = () => {
                   overflow:"hidden"
                   
                 }]}>
-                  <Text style={{fontSize:20,fontFamily:"MainFont",color: state ? "blue" : "black"}}>{date?.day}</Text>
+                  <Text style={{fontSize:16,fontFamily:"MainFont",color: state ? "blue" : "black"}}>{date?.day}</Text>
                   {marking?.marked && (
                     <Text style={[styles.amountLabel,{color: marking?.amount < 0 ? Colors.primaryBgColor.persianRed : "mediumgray"}]}>{numberInputValidation.converToString(marking?.amount.toFixed(2))} {currency}</Text>
                     
@@ -220,50 +390,74 @@ const transactions = () => {
 
           <GestureDetector gesture={gesture}>
           <Animated.View  style={[styles.modalBalanceContainer,animatedBalanceContainer,{backgroundColor:"black",borderRadius:13}]}>
-            <View style={[{width:80,height:5,backgroundColor:Colors.primaryBgColor.prime,marginTop:10,justifyContent:"center",alignSelf:"center",borderRadius:5}]}/>
-              <View style={styles.balanceContainer}>
+            <View style={[{width:80,height:5,backgroundColor:Colors.primaryBgColor.black,marginTop:10,justifyContent:"center",alignSelf:"center",borderRadius:5}]}/>
+              <View style={[styles.balanceContainer]}>
               {/* <HeaderComp/> */}
             {/* {dayPressed && !swiped && (
               <TouchableOpacity style={styles.btnBack} onPress={() => setDayPressed(false)} >
                 <Text style={styles.btnLabel}>Back to Month</Text>
               </TouchableOpacity> 
             )} */}
-            
             {dayPressed && (
               <DayView date={dateStringPressed} totalAmount={markedDates[dateStringPressed] && markedDates[dateStringPressed].amount} currency={currency} />
             )}
 
             {!dayPressed && !swiped && (
-              <View style={styles.categorieBtnContainer}>
-              <CategorieBtn label={"Linear"} onPress={() => {
-                setTabs("linear")
-              }} focused={tabs === "linear"}/>
-              <CategorieBtn label={"Graph"} onPress={() => {
-                setTabs("graph")
-              }} focused={tabs === "graph"}/>
-              <CategorieBtn label={"Transactions"} onPress={() => {
-                setTabs("transactions")
-              }} focused={tabs === "transactions"}/>
+              <View style={{paddingHorizontal:30,width:"100%",marginTop:tabs === "all" ? 0 : 0}}>
+                <View style={[styles.categorieBtnContainer,{width:"100%"}]}>  
+                  {/* second container */}
+                  <Animated.View style={[animatedSecondNav,{position:"absolute",width:"100%",borderColor:Colors.primaryBgColor.darkPurple,top:0}]}>
+                    <Animated.View style={[animatedSearchNav,styles.secondContainer,{}]}>
+                      <SecondNavComp navAllPressHandler={navAllPressHandler} searchPressed={searchPressed} setSearchPressed={setSearchPressed}/>
+                    </Animated.View>
+                    <Animated.View style={[animatedFilterNav,{marginTop:45 + 3,borderRadius:8,position:"absolute",width:"100%"}]}>
+                      <FilterNavComp filterPressed={filterPressed} setFilterPressed={setFilterPressed} />
+                  </Animated.View>
+                  </Animated.View>
+                  {/* main container */}
+                  <Animated.View style={[animatedAllNav,{paddingLeft:10}]}>
+                    <TouchableOpacity onPress={navAllPressHandler}>
+                      <Text style={{
+                        color: Colors.primaryBgColor.black,
+                        fontSize:17,
+                        fontFamily:"BoldFont"
+                      }}>All</Text>
+                    </TouchableOpacity>
+                  </Animated.View>
+                  
+                  <Animated.View style={[animatedMainNav,{justifyContent:"flex-end",flexDirection:"row",alignItems:"center",backgroundColor:Colors.primaryBgColor.gray,borderRadius:6,marginLeft:30}]}>
+                    <CategorieBtn label={"Week"} onPress={() => {
+                      setTabs("week")
+                    }} focused={tabs === "week"}/>
+                    <CategorieBtn label={"Month"} onPress={() => {
+                      setTabs("month")
+                    }} focused={tabs === "month"}/>
+                    <CategorieBtn label={"Year"} onPress={() => {
+                      setTabs("year")
+                    }} focused={tabs === "year"}/>
+                  </Animated.View>
+              </View>
             </View>
             )}
           
-            {!swiped && !dayPressed && tabs === "linear" &&(
-              <MonthInfoComp month={currentMonth} year={currentYear} />
+            {!swiped && !dayPressed && tabs === "week" &&(
+              <TransactionDataComponent typeDate={tabs} />
             )}
-            {!swiped && !dayPressed && tabs === "graph" &&(
-              <GraphComponent month={currentMonth} year={currentYear} />
+            {!swiped && !dayPressed && tabs === "month" &&(
+              <TransactionDataComponent typeDate={tabs}/>
             )}
-            {!swiped && !dayPressed && tabs === "transactions" &&(
-              <ScrollView>
-                <TransactionsComponent month={currentMonth} year={currentYear} />
-              </ScrollView>
+            {!swiped && !dayPressed && tabs === "year" &&(
+              <TransactionDataComponent typeDate={tabs} />
             )}
-            
+            {!swiped && !dayPressed && tabs === "all" && (
+              <FilterTransactionComp/>
+            )}
           </View>
            
         </Animated.View>
         </GestureDetector>
     </View>
+    </SafeAreaView>
   </GestureHandlerRootView>
   )
 }
@@ -277,11 +471,20 @@ const styles = StyleSheet.create({
     position:"relative"
   },
   amountLabel:{
-    fontSize:10,
+    fontSize:9,
     fontFamily:"MainFont",
     color:"mediumgray",
     textAlign:"center",
 
+  },
+  secondContainer:{
+    width:"100%",
+    borderRadius:6,
+    flexDirection:"row",
+    alignItems:"center",
+    justifyContent:"space-between",
+    paddingHorizontal:10,
+    backgroundColor:Colors.primaryBgColor.dark
   },
   btnBack:{
     width:115,
@@ -305,10 +508,9 @@ const styles = StyleSheet.create({
   categorieBtnContainer:{
     width:"100%",
     alignItems:"center",
-    justifyContent:"center",
     flexDirection:"row",
-    gap:10,
-    marginVertical:15
+    borderRadius:10,
+    height:45,
   },
   modalBalanceContainer:{
     position:"absolute",

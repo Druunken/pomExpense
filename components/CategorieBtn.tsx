@@ -12,8 +12,8 @@ interface CategorieProps{
 const CategorieBtn: React.FC<CategorieProps> = ({label, onPress, focused}) => {
 
   return (
-      <TouchableOpacity style={[styles.btn,{backgroundColor: focused ? Colors.primaryBgColor.prime : Colors.primaryBgColor.white }]} onPress={onPress}>
-        <Text style={styles.label}>{label}</Text>
+      <TouchableOpacity style={[styles.btn,{backgroundColor: focused ? Colors.primaryBgColor.black : "transparent" }]} onPress={onPress}>
+        <Text style={[styles.label,{color: focused ? Colors.primaryBgColor.chillOrange : "white",fontFamily:focused ? "BoldFont" : "MainFont"}]}>{label}</Text>
       </TouchableOpacity>
   )
 }
@@ -22,16 +22,17 @@ const styles = StyleSheet.create({
     label:{
         color: Colors.primaryBgColor.black,
         fontSize:17,
-        fontFamily:"MainFont"
+        fontFamily:"BoldFont",
     },
+    
     btn:{
         backgroundColor:Colors.primaryBgColor.white,
-        width:110,
+        width:90,
         alignItems:"center",
-        borderRadius:10,
-        height:40,
+        borderRadius:6,
+        height:45,
         justifyContent:"center",
-        paddingHorizontal:5
+        zIndex:5,
     }
 })
 

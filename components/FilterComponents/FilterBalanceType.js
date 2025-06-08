@@ -4,10 +4,12 @@ import { Colors } from '@/constants/Colors'
 import SwitchComponent from './SwitchComponent'
 
 const FilterBalanceType = ({ state, setState }) => {
-  const titles = ["All","Expense","Income"]
+  const titles = ["All Transfers","Expense","Income"]
   return (
     <View style={styles.container}>
-      <SwitchComponent label={"BalanceType"} width={25} color={Colors.primaryBgColor.gray} steps={2} titles={titles} state={state} setState={setState}/>
+      <SwitchComponent label={"BalanceType"} width={25} color={Colors.primaryBgColor.prime} steps={2} titles={titles} state={state} setState={setState}
+      bgColor1={Colors.primaryBgColor.gray} bgColor2={Colors.primaryBgColor.persianRed} bgColor3={Colors.primaryBgColor.prime}
+      />
     </View>
   )
 }

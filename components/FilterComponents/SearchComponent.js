@@ -22,19 +22,18 @@ const SearchComponent = ({ setPressed, pressed, state, setState }) => {
         handlePress()
     }} style={[styles.container,{
         flex: pressed > 0 ? 1 : 0,
-        borderWidth: 3,
-        borderColor: pressed > 0 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.gray
+        borderWidth: 0,
+        borderColor: pressed > 0 ? Colors.primaryBgColor.prime : Colors.primaryBgColor.gray,
     }]}>
 
-        <Icon name="search" size={30} color={"white"}/>
+        <Icon name="search" size={25} color={Colors.primaryBgColor.newPrime}/>
             <TextInput style={styles.input} focus ref={inputRef} value={state} onChangeText={(txt) =>{
                 setState(txt)
             }} onPress={() => {
                 setPressed((prev) => !prev)
-            }} placeholderTextColor={Colors.primaryBgColor.white} placeholder='Search' onSubmitEditing={() => setPressed(false)} onBlur={() => {
+            }} placeholderTextColor={Colors.primaryBgColor.white} placeholder='' onSubmitEditing={() => setPressed(false)} onBlur={() => {
                 setPressed(false)
             }}/>
-        
     </TouchableOpacity>
   )
 }
@@ -43,21 +42,17 @@ export default SearchComponent
 
 const styles = StyleSheet.create({
     container:{
-        width:125,
-        height:50,
+        width:30,
+        height:45,
         flexDirection:"row",
         borderRadius:20,
         borderWidth:2,
-        borderColor:Colors.primaryBgColor.prime,
-        backgroundColor:Colors.primaryBgColor.gray,
         alignItems:"center",
-        paddingHorizontal:5,
-        marginTop:20
-        
+        borderWidth:3,
     },
     title:{
         fontSize:12,
-        color:Colors.primaryBgColor.white,
+        color:Colors.primaryBgColor.black,
         fontFamily:"MainFont",
     },
     input:{
@@ -66,6 +61,6 @@ const styles = StyleSheet.create({
         borderRadius:20,
         paddingLeft:10,
         height:40,
-        color:Colors.primaryBgColor.white
+        color:Colors.primaryBgColor.white,
     }
 })

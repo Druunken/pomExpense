@@ -149,9 +149,6 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
     const getData = async() => {
         try {
             const monthExpense = await db.getMonthProps()
-            if(monthExpense === undefined){
-                return
-            }
             if(monthExpense.length > 0){
                 /* if saving goal is active */
                 /* 250 of 1800 */
