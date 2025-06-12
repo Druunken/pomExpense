@@ -12,8 +12,8 @@ const createCurrentDate = async() => {
   const currDay = date.toISOString().split("T")[0]
   const arr = currDay.split("-")
   const day = arr[2]
-  const month = arr[1]
-  const year = arr[0]
+  const month = "05"
+  const year = "2027"
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]
 }
@@ -500,7 +500,6 @@ const deleteTable = async() => {
 
       // check if there is no column for current Month
       if(currMonthExists.length < 1){
-
         // check for previous month if it's already processed and exclude the current Month we are currently in
         const notProcessedMonth = await db.getAllAsync(
           'SELECT * FROM monthsProps WHERE monthProcessed = FALSE AND NOT (monthsIncomeDate = ? AND yearsIncomeDate = ?)',[currMonth,currYear]
@@ -1769,38 +1768,143 @@ const getDayTrans = async(dateString) => {
     }
   }
 
-  const dynamicQuery = async(month,year,search,filterAmount,filterBalType) => {
-    try {
-      const isExpense = filterBalType === "minus" && filterAmount
-      const isIncome = filterBalType === "plus" && filterAmount
+  const dynamicQuery = async (month, year, search = "", filterAmount = "", filterBalType = "", type, selectedDay=undefined) => {
+  try {
 
-      const validateExpense = isExpense ? 'DESC' : 'ASC'
-      const validateIncome = isIncome ? 'ASC' : "DESC"
-      console.log(validateExpense)
-      console.log("DEBUG",filterAmount)
-      const searchPattern = `${search}%`
-      const filterBalPattern = `${filterBalType}%`
-      let validateAmount = filterAmount ? `ORDER BY moneyValue ASC`: `ORDER BY moneyValue DESC`
-      if(filterAmount === null) validateAmount = ''
+    const isExpense = filterBalType === "minus" && filterAmount;
+    const isIncome = filterBalType === "plus" && filterAmount;
 
+    const orderDirection = isExpense ? 'DESC' : isIncome ? 'ASC' : '';
 
-      const getData = await db.getAllAsync(
-        `
-        SELECT * FROM balance
-        WHERE
-          value LIKE ? AND
-          balanceType LIKE ? AND
-          month = ? AND
-          year = ?
-        ${validateAmount}
-        `,[searchPattern,filterBalPattern,month,year]
-      )
+    const searchPattern = `${search}%`;
+    const filterBalPattern = `${filterBalType}%`;
 
-      return getData
-    } catch (error) {
-      console.error(error,"dynamicQuery")
+    const params = [searchPattern, filterBalPattern];
+
+    
+    let whereClause = `
+      value LIKE ? AND
+      balanceType LIKE ? 
+    `;
+
+    if(selectedDay !== undefined){
+      console.log(selectedDay)
+      whereClause += ` AND day = ?`
+      params.push(selectedDay)
     }
+
+    if (month === undefined && year === undefined) {
+      /* const date = await createCurrentDate();
+      month = date[1];
+      year = date[2]; */
+    }
+
+     if(month) {
+      console.log("month applied")
+      whereClause += `AND month = ?`
+      params.push(month)
+    }
+
+    if(year){
+      console.log("year applied")
+      whereClause += `AND year = ?`
+      params.push(year)
+    }
+
+    if (Array.isArray(type) && type.length > 0) {
+      const placeholders = type.map(() => '?').join(', ');
+      whereClause += ` AND type IN (${placeholders})`;
+      params.push(...type);
+    }
+
+    let orderByClause = '';
+    if (filterAmount !== null && orderDirection) {
+      orderByClause = `ORDER BY moneyValue ${orderDirection}`;
+      whereClause += `, ORDER BY ID DESC`
+    }else{
+      whereClause += `ORDER BY ID DESC`
+    }
+
+    const query = `
+      SELECT * FROM balance
+      WHERE ${whereClause}
+      ${orderByClause}
+    `;
+
+    const getData = await db.getAllAsync(query, params);
+    return getData;
+
+  } catch (error) {
+    console.error(error, "dynamicQuery");
   }
+};
+
+const getProperMonths = async() => {
+  
+  try {
+    let monthsArr = []
+    const getAllMonths = await db.getAllAsync(
+      `
+      SELECT * FROM monthsProps
+      `
+    )
+    for(let i = getAllMonths.length - 1; i >= 0; i--){
+      monthsArr.push(getAllMonths[i].monthsIncomeDate)
+    }
+    return [monthsArr,getAllMonths]
+  } catch (error) {
+    
+  }
+}
+
+const getAllYears = async() => {
+  try {
+    let yearsObj = {}
+    const getYears = await db.getAllAsync(
+      `
+      SELECT * FROM monthsProps
+      `
+    )
+
+    /* 
+    
+      balance : true
+      totalTransactions : true
+      ...
+      some missing here
+      
+
+    */
+
+    for(let i = 0 ; i < getYears.length; i ++){
+      const currYear = getYears[i]?.yearsIncomeDate
+      const balance = getYears[i]?.monthsTotalBalance
+      const amountTransactions = getYears[i]?.monthsTotalTransactions
+
+      if(yearsObj[currYear] === undefined)
+        yearsObj[currYear] = {
+          balance: balance,
+          monthsTotalTransactions: amountTransactions,
+          year: currYear
+
+        }
+      else{
+        const prevAmountTrans = yearsObj[currYear].monthsTotalTransactions
+        yearsObj[currYear] = {
+          balance: balance,
+          monthsTotalTransactions: prevAmountTrans + amountTransactions,
+          year: currYear
+        }
+      }
+    }
+
+    return yearsObj
+
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 
 
 export default {
@@ -1855,5 +1959,7 @@ export default {
   getDayTrans,
   newOpening,
   getAllMonths,
-  dynamicQuery
+  dynamicQuery,
+  getProperMonths,
+  getAllYears
 }

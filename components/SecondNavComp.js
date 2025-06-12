@@ -5,15 +5,11 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } fr
 import SearchComponent from '../components/FilterComponents/SearchComponent'
 import FilterAmount from '@/components/FilterComponents/FilterAmount'
 import FilterBalanceType from '@/components/FilterComponents/FilterBalanceType'
-import db from '@/services/serverSide'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '@/constants/Colors'
 
-const SecondNavComp = ({ navAllPressHandler, searchPressed, setSearchPressed }) => {
+const SecondNavComp = ({ navAllPressHandler, searchPressed, setSearchPressed, inputSearch, setInputSearch, selectedMonth, selectedYear, selectedDay, filteredData, setFilteredData, categoryList}) => {
 
-    const [data,setData] = useState({})
-    const [noData,setNoData] = useState(false)
-    const [inputSearch,setInputSearch] = useState("")
     const [amountType,setAmountType] = useState(null)
     const [balType,setBalType] = useState("")
 
@@ -28,20 +24,6 @@ const SecondNavComp = ({ navAllPressHandler, searchPressed, setSearchPressed }) 
             transform: [{ translateX: filtersX.value }]
         }
     })
-
-    const fetchData = async() => {
-        try {
-
-            const getData = await db.dynamicQuery(month,year,inputSearch,amountType,balType)
-            if(getData.length > 0){
-                setData(getData)
-                setNoData(false)
-            }
-            else setNoData(true) 
-        } catch (error) {
-            console.error(error)
-        }
-    }
 
     useEffect(() => {
         if(searchPressed){
@@ -61,13 +43,13 @@ const SecondNavComp = ({ navAllPressHandler, searchPressed, setSearchPressed }) 
 
    return (
     <View style={styles.container}>
-        <SearchComponent setPressed={setSearchPressed} pressed={searchPressed} state={inputSearch} setState={setInputSearch} />
+        <SearchComponent categoryList={categoryList} setFilteredData={setFilteredData} selectedMonth={selectedMonth} selectedYear={selectedYear} selectedDay={selectedDay} setPressed={setSearchPressed} pressed={searchPressed} state={inputSearch} setState={setInputSearch} amountType={amountType} balType={balType}/>
         <Animated.View style={[animatedFilters,{ flexDirection:"row",gap:10,justifyContent:"center",alignItems:"center" }]}>
             <FilterBalanceType state={balType} setState={setBalType}/> 
             <FilterAmount state={amountType} setState={setAmountType}/>
         </Animated.View>
         <TouchableOpacity onPress={navAllPressHandler}>
-            <Icon name='exit' size={25} color={Colors.primaryBgColor.newPrime}/>
+            <Icon name='exit' size={25} color={Colors.primaryBgColor.white}/>
         </TouchableOpacity>
     </View>
   )

@@ -18,6 +18,8 @@ import DayView from '@/components/MonthComponents/DayView'
 import numberInputValidation from '@/services/numberInputValidation';
 import FilterTransactionComp from '../../components/FilterTransactionComp.js'
 import FilterNavComp from '../../components/FilterNavComp.js'
+import TransactionModal from '../../components/ModalformComponents/TransactionModal.js'
+import { months, years, days} from '@/constants/Dates.js';
 
 import SecondNavComp from '../../components/SecondNavComp.js'
 
@@ -40,16 +42,24 @@ const transactions = () => {
   const [dateStringPressed,setDayStringPressed] = useState("")
   const [dayPressed,setDayPressed] = useState(false)
 
+  const [transModalVisible,setTransModalVisible] = useState(false)
+  const [id,setId] = useState(0)
+
+  const [filteredData,setFilteredData] = useState()
   const [searchPressed,setSearchPressed] = useState(false)
+  const [inputSearch,setInputSearch] = useState("")
   const [filterPressed,setFilterPressed] = useState(false)
 
   const { currency,value,markedDates } = useContext(usersBalanceContext)
   const { automateIncomeDay } = useContext(incomeActiveContext)
 
-  const [currentMonth,setCurrentMonth] = useState("")
-  const [currentYear,setCurrentYear] = useState("")
+  const [categoryList, setCategoryList] = useState([])
 
-  const [tabs,setTabs] = useState("week")
+  const [selectedDay,setSelectedDay] = useState("")
+  const [selectedMonth,setSelectedMonth] = useState("")
+  const [selectedYear,setSelectedYear] = useState("")
+
+  const [tabs,setTabs] = useState("month")
 
 
   const mainNavContainerOp = useSharedValue(1)
@@ -77,11 +87,13 @@ const transactions = () => {
 
   const balanceContainerY = useSharedValue(0)
 
+  const validateFData = Array.isArray(filteredData) && filteredData.length > 0
+
   const animatedFilterNav = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
       filterBg.value,
       [0,1],
-      [Colors.primaryBgColor.gray,Colors.primaryBgColor.darkPurple]
+      [validateFData ? Colors.primaryBgColor.chillOrange : Colors.primaryBgColor.gray,Colors.primaryBgColor.darkPurple]
     )
     return{
       opacity: filterNavOp.value,
@@ -120,7 +132,7 @@ const transactions = () => {
     const backgroundColor = interpolateColor(
       secondNavBG.value,
       [0,1],
-      [Colors.primaryBgColor.dark,Colors.primaryBgColor.gray]
+      [Colors.primaryBgColor.lightPrime,Colors.primaryBgColor.gray]
     )
     return {
       opacity: searchNavOp.value,
@@ -264,7 +276,7 @@ const transactions = () => {
       searchNavIndex.value = 1
       searchNavOp.value = withTiming(1,{ duration:500 }) 
       searchNavX.value = withSpring(0)
-      filterInd.value = 1
+      filterInd.value = 3
       filterNavOp.value = withTiming(1,{ duration:500 })
       filterX.value = withSpring(0, { damping:13})
       setTabs("all")
@@ -348,9 +360,9 @@ const transactions = () => {
             displayLoadingIndicator={false}
             markedDates={markedDates}   
             onMonthChange={(el) => {
-              let currDateString = el.dateString.split("-")
-              setCurrentMonth(currDateString[1])
-              setCurrentYear(currDateString[0])
+              /* let currDateString = el.dateString.split("-")
+              setSelectedMonth(currDateString[1])
+              setSelectedYear(currDateString[0]) */
             }}
             dayComponent={({date,state,marking}) => {
               const automateDayValid = date?.day === Number(automateIncomeDay)
@@ -408,10 +420,10 @@ const transactions = () => {
                   {/* second container */}
                   <Animated.View style={[animatedSecondNav,{position:"absolute",width:"100%",borderColor:Colors.primaryBgColor.darkPurple,top:0}]}>
                     <Animated.View style={[animatedSearchNav,styles.secondContainer,{}]}>
-                      <SecondNavComp navAllPressHandler={navAllPressHandler} searchPressed={searchPressed} setSearchPressed={setSearchPressed}/>
+                      <SecondNavComp  categoryList={categoryList} filteredData={filteredData} setFilteredData={setFilteredData} selectedMonth={selectedMonth} selectedYear={selectedYear} selectedDay={selectedDay} navAllPressHandler={navAllPressHandler} searchPressed={searchPressed} setSearchPressed={setSearchPressed} inputSearch={inputSearch} setInputSearch={setInputSearch} />
                     </Animated.View>
-                    <Animated.View style={[animatedFilterNav,{marginTop:45 + 3,borderRadius:8,position:"absolute",width:"100%"}]}>
-                      <FilterNavComp filterPressed={filterPressed} setFilterPressed={setFilterPressed} />
+                    <Animated.View style={[animatedFilterNav,{borderRadius:8,position:"absolute",width:"100%"}]}>
+                      <FilterNavComp  setSelectedDay={setSelectedDay} selectedYear={selectedYear} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} setSelectedYear={setSelectedYear} filteredData={filteredData} filterPressed={filterPressed} setFilterPressed={setFilterPressed}  categoryList={categoryList} setCategoryList={setCategoryList}/>
                   </Animated.View>
                   </Animated.View>
                   {/* main container */}
@@ -426,9 +438,9 @@ const transactions = () => {
                   </Animated.View>
                   
                   <Animated.View style={[animatedMainNav,{justifyContent:"flex-end",flexDirection:"row",alignItems:"center",backgroundColor:Colors.primaryBgColor.gray,borderRadius:6,marginLeft:30}]}>
-                    <CategorieBtn label={"Week"} onPress={() => {
-                      setTabs("week")
-                    }} focused={tabs === "week"}/>
+                    <CategorieBtn label={"Day"} onPress={() => {
+                      setTabs("day")
+                    }} focused={tabs === "day"}/>
                     <CategorieBtn label={"Month"} onPress={() => {
                       setTabs("month")
                     }} focused={tabs === "month"}/>
@@ -440,22 +452,23 @@ const transactions = () => {
             </View>
             )}
           
-            {!swiped && !dayPressed && tabs === "week" &&(
-              <TransactionDataComponent typeDate={tabs} />
+            {!swiped && !dayPressed && tabs === "day" &&(
+              <TransactionDataComponent typeDate={tabs} dateData={days} />
             )}
             {!swiped && !dayPressed && tabs === "month" &&(
-              <TransactionDataComponent typeDate={tabs}/>
+              <TransactionDataComponent typeDate={tabs} dateData={months} />
             )}
             {!swiped && !dayPressed && tabs === "year" &&(
-              <TransactionDataComponent typeDate={tabs} />
+              <TransactionDataComponent typeDate={tabs} dateData={years} />
             )}
             {!swiped && !dayPressed && tabs === "all" && (
-              <FilterTransactionComp/>
+              <FilterTransactionComp filteredData={filteredData} setFilteredData={setFilteredData} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
           </View>
            
         </Animated.View>
         </GestureDetector>
+        <TransactionModal visible={transModalVisible} setVisible={setTransModalVisible} id={id} setId={setId} />
     </View>
     </SafeAreaView>
   </GestureHandlerRootView>
@@ -475,7 +488,6 @@ const styles = StyleSheet.create({
     fontFamily:"MainFont",
     color:"mediumgray",
     textAlign:"center",
-
   },
   secondContainer:{
     width:"100%",
@@ -484,7 +496,6 @@ const styles = StyleSheet.create({
     alignItems:"center",
     justifyContent:"space-between",
     paddingHorizontal:10,
-    backgroundColor:Colors.primaryBgColor.dark
   },
   btnBack:{
     width:115,

@@ -355,7 +355,7 @@ export default function Index() {
       setCurrency("")
       setValue("")
     }else{
-      /* setBalance() */
+      setBalance()
     }
   },[])
 

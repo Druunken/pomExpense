@@ -143,7 +143,7 @@ const settings = () => {
       )}
 
       <SafeAreaView style={[styles.layout,{backgroundColor:Colors.primaryBgColor.newPrime}]}>
-        <ScrollView contentContainerStyle={styles.mainOptions} keyboardShouldPersistTaps="always" scrollEnabled={true} showsHorizontalScrollIndicator onScroll={() => console.log("pressed")}>
+        <ScrollView contentContainerStyle={styles.mainOptions} keyboardShouldPersistTaps="always" scrollEnabled={true} showsHorizontalScrollIndicator>
           <Text style={styles.settingsLabel}>Appearance</Text>
           <Buttons secBtn={false} icon={""} onPress={() => alert("Available soon")} label={"Change Theme"} brdCol={Colors.primaryBgColor.newPrimeLight}></Buttons>
           <Text style={styles.settingsLabel}>Profile</Text>
