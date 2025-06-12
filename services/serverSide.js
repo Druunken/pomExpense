@@ -10,9 +10,10 @@ const db = SQLite.openDatabaseSync("balance.db")
 const createCurrentDate = async() => {
   const date = new Date
   const currDay = date.toISOString().split("T")[0]
+  console.log(currDay)
   const arr = currDay.split("-")
   const day = arr[2]
-  const month = "05"
+  const month = arr[1]
   const year = "2027"
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]

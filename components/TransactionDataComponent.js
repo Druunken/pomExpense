@@ -61,7 +61,7 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
           const yearsData = await db.getAllYears()
           setDataLength(Object.keys(yearsData).length)
           setTrackingIndex(Object.keys(yearsData).length - 1)
-          setQueryState
+          setQueryState(Object.keys(yearsData))
           setLabel(Object.keys(yearsData)[trackingIndex])
           setData(yearsData)
         }

@@ -50,8 +50,8 @@ const NumberInput = ({
     }
 
     const balanceInputValidation = (txt) => {
-      console.log(txt)
-      if(txt.includes(".")) return
+      
+      /* if(txt.includes(".")) return */
 
       const len = txt.length
       const validInput = /^[\d,\.]*$/.test(txt)
