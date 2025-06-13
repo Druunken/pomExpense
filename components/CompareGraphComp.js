@@ -14,7 +14,7 @@ const CompareGraphComp = ({ outputData, typeDate, setGivenWidth }) => {
     */
 
     useEffect(() => {
-      console.log(outputData)
+      
     },[outputData])
   return (
     <View style={styles.container} onLayout={(ev) => setGivenWidth(ev.nativeEvent.layout.width)}>

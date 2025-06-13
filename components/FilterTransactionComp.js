@@ -7,7 +7,7 @@ import LottieView from 'lottie-react-native'
 import numberInputValidation from '@/services/numberInputValidation'
 import { months } from '../constants/Dates.js'
 
-const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVisible, setId , monthView, yearView, queryState}) => {
+const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVisible, setId , monthView, yearView, queryState, setContentOffSetY, style }) => {
 
 
     const [renderItems,setRenderItems] = useState([])
@@ -55,7 +55,7 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
 
           dataRdyOp.value = withTiming(1, {duration:250})
           dataRdyInd.value = 0
-        }
+        } 
     } 
 
 
@@ -74,10 +74,9 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
         }else{
           data = await db.dynamicQuery()
         }
-        console.log("K OK sd")
         setFilteredData(data)
         animateValidtion(data.length > 0 ? true : false)
-        elementToRender(data.length > 0 ? true : false)
+        elementToRender(data.length > 0 ? true : false,data)
       } catch (error) {
         console.error(error,"firstMountFetch")
       
@@ -87,6 +86,10 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
     useEffect(() => {
       firstMountFetch()
     },[])
+
+    useEffect(() => {
+      firstMountFetch()
+    },[queryState])
 
     /* useEffect(() => {
 
@@ -103,18 +106,17 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
       return day + " " + month + " "  + year
     }
 
-    const elementToRender = (valid) => {
+    const elementToRender = (valid,data) => {
       if(valid){
-        console.log(filteredData)
         let elementsArr = []
         let dateMemo = ""
         let flag = false
-        for(let i = 0; i < filteredData?.length; i++){
-          const title = filteredData[i].value
-          const moneyValue = filteredData[i].moneyValue
-          const date = filteredData[i].date
-          const type = filteredData[i].type
-          const id = filteredData[i].id
+        for(let i = 0; i < data?.length; i++){
+          const title = data[i].value
+          const moneyValue = data[i].moneyValue
+          const date = data[i].date
+          const type = data[i].type
+          const id = data[i].id
           let dateDiff = date
           if(dateMemo !== dateDiff){
             dateDiff = date
@@ -155,14 +157,12 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
     }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,style]}>
       <View style={styles.transactionContainer}>
         <Animated.View style={[animatedNoData,{position:"absolute",top:0,justifyContent:"center",alignItems:"center",width:"100%",height:350}]}>
           <Text style={styles.infoLabel}>No data</Text>
           <LottieView style={styles.lottieNoData} source={require("../assets/lottie/settings_lottie.json")} autoPlay loop/>
         </Animated.View>
-
-
         {/* 
 
             Graph Component is missing here.
@@ -174,9 +174,10 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
             Thought could be 
 
          */}
-
         <Animated.View style={[animatedDataRdy]}>
-          <ScrollView contentContainerStyle={styles.itemContainer}>
+          <ScrollView contentContainerStyle={styles.itemContainer} onScroll={(ev) => {
+            setContentOffSetY(ev.nativeEvent.contentOffset.y )
+          }}>
             {renderItems}
           </ScrollView>
         </Animated.View>
@@ -189,10 +190,8 @@ export default FilterTransactionComp
 
 const styles = StyleSheet.create({
     container:{
-        marginTop:80,
-        padding:20,
-        minHeight:500,
-        paddingHorizontal:35
+        paddingHorizontal:35,
+        height:250,
     },
     transactionContainer:{
     },
@@ -213,7 +212,6 @@ const styles = StyleSheet.create({
       height:70
     },
     itemContainer:{
-      minHeight:450,
       gap:10,
     },
     title:{
