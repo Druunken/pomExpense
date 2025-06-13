@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, Dimensions } from 'react-native'
 import React, { useEffect } from 'react'
 import { months } from '../constants/Dates.js'
+import MonthsStatsComp from '../components/MonthsStatsComp.js'
 
 const { width } = Dimensions.get("window")
 
-const CompareGraphComp = ({ outputData, typeDate, setGivenWidth }) => {
+const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
 
     /* 
@@ -22,12 +23,16 @@ const CompareGraphComp = ({ outputData, typeDate, setGivenWidth }) => {
         <View>
           <Text style={styles.label}>{typeDate === "month" ? months[outputData?.monthsIncomeDate] : outputData.year}</Text> 
         </View>
+
+
+        {/* Stats of the Month comp here */}
+        <MonthsStatsComp/>
       </View>
     </View>
   )
 }
 
-export default CompareGraphComp
+export default GraphComp
 
 const styles = StyleSheet.create({
     container:{

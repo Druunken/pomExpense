@@ -174,7 +174,7 @@ const transactions = () => {
   const context = useSharedValue({y:0})
 
   const gesture = Gesture.Pan().onStart(() => {
-    context.value = {y: balanceContainerY.value}
+    /* context.value = {y: balanceContainerY.value}
   }).onUpdate((event) => {
     balanceContainerY.value = event.translationY + context.value.y
     balanceContainerY.value = Math.max(balanceContainerY.value,MAX_TRANSLATE_Y-50)
@@ -183,7 +183,7 @@ const transactions = () => {
       scrollTo(-SCREEN_HEIGHT / 2.7)
     }else if(balanceContainerY.value < -SCREEN_HEIGHT / 1.5){
       scrollTo(MAX_TRANSLATE_Y - insets.top)
-    }
+    } */
   })
 
   const animatedDateBackground = useAnimatedStyle(() => {

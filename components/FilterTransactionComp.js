@@ -175,7 +175,7 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
 
          */}
         <Animated.View style={[animatedDataRdy]}>
-          <ScrollView contentContainerStyle={styles.itemContainer} onScroll={(ev) => {
+          <ScrollView scrollEnabled scrollEventThrottle={16} contentContainerStyle={styles.itemContainer} onScroll={(ev) => {
             setContentOffSetY(ev.nativeEvent.contentOffset.y )
           }}>
             {renderItems}
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     },
     itemContainer:{
       gap:10,
+      flexGrow:1,
     },
     title:{
       fontSize:13,

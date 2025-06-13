@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 import SwipeLabelDataComp from '../components/SwipeLabelDataComp.js'
-import CompareGraphComp from '../components/CompareGraphComp.js'
+import GraphComp from '../components/GraphComp.js'
 import db from '../services/serverSide'
 import { months, days, years } from '../constants/Dates.js'
 import FilterTransactionComp from './FilterTransactionComp.js'
@@ -146,10 +146,10 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
       <Animated.View style={[animatedContainer,styles.graphContainer,{zIndex:0}]} >
         <SwipeLabelDataComp setState={setTrackingIndex} dataLength={dataLength} label={label} backLabel={backLabel} forwLabel={forwLabel}/>
 
-        <ScrollView contentContainerStyle={styles.scrollDiv} horizontal pagingEnabled >
-          <CompareGraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
-          <CompareGraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
-          <CompareGraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+        <ScrollView contentContainerStyle={styles.scrollDiv} horizontal pagingEnabled  scrollEnabled>
+          <GraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          <GraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          <GraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
         </ScrollView>
       </Animated.View>
 
