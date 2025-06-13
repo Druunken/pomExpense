@@ -24,7 +24,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
           <Text style={styles.label}>{typeDate === "month" ? months[outputData?.monthsIncomeDate] : outputData.year}</Text> 
         </View>
 
-
+        
         {/* Stats of the Month comp here */}
         <MonthsStatsComp/>
       </View>
