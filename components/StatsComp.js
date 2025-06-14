@@ -127,8 +127,10 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
 
     useEffect(() => {
+      console.log(outputData,"outputdata")
       if(typeDate === "year"){
         yearRender()
+
       }else if(typeDate === "month"){
         monthRender()
       }else if(typeDate === "day"){
