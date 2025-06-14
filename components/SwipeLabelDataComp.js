@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/Colors'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 
-const SwipeLabelDataComp = ({ setState, dataLength, label, backLabel, forwLabel }) => {
+const SwipeLabelDataComp = ({ setState, dataLength, label, backLabel, forwLabel, yearLabel }) => {
 
 
     /* 
@@ -75,6 +75,7 @@ const SwipeLabelDataComp = ({ setState, dataLength, label, backLabel, forwLabel 
             </Animated.View>
             <View style={{minWidth:80,justifyContent:"center",alignItems:"center"}}>
                 <Text style={styles.label}>{label}</Text>
+                <Text style={[styles.label,{fontSize:13,color:Colors.primaryBgColor.gray}]}>{yearLabel}</Text>
             </View>
             <Animated.View style={animatedForwBtn}>
             <TouchableOpacity activeOpacity={0.9} style={styles.btn} onPress={pressForw}  disabled={forwLabel === ""}>

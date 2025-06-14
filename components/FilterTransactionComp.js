@@ -1,16 +1,23 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Colors } from '@/constants/Colors'
 import db from '@/services/serverSide'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import LottieView from 'lottie-react-native'
 import numberInputValidation from '@/services/numberInputValidation'
 import { months } from '../constants/Dates.js'
+import { Ionicons } from '@expo/vector-icons'
 
-const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVisible, setId , monthView, yearView, queryState, setContentOffSetY, style }) => {
+const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, scrollbehaviour, setTransModalVisible, setId , monthView, yearView, dayView, queryState, style, setContentOffSetY, setScrollingDown }) => {
 
 
     const [renderItems,setRenderItems] = useState([])
+
+    const prevOffestY = useRef(0)
+
+    const [pressedUpBtn,setPressedUpBtn] = useState(false)
+
+    const scrollViewRef = useRef(null)
 
 
     /* 
@@ -24,6 +31,9 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
     const dataRdyOp = useSharedValue(0)
     const dataRdyInd = useSharedValue(-3)
 
+    const containerHeight = useSharedValue(300)
+
+    const upBtnOp = useSharedValue(0)
 
     const animatedNoData = useAnimatedStyle(() => {
       return {
@@ -35,6 +45,17 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
       return {
         opacity: dataRdyOp.value,
         zIndex: dataRdyInd.value,
+      }
+    })
+
+    const animatedContainer = useAnimatedStyle(() => {
+      return{
+        height: containerHeight.value
+      }
+    })
+    const animatedUpBtn = useAnimatedStyle(() => {
+      return {
+        opacity:upBtnOp.value,
       }
     })
 
@@ -64,6 +85,10 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
       setId(id)
     }
 
+    const scrollToTop = () => {
+      scrollViewRef.current?.scrollTo({ y:0, animated: true })
+    }
+
     const firstMountFetch = async() => {
       try {
         let data;
@@ -71,7 +96,14 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
           data = await db.dynamicQuery(queryState,undefined)
         }else if(yearView){
           data = await db.dynamicQuery(undefined,queryState)
-        }else{
+        }else if(dayView){
+          let dateString = queryState.split("-")
+          let month = dateString[1]
+          let year = dateString[0]
+          let day = dateString[2]
+          data = await db.dynamicQuery(month,year,"","","",undefined,day)
+        }
+        else{
           data = await db.dynamicQuery()
         }
         setFilteredData(data)
@@ -104,6 +136,38 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
       const month = months[arr[1]]
       const day = arr[2]
       return day + " " + month + " "  + year
+    }
+
+    const handleScroll = (ev) => {
+      if(!scrollbehaviour) return
+      const currOffset = ev.nativeEvent.contentOffset.y
+      const isScrollingDown = currOffset >= prevOffestY.current
+      prevOffestY.current = currOffset
+      if(isScrollingDown && currOffset > 5){
+        setScrollingDown(true)
+        containerHeight.value = withTiming(450,{ duration: 500 })
+        upBtnOp.value = withTiming(0,{ duration: 450 })
+        if(pressedUpBtn){
+          setPressedUpBtn(false)
+        }
+        return
+      }else if (currOffset < 5){
+        containerHeight.value = withTiming(250,{ duration: 400 })
+        upBtnOp.value = withTiming(0,{ duration: 450 })
+        setScrollingDown(false)
+        return
+      }else if(!isScrollingDown && currOffset > 5 && !pressedUpBtn){
+        upBtnOp.value = withTiming(1,{ duration: 450 })
+        return 
+      }
+    }
+
+    const upPressHandle = () => {
+      setScrollingDown(false)
+      setPressedUpBtn(true)
+      scrollToTop()
+      containerHeight.value = withTiming(250,{ duration: 400 })
+      upBtnOp.value = withTiming(0,{ duration: 450 })
     }
 
     const elementToRender = (valid,data) => {
@@ -156,12 +220,19 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
       }
     }
 
+
   return (
-    <View style={[styles.container,style]}>
+    <Animated.View style={[styles.container,animatedContainer,style && style,{borderWidth:0}]}>
       <View style={styles.transactionContainer}>
-        <Animated.View style={[animatedNoData,{position:"absolute",top:0,justifyContent:"center",alignItems:"center",width:"100%",height:350}]}>
+        <Animated.View style={[animatedNoData,{justifyContent:"center",alignItems:"center",width:"100%",position:"absolute"}]}>
           <Text style={styles.infoLabel}>No data</Text>
           <LottieView style={styles.lottieNoData} source={require("../assets/lottie/settings_lottie.json")} autoPlay loop/>
+        </Animated.View>
+
+        <Animated.View style={[animatedUpBtn,styles.upBtnDiv,{}]}>
+          <TouchableOpacity style={styles.upBtn} onPress={upPressHandle}>
+            <Ionicons name='arrow-up' size={30}/>
+          </TouchableOpacity>
         </Animated.View>
         {/* 
 
@@ -175,14 +246,14 @@ const FilterTransactionComp = ({ filteredData, setFilteredData, setTransModalVis
 
          */}
         <Animated.View style={[animatedDataRdy]}>
-          <ScrollView scrollEnabled scrollEventThrottle={16} contentContainerStyle={styles.itemContainer} onScroll={(ev) => {
-            setContentOffSetY(ev.nativeEvent.contentOffset.y )
+          <ScrollView  ref={scrollViewRef} bounces={false} scrollEnabled scrollEventThrottle={20} contentContainerStyle={styles.itemContainer} onScroll={(ev) => {
+            handleScroll(ev)
           }}>
             {renderItems}
           </ScrollView>
         </Animated.View>
       </View>
-    </View>
+    </Animated.View>
   )
 }
 
@@ -191,7 +262,25 @@ export default FilterTransactionComp
 const styles = StyleSheet.create({
     container:{
         paddingHorizontal:35,
-        height:250,
+    },
+    upBtnDiv:{
+      position:"absolute",
+      bottom:50,
+      zIndex:100,
+      justifyContent:"center",
+      alignItems:"center",
+      right:0
+    },
+    upBtn:{
+      width:50,
+      height:50,
+      backgroundColor:Colors.primaryBgColor.newPrimeLight,
+      borderRadius:10,
+      borderWidth:1,
+      borderColor:Colors.primaryBgColor.babyBlue,
+      justifyContent:"center",
+      alignItems:"center",
+
     },
     transactionContainer:{
     },
@@ -213,7 +302,7 @@ const styles = StyleSheet.create({
     },
     itemContainer:{
       gap:10,
-      flexGrow:1,
+      paddingBottom:100,
     },
     title:{
       fontSize:13,

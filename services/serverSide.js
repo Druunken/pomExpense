@@ -14,7 +14,7 @@ const createCurrentDate = async() => {
   const arr = currDay.split("-")
   const day = arr[2]
   const month = arr[1]
-  const year = "2027"
+  const year = arr[0]
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]
 }
@@ -1736,12 +1736,63 @@ const deactiveCosts = async() => {
   }
 }
 
-const getDayTrans = async(dateString) => {
-  try {
-    const data = await db.getAllAsync(
-      'SELECT * FROM balance WHERE date = ?',[dateString]
-    )
-    return data
+const getDayTrans = async(day,month,year) => {
+  try { 
+      let daysObj = {}
+      const data = await db.getAllAsync(
+        `
+          SELECT * FROM balance
+        `
+      )
+
+      for(let i = 0; i < data.length; i++){
+
+        const amount = data[i].moneyValue
+        const dayDate = data[i].day
+        const monthDate = data[i].month
+        const yearDate = data[i].year
+        const dateStr = data[i].date
+        const balanceType = data[i].balanceType
+        const isIncome = balanceType === "plus"
+        const income = isIncome ? amount : 0
+        const expense = !isIncome ? amount : 0
+        let numbersOfTrans = 0
+
+
+
+        if(daysObj[dateStr] === undefined){
+          daysObj[dateStr] = {
+            balance: amount,
+            dayDate: dayDate,
+            monthDate: monthDate,
+            yearDate: yearDate,
+            dateStr: dateStr,
+            income: isIncome ? amount : 0,
+            expense: !isIncome ? amount : 0,
+            numbersOfTrans: 1
+          }
+  
+        }else{
+          const prevAmount = daysObj[dateStr].balance
+          const prevExpense = daysObj[dateStr].expense
+          const prevIncome = daysObj[dateStr].income
+          const prevNumOfTrans = daysObj[dateStr].numbersOfTrans
+
+          daysObj[dateStr] = {
+            balance: 
+            prevAmount < 0 && balanceType === "minus" ? prevAmount + amount :
+            prevAmount > 0 && balanceType === "minus" ? prevAmount - amount :
+            prevAmount < 0 && balanceType === "plus" ? prevAmount + amount :
+            prevAmount + amount,
+            dayDate: dayDate,
+            income: isIncome ? prevIncome + income : prevIncome,
+            expense: !isIncome ? prevExpense + expense : prevExpense,
+            numbersOfTrans: prevNumOfTrans + 1
+
+          }
+        }
+      }
+    return daysObj
   } catch (error) {
     console.error(error,"getDayTrans")
   }
@@ -1876,25 +1927,36 @@ const getAllYears = async() => {
       
 
     */
-
     for(let i = 0 ; i < getYears.length; i ++){
       const currYear = getYears[i]?.yearsIncomeDate
       const balance = getYears[i]?.monthsTotalBalance
       const amountTransactions = getYears[i]?.monthsTotalTransactions
+      const expense = getYears[i]?.monthsTotalExpenses
+      const staticIncome = getYears[i]?.monthsStaticIncomeVal
+      const income = getYears[i]?.monthsIncomeVal
 
       if(yearsObj[currYear] === undefined)
         yearsObj[currYear] = {
           balance: balance,
           monthsTotalTransactions: amountTransactions,
-          year: currYear
+          year: currYear,
+          expense: expense,
+          staticIncome: staticIncome,
+          income: income
+
 
         }
       else{
         const prevAmountTrans = yearsObj[currYear].monthsTotalTransactions
+        const prevExpense = yearsObj[currYear].expense
+        const prevIncome = yearsObj[currYear].income
         yearsObj[currYear] = {
           balance: balance,
           monthsTotalTransactions: prevAmountTrans + amountTransactions,
-          year: currYear
+          year: currYear,
+          expense: prevExpense + expense,
+          staticIncome: staticIncome,
+          income: prevIncome + income
         }
       }
     }

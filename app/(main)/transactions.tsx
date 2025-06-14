@@ -59,6 +59,9 @@ const transactions = () => {
   const [selectedMonth,setSelectedMonth] = useState("")
   const [selectedYear,setSelectedYear] = useState("")
 
+  const [contentOffSetY,setContentOffSetY] = useState(0)
+  const [scrollingDown,setScrollingDown] = useState(false)
+
   const [tabs,setTabs] = useState("month")
 
 
@@ -453,16 +456,16 @@ const transactions = () => {
             )}
           
             {!swiped && !dayPressed && tabs === "day" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={days} />
+              <TransactionDataComponent typeDate={tabs} dateData={days} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "month" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={months} />
+              <TransactionDataComponent typeDate={tabs} dateData={months} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "year" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={years} />
+              <TransactionDataComponent typeDate={tabs} dateData={years} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "all" && (
-              <FilterTransactionComp filteredData={filteredData} setFilteredData={setFilteredData} setTransModalVisible={setTransModalVisible} setId={setId}/>
+              <FilterTransactionComp scrollbehaviour={false} setScrollingDown={setScrollingDown} setContentOffSetY={setContentOffSetY} style={{position:"absolute",top:150,height:450}} filteredData={filteredData} setFilteredData={setFilteredData} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
           </View>
            

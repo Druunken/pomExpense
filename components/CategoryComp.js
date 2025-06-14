@@ -20,7 +20,8 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
     <View style={styles.container} onLayout={(ev) => setGivenWidth(ev.nativeEvent.layout.width)}>
       <View style={styles.layout}>
         <View>
-          <Text style={styles.label}>{typeDate === "month" ? months[outputData?.monthsIncomeDate] : outputData.year}</Text> 
+          {/* <Text style={styles.label}>{typeDate === "month" ? months[outputData?.monthsIncomeDate] : outputData.year}</Text>  */}
+        <Text style={styles.label}>Category Component</Text>
         </View>
 
         

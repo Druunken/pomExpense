@@ -1,18 +1,20 @@
 import { Colors } from '@/constants/Colors'
 import { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 
 import SwipeLabelDataComp from '../components/SwipeLabelDataComp.js'
 import GraphComp from '../components/GraphComp.js'
 import db from '../services/serverSide'
 import { months, days, years } from '../constants/Dates.js'
 import FilterTransactionComp from './FilterTransactionComp.js'
+import StatsComp from '../components/StatsComp.js'
+import CategoryComp from '../components/CategoryComp.js'
+import CompareComp from '../components/CompareComp.js'
 
 
-const TransactionDataComponent = ({ typeDate, dateData }) => {
+const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTransModalVisible , setId}) => {
 
-  const [dataArr,setDataArr] = useState()
   const [data,setData] = useState({})
   const [outputData,setOutputData] = useState({})
   const [trackingIndex,setTrackingIndex] = useState(0)
@@ -23,12 +25,18 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
   const [givenWidth, setGivenWidth] = useState("")
   const [queryState,setQueryState] = useState("")
   const [contentOffSetY,setContentOffSetY] = useState(0)
+  const [scrollingDown,setScrollingDown] = useState(false)
+  const [yearLabel,setYearLabel] = useState("")
+  const [noData,setNoData] = useState(true)
 
   const [staticData, setStaticData] = useState()
 
   const containerY = useSharedValue(0)
-  const containerHeight = useSharedValue(350)
+  const containerHeight = useSharedValue(220)
   const containerOp = useSharedValue(1)
+
+
+  const mainContainerOp = useSharedValue(0)
     /* 
     
     We need Week, Month and Year
@@ -49,7 +57,13 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
       return{
         transform: [{ translateY: containerY.value}],
         height: containerHeight.value,
-        opacity: containerOp.value
+        opacity: mainContainerOp.value
+      }
+    })
+
+    const animatedMainContainer = useAnimatedStyle(() => {
+      return{
+        opacity:containerOp.value
       }
     })
 
@@ -58,26 +72,54 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
         if(typeDate === "month"){
           const monthData = await db.getProperMonths()
 
-          
-          const incomeDate = monthData[1][trackingIndex].monthsIncomeDate
-          const keyToCheck = monthData[0][0]
 
-          /* setting length for validating the trackingIndex */
+          if(monthData.length > 0){
+            console.log(monthData)
+            const incomeDate = monthData[1][trackingIndex].monthsIncomeDate
+            const keyToCheck = monthData[0][0]
+
           setDataLength(monthData[0].length)
           setLabel(months[keyToCheck])
           setData(monthData[1])
           setTrackingIndex(monthData[0].length - 1)
-          console.log(queryState)
+          setYearLabel(monthData[trackingIndex]?.yearsIncomeDate)
           setQueryState(keyToCheck)
+          mainContainerOp.value = withTiming(1, { duration: 250 })
+          }else {
+            mainContainerOp.value = withTiming(0, { duration: 250 })
+          }
           
         }else if(typeDate === "year"){
            
           const yearsData = await db.getAllYears()
-          setDataLength(Object.keys(yearsData).length)
-          setTrackingIndex(Object.keys(yearsData).length - 1)
-          setQueryState(Object.keys(yearsData)[trackingIndex])
-          setLabel(Object.keys(yearsData)[trackingIndex])
+          console.log(Object.values(yearsData)[0].monthsTotalTransactions)
+          if(Object.values(yearsData)[0].monthsTotalTransactions > 0){
+            setDataLength(Object.keys(yearsData).length)
+            setTrackingIndex(Object.keys(yearsData).length - 1)
+            setQueryState(Object.keys(yearsData)[trackingIndex])
+            setLabel(Object.keys(yearsData)[trackingIndex])
+            mainContainerOp.value = withTiming(1, { duration: 250 })
+          }else if(Object.values(yearsData)[0].monthsTotalTransactions < 1) {
+            mainContainerOp.value = withTiming(0, { duration: 250 })
+          }
+
           setData(yearsData)
+        }else if(typeDate === "day"){
+          const daysData = await db.getDayTrans() 
+          if(Object.keys(daysData).length > 0){
+            console.log("Ok ok ok ")
+
+            const len = Object.keys(daysData).length
+            const daysStr = Object.keys(daysData)[len - 1].split("-")[2]
+            setDataLength(len)
+            setTrackingIndex(len - 1)
+            setQueryState(daysStr)
+            setLabel(daysStr)
+            setData(daysData)
+            mainContainerOp.value = withTiming(1, { duration: 250 })
+          }else{
+            mainContainerOp.value = withTiming(0, { duration: 250 })
+          }
         }
       } catch (error) {
         console.error(error)
@@ -89,20 +131,13 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
     },[])
 
     useEffect(() => {
-      let obj = {y: 0}
-      if(obj.y < contentOffSetY){
-        obj.y = contentOffSetY
-      }
-      containerHeight.value = containerHeight.value - contentOffSetY
-    },[contentOffSetY])
-
-    useEffect(() => {
       if(data === undefined) return
 
       if(typeDate === "month"){
         if(data && dataLength > 0) {
           setOutputData(data[trackingIndex])
           setLabel(months[data[trackingIndex]?.monthsIncomeDate])
+          setYearLabel(data[trackingIndex]?.yearsIncomeDate)
           setQueryState(data[trackingIndex]?.monthsIncomeDate)
 
 
@@ -119,10 +154,16 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
             setForwLabel(months[data[trackingIndex + 1]?.monthsIncomeDate])
           }
         }
-      }else if(typeDate === "year"){
+      }else if(typeDate === "year" || typeDate === "day"){
+        const isDay = typeDate === "day"
+        const norm = Object.keys(data)[trackingIndex]
+        let valid;
+        if(isDay && norm) valid = norm.split("-")[2]
+
         if(data && dataLength > 0){
           setOutputData(Object.values(data)[trackingIndex])
-          setLabel(Object.keys(data)[trackingIndex])
+          setLabel(!isDay ? norm : valid)
+          setYearLabel(isDay && norm.split("-")[0] + " " + months[norm.split("-")[1]])
           setQueryState(Object.keys(data)[trackingIndex])
 
           if(trackingIndex - 1 < 0){
@@ -140,22 +181,36 @@ const TransactionDataComponent = ({ typeDate, dateData }) => {
       }
     },[trackingIndex])
 
+    useEffect(() => {
+      mainContainerOp.value = withTiming(1,{ duration:500})
+    },[])
+
+    useEffect(() => {
+      if(scrollingDown){
+        containerOp.value = withTiming(0,{ duration:250})
+        return containerHeight.value = withTiming(0,{ duration: 150})
+      }else{!scrollingDown}{
+        containerOp.value = withTiming(1,{ duration:250})
+        return containerHeight.value = withSpring(210)
+      }
+    },[scrollingDown])
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container,animatedMainContainer,{}]}>
       {/* <Text style={styles.label}>{typeDate === "day" ? "Day component" : typeDate === "month" ? "Month component" : "Year component"}</Text> */}
+      <SwipeLabelDataComp setState={setTrackingIndex} dataLength={dataLength} label={label} backLabel={backLabel} forwLabel={forwLabel} yearLabel={yearLabel}/>
       <Animated.View style={[animatedContainer,styles.graphContainer,{zIndex:0}]} >
-        <SwipeLabelDataComp setState={setTrackingIndex} dataLength={dataLength} label={label} backLabel={backLabel} forwLabel={forwLabel}/>
 
         <ScrollView contentContainerStyle={styles.scrollDiv} horizontal pagingEnabled  scrollEnabled>
-          <GraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
-          <GraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
-          <GraphComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          <StatsComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          <CategoryComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          <CompareComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
         </ScrollView>
       </Animated.View>
 
-      <FilterTransactionComp style={styles.transactionComponent} filteredData={staticData} setFilteredData={setStaticData} queryState={queryState} monthView={typeDate === "month"} yearView={typeDate === "year"} setContentOffSetY={setContentOffSetY}/>
+      <FilterTransactionComp scrollbehaviour={true} setId={setId} setTransModalVisible={setTransModalVisible} scrollingDown={scrollingDown} setScrollingDown={setScrollingDown} filteredData={staticData} setFilteredData={setStaticData} queryState={queryState} dayView={typeDate === "day"} monthView={typeDate === "month"} yearView={typeDate === "year"} setContentOffSetY={setContentOffSetY}/>
       
-    </View>
+    </Animated.View >
   )
 }
 
@@ -166,14 +221,11 @@ const styles = StyleSheet.create({
     width:"100%",
     marginTop:5,
     flex:1,
-
+    gap:15
   },
   transactionComponent:{
-    position:"absolute",
-    top:350
   },
   graphContainer:{
-    position:"absolute"
   },
   scrollDiv:{
     marginTop:5,
