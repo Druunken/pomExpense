@@ -2,13 +2,13 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import React, { useEffect, useState, useRef } from 'react'
 import { Colors } from '@/constants/Colors'
 import db from '@/services/serverSide'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import LottieView from 'lottie-react-native'
 import numberInputValidation from '@/services/numberInputValidation'
 import { months } from '../constants/Dates.js'
 import { Ionicons } from '@expo/vector-icons'
 
-const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, scrollbehaviour, setTransModalVisible, setId , monthView, yearView, dayView, queryState, style, setContentOffSetY, setScrollingDown }) => {
+const FilterTransactionComp = ({ givinStyle, scrollingDown,filteredData, setFilteredData, scrollbehaviour, setTransModalVisible, setId , monthView, yearView, dayView, queryState, style, setContentOffSetY, setScrollingDown }) => {
 
 
     const [renderItems,setRenderItems] = useState([])
@@ -31,7 +31,9 @@ const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, sc
     const dataRdyOp = useSharedValue(0)
     const dataRdyInd = useSharedValue(-3)
 
-    const containerHeight = useSharedValue(300)
+    const containerHeight = useSharedValue(500)
+
+    const scrollBg = useSharedValue(0)
 
     const upBtnOp = useSharedValue(0)
 
@@ -49,8 +51,14 @@ const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, sc
     })
 
     const animatedContainer = useAnimatedStyle(() => {
+      const backgroundColor = interpolateColor(
+        scrollBg.value,
+        [0,1],
+        [Colors.primaryBgColor.black,Colors.primaryBgColor.newPrimeLight]
+      )
       return{
-        height: containerHeight.value
+        height: containerHeight.value,
+        backgroundColor:backgroundColor
       }
     })
     const animatedUpBtn = useAnimatedStyle(() => {
@@ -143,18 +151,21 @@ const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, sc
       const currOffset = ev.nativeEvent.contentOffset.y
       const isScrollingDown = currOffset >= prevOffestY.current
       prevOffestY.current = currOffset
-      if(isScrollingDown && currOffset > 5){
+      if(isScrollingDown && currOffset > 5 && !scrollingDown){
+        
         setScrollingDown(true)
-        containerHeight.value = withTiming(450,{ duration: 500 })
+        scrollBg.value = withTiming(1,{ duration:500})
+        containerHeight.value = withTiming(600,{ duration: 500 })
         upBtnOp.value = withTiming(0,{ duration: 450 })
         if(pressedUpBtn){
           setPressedUpBtn(false)
         }
         return
       }else if (currOffset < 5){
-        containerHeight.value = withTiming(250,{ duration: 400 })
+        containerHeight.value = withTiming(500,{ duration: 400 })
         upBtnOp.value = withTiming(0,{ duration: 450 })
         setScrollingDown(false)
+        scrollBg.value = withTiming(0,{ duration:500})
         return
       }else if(!isScrollingDown && currOffset > 5 && !pressedUpBtn){
         upBtnOp.value = withTiming(1,{ duration: 450 })
@@ -166,7 +177,8 @@ const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, sc
       setScrollingDown(false)
       setPressedUpBtn(true)
       scrollToTop()
-      containerHeight.value = withTiming(250,{ duration: 400 })
+      scrollBg.value = withTiming(0,{ duration:500})
+      containerHeight.value = withTiming(500,{ duration: 400 })
       upBtnOp.value = withTiming(0,{ duration: 450 })
     }
 
@@ -197,7 +209,7 @@ const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, sc
             <View style={[styles.transactionDiv,{
               backgroundColor: 
               type.toLowerCase() === "income" ? Colors.primaryBgColor.prime :
-              type.toLowerCase() == "fixed cost" ? Colors.primaryBgColor.brown : Colors.primaryBgColor.newPrimeLight
+              type.toLowerCase() == "fixed cost" ? Colors.primaryBgColor.chillOrange : Colors.primaryBgColor.newPrimeLight
             }]}>
               <TouchableOpacity style={{flexDirection:"row",justifyContent:"space-between",width:"100%",alignItems:"center",height:"100%"}} onPress={() => pressHandler(id)}>
               <View style={styles.lPart}>
@@ -222,7 +234,10 @@ const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, sc
 
 
   return (
-    <Animated.View style={[styles.container,animatedContainer,style && style,{borderWidth:0}]}>
+    <Animated.View style={[styles.container,animatedContainer,style && style,givinStyle,{borderWidth:0}]}>
+      <View style={{width:"100%",justifyContent:"center",alignItems:"center"}}>
+        <View style={{width:60,height:5,backgroundColor:Colors.primaryBgColor.white,borderRadius:10}}/>
+      </View>
       <View style={styles.transactionContainer}>
         <Animated.View style={[animatedNoData,{justifyContent:"center",alignItems:"center",width:"100%",position:"absolute"}]}>
           <Text style={styles.infoLabel}>No data</Text>
@@ -246,9 +261,13 @@ const FilterTransactionComp = ({ scrollingDown,filteredData, setFilteredData, sc
 
          */}
         <Animated.View style={[animatedDataRdy]}>
-          <ScrollView  ref={scrollViewRef} bounces={false} scrollEnabled scrollEventThrottle={20} contentContainerStyle={styles.itemContainer} onScroll={(ev) => {
+          <ScrollView  ref={scrollViewRef} bounces={false} scrollEnabled scrollEventThrottle={16} contentContainerStyle={styles.itemContainer} /* stickyHeaderHiddenOnScroll stickyHeaderIndices={[0]}  */onScroll={(ev) => {
             handleScroll(ev)
           }}>
+            {/* <View style={{backgroundColor:Colors.primaryBgColor.babyBlue,padding:5,borderRadius:5}}>
+              <Text style={[styles.label,{color:Colors.primaryBgColor.black}]}>Transactions</Text>
+            </View> */}
+            
             {renderItems}
           </ScrollView>
         </Animated.View>
@@ -265,7 +284,7 @@ const styles = StyleSheet.create({
     },
     upBtnDiv:{
       position:"absolute",
-      bottom:50,
+      bottom:150,
       zIndex:100,
       justifyContent:"center",
       alignItems:"center",
@@ -302,7 +321,8 @@ const styles = StyleSheet.create({
     },
     itemContainer:{
       gap:10,
-      paddingBottom:100,
+      paddingBottom:200,
+      paddingTop:50
     },
     title:{
       fontSize:13,

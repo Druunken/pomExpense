@@ -22,7 +22,6 @@ const SearchComponent = ({ setPressed, pressed, state, setState, selectedMonth, 
             }
             else{
                 setFilteredData({})
-                console.log("No data found")
             }
         } catch (error) {
             console.error(error)
@@ -39,11 +38,8 @@ const SearchComponent = ({ setPressed, pressed, state, setState, selectedMonth, 
     }
 
     useEffect(() => {
-        console.log(selectedMonth,"MONTH")
-        console.log(selectedYear,"YEAR")
         if(selectedMonth === "" && selectedYear  === ""){
             fetchData(undefined,undefined,undefined)
-            console.log("Ok")
         }
         
         else fetchData(undefined,selectedMonth,selectedYear)

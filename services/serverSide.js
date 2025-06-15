@@ -13,8 +13,8 @@ const createCurrentDate = async() => {
   console.log(currDay)
   const arr = currDay.split("-")
   const day = arr[2]
-  const month = arr[1]
-  const year = arr[0]
+  const month = arr[1] // arr[1]
+  const year = "2026" // arr[0]
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]
 }
@@ -1927,6 +1927,7 @@ const getAllYears = async() => {
       
 
     */
+
     for(let i = 0 ; i < getYears.length; i ++){
       const currYear = getYears[i]?.yearsIncomeDate
       const balance = getYears[i]?.monthsTotalBalance
@@ -1943,7 +1944,6 @@ const getAllYears = async() => {
           expense: expense,
           staticIncome: staticIncome,
           income: income
-
 
         }
       else{
@@ -1963,6 +1963,104 @@ const getAllYears = async() => {
 
     return yearsObj
 
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const getCategoryYears = async() => {
+  try {
+
+    let obj = {}
+    const getData = await db.getAllAsync(
+      `
+        SELECT * FROM balance 
+        
+      `
+    )
+    for(let i = 0; i < getData.length; i++){
+      const cate = getData[i].type
+      const year = getData[i].year
+      const month = getData[i].month
+      const day = getData[i].day
+      const date = getData[i].date
+      const amount = getData[i].moneyValue
+      const balanceType = getData[i].balanceType
+
+      /* 
+      
+          obj = {
+            "2025":[
+                "drink":{
+                  amount: 1250,
+                  year: 2026,
+                  transactions: 52,
+                },
+                "food":{
+                  amount: 2500,
+                  year: 2026,
+                  transactions: 80
+                }
+              ]
+          }
+      
+      */  
+
+          /* nothing exists */
+      if(obj[year] === undefined){
+        obj[year] = {
+          [cate]:{
+            amount: amount,
+            year: year,
+            transactions: 1
+          }
+        }
+        /* if year exists but check category exists aswell*/
+      }else if(cate in obj[year]){
+        const prevAmount = obj[year][cate].amount
+        const prevTrans = obj[year][cate].transactions
+
+        obj[year][cate] = {
+          amount: prevAmount + amount,
+          year:year,
+          transactions: prevTrans + 1
+        }
+
+        /* check if cate doesn't exists */
+      }else if(!(cate in obj[year])){
+        obj[year][cate] = {
+          amount: amount,
+          year: year,
+          transactions: 1
+        }
+      }
+    }
+
+    return obj
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const getCategoryMonths = async() => {
+  try {
+    const getData = await db.getAllAsync(
+      `
+      
+      `
+    )
+  } catch (error) {
+    
+  }
+}
+
+const getCategoryDays = async() => {
+  try {
+    const getData = await db.getAllAsync(
+      `
+      
+      `
+    )
   } catch (error) {
     console.error(error)
   }
@@ -2024,5 +2122,8 @@ export default {
   getAllMonths,
   dynamicQuery,
   getProperMonths,
-  getAllYears
+  getAllYears,
+  getCategoryYears,
+  getCategoryMonths,
+  getCategoryDays
 }

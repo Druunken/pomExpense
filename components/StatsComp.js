@@ -30,12 +30,13 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
     */
     const yearRender = () => {
-      setRenderItems(() =>{
+      if(Object.values(outputData).length > 0){
+        setRenderItems(() =>{
         return( 
           <View style={[,{width:"100%"}]}>
           <View style={styles.elementDiv}>
             <Text style={styles.mainLabel}>Balance: </Text>
-            <Text style={styles.resLabel}>{outputData.balance} {currency}</Text>
+            <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData.balance)} {currency}</Text>
           </View>
 
           <View style={styles.elementDiv}>
@@ -45,7 +46,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
           <View style={styles.elementDiv}>
             <Text style={[styles.mainLabel,{}]}>Expenses: </Text>
-            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{outputData.expense} {currency}</Text>
+            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.expense)} {currency}</Text>
           </View>
 
           {/* <View style={styles.elementDiv}>
@@ -55,20 +56,23 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
           <View style={styles.elementDiv}>
             <Text style={styles.mainLabel}>Income: </Text>
-            <Text style={styles.resLabel}>{outputData.income} {currency}</Text>
+            <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData.income)} {currency}</Text>
           </View>
           </View>
         )
       })
+
+      }
     }
 
     const monthRender = () => {
-      setRenderItems(() =>{
+      if(Object.values(outputData).length > 0){
+         setRenderItems(() =>{
         return( 
           <View style={[,{width:"100%"}]}>
           <View style={styles.elementDiv}>
             <Text style={styles.mainLabel}>Balance: </Text>
-            <Text style={styles.resLabel}>{outputData?.monthsTotalBalance} {currency}</Text>
+            <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData?.monthsTotalBalance)} {currency}</Text>
           </View>
           
           <View style={styles.elementDiv}>
@@ -78,56 +82,58 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
           <View style={styles.elementDiv}>
             <Text style={[styles.mainLabel,{}]}>Expenses: </Text>
-            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{outputData.monthsTotalExpenses} {currency}</Text>
+            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.monthsTotalExpenses)} {currency}</Text>
           </View>
 
           <View style={styles.elementDiv}>
             <Text style={styles.mainLabel}>Static Income: </Text>
-            <Text style={styles.resLabel}>{outputData.monthsStaticIncomeVal} {currency}</Text>
+            <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData.monthsStaticIncomeVal)} {currency}</Text>
           </View>
 
           <View style={styles.elementDiv}>
             <Text style={styles.mainLabel}>Income: </Text>
-            <Text style={styles.resLabel}>{outputData.monthsIncomeVal} {currency}</Text>
+            <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData.monthsIncomeVal)} {currency}</Text>
           </View>
           </View>
         )
-      })
+      }) 
+        }
     }
 
     const dayRender = () => {
-      setRenderItems(() =>{
-        return( 
-          <View style={[,{width:"100%"}]}>
-          <View style={styles.elementDiv}>
-            <Text style={styles.mainLabel}>Balance: </Text>
-            <Text style={[styles.resLabel,{ color: outputData.balance < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}]}>{outputData.balance} {currency}</Text>
-          </View>
+      if(Object.values(outputData).length > 0){
+        setRenderItems(() =>{
+          return( 
+            <View style={[,{width:"100%"}]}>
+            <View style={styles.elementDiv}>
+              <Text style={styles.mainLabel}>Balance: </Text>
+              <Text style={[styles.resLabel,{ color: outputData.balance < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}]}>{numberInputValidation.converToString(outputData.balance)} {currency}</Text>
+            </View>
 
-          <View style={styles.elementDiv}>
-            <Text style={styles.mainLabel}>Total Transactions: </Text>
-            <Text style={styles.resLabel}>{outputData.numbersOfTrans}</Text>
-          </View>
+            <View style={styles.elementDiv}>
+              <Text style={styles.mainLabel}>Total Transactions: </Text>
+              <Text style={styles.resLabel}>{outputData.numbersOfTrans}</Text>
+            </View>
 
-          <View style={styles.elementDiv}>
-            <Text style={[styles.mainLabel,{}]}>Expenses: </Text>
-            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{outputData.expense} {currency}</Text>
-          </View>
+            <View style={styles.elementDiv}>
+              <Text style={[styles.mainLabel,{}]}>Expenses: </Text>
+              <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.expense)} {currency}</Text>
+            </View>
 
-          <View style={styles.elementDiv}>
-            <Text style={styles.mainLabel}>Income: </Text>
-            <Text style={styles.resLabel}>{outputData.income} {currency}</Text>
-          </View>
+            <View style={styles.elementDiv}>
+              <Text style={styles.mainLabel}>Income: </Text>
+              <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData.income)} {currency}</Text>
+            </View>
 
-          
-          </View>
-        )
-      })
+            
+            </View>
+          )
+        })
+      }
     }
 
 
     useEffect(() => {
-      console.log(outputData,"outputdata")
       if(typeDate === "year"){
         yearRender()
 
@@ -171,7 +177,7 @@ const styles = StyleSheet.create({
       height:200,
       alignItems:"center",
       justifyContent:"center",
-      backgroundColor:Colors.primaryBgColor.babyBlue,
+      backgroundColor:Colors.primaryBgColor.newPrimeLight,
       borderColor:Colors.primaryBgColor.darkPurple
     },
     mainLabel:{

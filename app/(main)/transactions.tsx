@@ -7,6 +7,7 @@ import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context'
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import TransactionDataComponent from '../../components/TransactionDataComponent.js'
 import Icon from 'react-native-vector-icons/Ionicons';
+import db from '../../services/serverSide.js'
 
 import { Colors } from '@/constants/Colors'
 import CategorieBtn from '@/components/CategorieBtn';
@@ -61,6 +62,8 @@ const transactions = () => {
 
   const [contentOffSetY,setContentOffSetY] = useState(0)
   const [scrollingDown,setScrollingDown] = useState(false)
+
+  const [cateYears,setCateYears] = useState({})
 
   const [tabs,setTabs] = useState("month")
 
@@ -332,6 +335,28 @@ const transactions = () => {
       filterHeight.value = withTiming(45, { duration: 500 })
     }
   },[filterPressed])
+
+  const fetchData = async() => {
+  
+    try {
+      // categoryData
+      const data = await db.getCategoryYears()
+
+      if(cateYears){
+        setCateYears(data)
+      }
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(() => {
+    /* 
+      this should load all data on the beginning of the tab 
+    */
+    fetchData()
+
+  },[])
   
   return (
     
@@ -462,7 +487,7 @@ const transactions = () => {
               <TransactionDataComponent typeDate={tabs} dateData={months} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "year" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={years} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
+              <TransactionDataComponent typeDate={tabs} dateData={years} cateYears={cateYears} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "all" && (
               <FilterTransactionComp scrollbehaviour={false} setScrollingDown={setScrollingDown} setContentOffSetY={setContentOffSetY} style={{position:"absolute",top:150,height:450}} filteredData={filteredData} setFilteredData={setFilteredData} setTransModalVisible={setTransModalVisible} setId={setId}/>
