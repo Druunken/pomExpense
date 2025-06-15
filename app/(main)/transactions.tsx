@@ -4,17 +4,12 @@ import Animated, {  Extrapolation, interpolate, interpolateColor, runOnJS, useAn
 import {CalendarList} from 'react-native-calendars';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler'
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
-import SystemNavigationBar from 'react-native-system-navigation-bar';
 import TransactionDataComponent from '../../components/TransactionDataComponent.js'
-import Icon from 'react-native-vector-icons/Ionicons';
 import db from '../../services/serverSide.js'
 
 import { Colors } from '@/constants/Colors'
 import CategorieBtn from '@/components/CategorieBtn';
-import TransactionsComponent from '@/components/TransactionsComponent';
-import GraphComponent from '@/components/GraphComponent';
 import { usersBalanceContext, incomeActiveContext } from "@/hooks/balanceContext";
-import MonthInfoComp from '@/components/MonthComponents/MonthInfoComp.js'
 import DayView from '@/components/MonthComponents/DayView'
 import numberInputValidation from '@/services/numberInputValidation';
 import FilterTransactionComp from '../../components/FilterTransactionComp.js'
@@ -64,6 +59,8 @@ const transactions = () => {
   const [scrollingDown,setScrollingDown] = useState(false)
 
   const [cateYears,setCateYears] = useState({})
+  const [cateMonths,setCateMonths] = useState({})
+  const [cateDays,setCateDays] = useState({})
 
   const [tabs,setTabs] = useState("month")
 
@@ -337,14 +334,26 @@ const transactions = () => {
   },[filterPressed])
 
   const fetchData = async() => {
+
+    /* this could need a splashscreen for loading this data */
   
     try {
       // categoryData
-      const data = await db.getCategoryYears()
-
+      const yearData = await db.getCategoryYears()
+      const monthData = await db.getCategoryMonths()
+      const dayData = await db.getCategoryDays()
       if(cateYears){
-        setCateYears(data)
+        setCateYears(yearData)
       }
+      
+      if(monthData){
+        setCateMonths(monthData)
+      }
+
+      if(dayData){
+        setCateDays(dayData)
+      }
+      
     } catch (error) {
       
     }
