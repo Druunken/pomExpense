@@ -24,7 +24,8 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
         <Text style={styles.label}>Compare Component</Text>
         </View>
 
-        
+        <Text>we need the dates with these properties</Text>
+        <Text>balance, expense, income</Text>
         {/* Stats of the Month comp here */}
       </View>
     </View>

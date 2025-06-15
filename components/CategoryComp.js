@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { months } from '../constants/Dates.js'
 import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/Colors'
 
@@ -20,6 +19,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
     const renderData = () =>{
       let elements = []
       let index = 0
+
       for(const [key,value] of Object.entries(outputData)){
         elements.push(
           <View style={styles.elementDiv} key={index}>
@@ -36,20 +36,17 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
     }
 
     useEffect(() => {
-      console.log(outputData)
       if(outputData){
         if(Object.values(outputData).length > 0) renderData()
       }
     },[outputData])
+
   return (
     <View style={styles.container} onLayout={(ev) => setGivenWidth(ev.nativeEvent.layout.width)}>
       <View style={styles.layout}>
         <View style={styles.elementContainer}>
         {renderItems}
         </View>
-
-        
-        {/* Stats of the Month comp here */}
       </View>
     </View>
   )

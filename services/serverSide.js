@@ -2044,27 +2044,238 @@ const getCategoryYears = async() => {
 
 const getCategoryMonths = async() => {
   try {
-    const getData = await db.getAllAsync(
-      `
-      
-      `
-    )
-  } catch (error) {
-    
-  }
-}
+    const obj = {}
 
-const getCategoryDays = async() => {
-  try {
+    /* 
+      obj = {
+        "2025-05-22": {
+
+        }
+      }
+    */
+
     const getData = await db.getAllAsync(
       `
-      
+      SELECT * FROM balance
       `
     )
+
+    if(getData.length > 0){
+      for(let i = 0; i < getData.length; i++){
+        const cate = getData[i].type
+        const year = getData[i].year
+        const month = getData[i].month
+        const day = getData[i].day
+        const date = year + "-" + month
+        const amount = getData[i].moneyValue
+        const balanceType = getData[i].balanceType
+
+        
+
+        if(obj[date] === undefined){
+        obj[date] = {
+          [cate]:{
+            amount: amount,
+            date: date,
+            transactions: 1
+          }
+        }
+          /* if date exists but check category exists aswell*/
+        }else if(cate in obj[date]){
+          const prevAmount = obj[date][cate].amount
+          const prevTrans = obj[date][cate].transactions
+
+          obj[date][cate] = {
+            amount: prevAmount + amount,
+            date:date,
+            transactions: prevTrans + 1
+          }
+
+          /* check if cate doesn't exists */
+        }else if(!(cate in obj[date])){
+          obj[date][cate] = {
+            amount: amount,
+            date: date,
+            transactions: 1
+          }
+        }
+      }
+      console.log(obj)
+      return obj
+    }
   } catch (error) {
     console.error(error)
   }
 }
+
+
+const getCategoryDays = async() => {
+  try {
+    const obj = {}
+
+    /* 
+      obj = {
+        "2025-05-22": {
+
+        }
+      }
+    */
+
+    const getData = await db.getAllAsync(
+      `
+      SELECT * FROM balance
+      `
+    )
+
+    if(getData.length > 0){
+      for(let i = 0; i < getData.length; i++){
+        const cate = getData[i].type
+        const year = getData[i].year
+        const month = getData[i].month
+        const day = getData[i].day
+        const date = getData[i].date
+        const amount = getData[i].moneyValue
+        const balanceType = getData[i].balanceType
+
+        
+
+        if(obj[date] === undefined){
+        obj[date] = {
+          [cate]:{
+            amount: amount,
+            date: date,
+            transactions: 1
+          }
+        }
+          /* if date exists but check category exists aswell*/
+        }else if(cate in obj[date]){
+          const prevAmount = obj[date][cate].amount
+          const prevTrans = obj[date][cate].transactions
+
+          obj[date][cate] = {
+            amount: prevAmount + amount,
+            date:date,
+            transactions: prevTrans + 1
+          }
+
+          /* check if cate doesn't exists */
+        }else if(!(cate in obj[date])){
+          obj[date][cate] = {
+            amount: amount,
+            date: date,
+            transactions: 1
+          }
+        }
+      }
+      return obj
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const getCompareMonthData = async() => {
+  try {
+
+    let obj = {}
+    const data = await db.getAllAsync(
+      `
+        SELECT * FROM balance
+      `
+    )
+
+    if(data.length > 0){
+      for(let i = 0; i < data.length; i++){
+        const amount = data[i].moneyValue
+        const expense = amount
+        const income = amount
+        const balanceType = data[i].balanceType
+
+        const isIncome = balanceType === "plus"
+        
+        const month = data[i].month
+        const year = data[i].year
+        const date = year + "-" + month
+        
+        if(obj[date] === undefined){
+          obj[date] = {
+            amount: amount,
+            date: date,
+            income: isIncome ? income : 0,
+            expense : !isIncome ? expense : 0
+          }
+        }else if(obj[date]){
+          const prevAmount = obj[date].amount
+          const prevExpense = obj[date].expense
+          const prevIncome = obj[date].income
+
+          obj[date] = {
+            amount: prevAmount + amount,
+            date:date,
+            income: isIncome ? prevIncome + income : prevIncome,
+            expense: !isIncome ? prevExpense + expense : prevExpense
+
+          }
+        }
+      }
+      console.log("ALOOOHA",obj)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const getCompareYearData = async() => {
+  try {
+    let obj = {}
+    const data = await db.getAllAsync(
+      `
+        SELECT * FROM balance
+      `
+    )
+
+    if(data.length > 0){
+      for(let i = 0; i < data.length; i++){
+        const amount = data[i].moneyValue
+        const expense = amount
+        const income = amount
+        const balanceType = data[i].balanceType
+
+        const isIncome = balanceType === "plus"
+        
+        const month = data[i].month
+        const year = data[i].year
+        const date = year + "-" + month
+        
+        if(obj[date] === undefined){
+          obj[date] = {
+            amount: amount,
+            date: date,
+            income: isIncome ? income : 0,
+            expense : !isIncome ? expense : 0
+          }
+        }else if(obj[date]){
+          const prevAmount = obj[date].amount
+          const prevExpense = obj[date].expense
+          const prevIncome = obj[date].income
+
+          obj[date] = {
+            amount: prevAmount + amount,
+            date:date,
+            income: isIncome ? prevIncome + income : prevIncome,
+            expense: !isIncome ? prevExpense + expense : prevExpense
+
+          }
+        }
+      }
+      console.log("ALOOOHA",obj)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+
 
 
 
@@ -2125,5 +2336,7 @@ export default {
   getAllYears,
   getCategoryYears,
   getCategoryMonths,
-  getCategoryDays
+  getCategoryDays,
+  getCompareMonthData,
+  getCompareYearData 
 }

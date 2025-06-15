@@ -333,20 +333,31 @@ const transactions = () => {
     }
   },[filterPressed])
 
+  const fetchCompareData = async() => {
+    try {
+      const monthData = await db.getCompareMonthData()
+      
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const fetchData = async() => {
 
     /* this could need a splashscreen for loading this data */
   
     try {
-      // categoryData
+
       const yearData = await db.getCategoryYears()
+
       const monthData = await db.getCategoryMonths()
       const dayData = await db.getCategoryDays()
+
       if(cateYears){
         setCateYears(yearData)
-      }
+      } 
       
-      if(monthData){
+       if(monthData){
         setCateMonths(monthData)
       }
 
@@ -364,7 +375,7 @@ const transactions = () => {
       this should load all data on the beginning of the tab 
     */
     fetchData()
-
+    fetchCompareData()
   },[])
   
   return (
@@ -490,10 +501,10 @@ const transactions = () => {
             )}
           
             {!swiped && !dayPressed && tabs === "day" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={days} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
+              <TransactionDataComponent typeDate={tabs} dateData={days} cateDays={cateDays} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "month" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={months} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
+              <TransactionDataComponent typeDate={tabs} dateData={months} cateMonths={cateMonths} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "year" &&(
               <TransactionDataComponent typeDate={tabs} dateData={years} cateYears={cateYears} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>

@@ -20,7 +20,7 @@ const transactionStyle = {
   }
 
 
-const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTransModalVisible , setId, cateYears}) => {
+const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTransModalVisible , setId, cateMonths, cateDays, cateYears}) => {
 
   const [data,setData] = useState({})
   const [outputData,setOutputData] = useState({})
@@ -212,6 +212,11 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
           setQueryState(data[trackingIndex]?.monthsIncomeDate)
 
 
+          if(cateMonths){
+          const ind = Object.keys(cateMonths)[trackingIndex]
+          setOutputCate(cateMonths[ind])
+        }
+
           if(trackingIndex - 1 < 0){
             setBackLabel("")
           }else if(months[data[trackingIndex - 1]?.monthsIncomeDate] !== undefined){
@@ -232,9 +237,16 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
         if(isDay && norm) valid = norm.split("-")[2]
 
         if(cateYears){
-          const ind =Object.keys(cateYears)[trackingIndex]
+          const ind = Object.keys(cateYears)[trackingIndex]
           setOutputCate(cateYears[ind])
         }
+
+        if(cateDays){
+          const ind = Object.keys(cateDays)[trackingIndex]
+          setOutputCate(cateDays[ind])
+        }
+
+
 
         if(data && dataLength > 0){
           setOutputData(Object.values(data)[trackingIndex])
@@ -259,6 +271,7 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
 
 
 
+    /* SCROLLING DOWN CONDITIONS */
     useEffect(() => {
       if(scrollingDown){
         mainContainerOp.value = withTiming(0,{ duration:250})
@@ -273,6 +286,8 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
       }
     },[scrollingDown])
 
+
+    /*  INDICATOR */
     useEffect(() => {
       if(scrollIndex === 0){
         lIndicatorBg.value = withTiming(1,{ duration:250 }) 
@@ -309,7 +324,7 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
           prepCateData()
         }
       }
-    },[cateYears])
+    },[cateYears,cateDays])
 
   return (
     <Animated.View style={[styles.container,animatedMainContainer,{}]}>
