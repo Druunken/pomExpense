@@ -8,7 +8,7 @@ import numberInputValidation from '@/services/numberInputValidation'
 import { months } from '../constants/Dates.js'
 import { Ionicons } from '@expo/vector-icons'
 
-const FilterTransactionComp = ({ givinStyle, scrollingDown,filteredData, setFilteredData, scrollbehaviour, setTransModalVisible, setId , monthView, yearView, dayView, queryState, style, setContentOffSetY, setScrollingDown }) => {
+const FilterTransactionComp = ({ givinStyle, scrollingDown, filteredData, setFilteredData, scrollbehaviour, setTransModalVisible, setId , monthView, yearView, dayView, queryState, style, setContentOffSetY, setScrollingDown }) => {
 
 
     const [renderItems,setRenderItems] = useState([])
@@ -31,7 +31,7 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown,filteredData, setFilt
     const dataRdyOp = useSharedValue(0)
     const dataRdyInd = useSharedValue(-3)
 
-    const containerHeight = useSharedValue(500)
+    const containerHeight = useSharedValue(650)
 
     const scrollBg = useSharedValue(0)
 
@@ -54,7 +54,7 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown,filteredData, setFilt
       const backgroundColor = interpolateColor(
         scrollBg.value,
         [0,1],
-        [Colors.primaryBgColor.black,Colors.primaryBgColor.newPrimeLight]
+        [givinStyle ? Colors.primaryBgColor.black : Colors.primaryBgColor.newPrime ,Colors.primaryBgColor.newPrimeLight]
       )
       return{
         height: containerHeight.value,
@@ -155,14 +155,14 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown,filteredData, setFilt
         
         setScrollingDown(true)
         scrollBg.value = withTiming(1,{ duration:500})
-        containerHeight.value = withTiming(600,{ duration: 500 })
+        containerHeight.value = withTiming(500,{ duration: 500 })
         upBtnOp.value = withTiming(0,{ duration: 450 })
         if(pressedUpBtn){
           setPressedUpBtn(false)
         }
         return
       }else if (currOffset < 5){
-        containerHeight.value = withTiming(500,{ duration: 400 })
+        containerHeight.value = withTiming(500,{ duration: 650 })
         upBtnOp.value = withTiming(0,{ duration: 450 })
         setScrollingDown(false)
         scrollBg.value = withTiming(0,{ duration:500})
@@ -178,7 +178,7 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown,filteredData, setFilt
       setPressedUpBtn(true)
       scrollToTop()
       scrollBg.value = withTiming(0,{ duration:500})
-      containerHeight.value = withTiming(500,{ duration: 400 })
+      containerHeight.value = withTiming(650,{ duration: 400 })
       upBtnOp.value = withTiming(0,{ duration: 450 })
     }
 
@@ -232,16 +232,26 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown,filteredData, setFilt
       }
     }
 
+    useEffect(() => {
+      elementToRender(true,filteredData)
+      animateValidtion(filteredData.length > 0 ? true : false)
+    },[filteredData])
+
 
   return (
     <Animated.View style={[styles.container,animatedContainer,style && style,givinStyle,{borderWidth:0}]}>
-      <View style={{width:"100%",justifyContent:"center",alignItems:"center"}}>
-        <View style={{width:60,height:5,backgroundColor:Colors.primaryBgColor.white,borderRadius:10}}/>
-      </View>
+      { givinStyle && (
+        <View style={{width:"100%",justifyContent:"center",alignItems:"center"}}>
+          <View style={{width:60,height:5,backgroundColor:Colors.primaryBgColor.white,borderRadius:10}}/>
+        </View>
+      )}
       <View style={styles.transactionContainer}>
         <Animated.View style={[animatedNoData,{justifyContent:"center",alignItems:"center",width:"100%",position:"absolute"}]}>
-          <Text style={styles.infoLabel}>No data</Text>
-          <LottieView style={styles.lottieNoData} source={require("../assets/lottie/settings_lottie.json")} autoPlay loop/>
+          <View style={{backgroundColor:Colors.primaryBgColor.white,padding:20,borderRadius:10}}>
+            <Text style={styles.infoLabel}>No data</Text>
+            <LottieView style={styles.lottieNoData} source={require("../assets/lottie/settings_lottie.json")} autoPlay loop/>
+          </View>
+          
         </Animated.View>
 
         <Animated.View style={[animatedUpBtn,styles.upBtnDiv,{}]}>

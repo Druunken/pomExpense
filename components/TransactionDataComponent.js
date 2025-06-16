@@ -16,11 +16,11 @@ const transactionStyle = {
     backgroundColor:Colors.primaryBgColor.black,
     borderRadius:30,
     paddingTop:15,
-    height:500
+    height:200
   }
 
 
-const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTransModalVisible , setId, cateMonths, cateDays, cateYears}) => {
+const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, comparedData, setTransModalVisible , setId, cateMonths, cateDays, cateYears}) => {
 
   const [data,setData] = useState({})
   const [outputData,setOutputData] = useState({})
@@ -36,6 +36,7 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
   const [scrollingDown,setScrollingDown] = useState(false)
   const [yearLabel,setYearLabel] = useState("")
   const [noData,setNoData] = useState(true)
+  
 
   const [cateIndex,setCateIndex] = useState(0)
   const [cateLength,setCateLength] = useState(0)
@@ -45,7 +46,7 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
   const [staticData, setStaticData] = useState()
 
   const containerY = useSharedValue(0)
-  const containerHeight = useSharedValue(230)
+  const containerHeight = useSharedValue(390)
   const containerOp = useSharedValue(1)
 
 
@@ -282,7 +283,7 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
         }else{
           mainContainerOp.value = withTiming(0,{ duration:250})
         }
-        return containerHeight.value = withSpring(230)
+        return containerHeight.value = withSpring(390)
       }
     },[scrollingDown])
 
@@ -334,9 +335,11 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
         <View style={styles.indicatorDiv}>
           <Animated.View style={[styles.scrollIndicator,animatedIndicatorL]}/>
           <Animated.View style={[styles.scrollIndicator,animatedIndicatorM]}/>
-          <Animated.View style={[styles.scrollIndicator,animatedIndicatorR]}/>
+          { typeDate !== "day" && (
+            <Animated.View style={[styles.scrollIndicator,animatedIndicatorR]}/>
+          )}
         </View>
-        <ScrollView contentContainerStyle={styles.scrollDiv} horizontal pagingEnabled  scrollEnabled showsHorizontalScrollIndicator={false} onScroll={(ev) => {
+        <ScrollView nestedScrollEnabled contentContainerStyle={styles.scrollDiv} horizontal pagingEnabled  scrollEnabled showsHorizontalScrollIndicator={false} onScroll={(ev) => {
           const offsetX = ev.nativeEvent.contentOffset.x
           const pageWidth = ev.nativeEvent.layoutMeasurement.width
           const pageIndex = Math.round(offsetX / pageWidth)
@@ -344,9 +347,12 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, setTr
             setScrollIndex(pageIndex)
           }
         }}>
+
           <StatsComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
           <CategoryComp outputData={outputCate && outputCate} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
-          <CompareComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          { typeDate !== "day" && (
+            <CompareComp outputData={comparedData && comparedData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          )}
         </ScrollView>
       </Animated.View>
 

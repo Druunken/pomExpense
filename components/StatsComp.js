@@ -36,7 +36,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
           <View style={[,{width:"100%"}]}>
           <View style={styles.elementDiv}>
             <Text style={styles.mainLabel}>Balance: </Text>
-            <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData.balance)} {currency}</Text>
+            <Text style={styles.resLabel}>{numberInputValidation.converToString(outputData.balance.toFixed(2))} {currency}</Text>
           </View>
 
           <View style={styles.elementDiv}>
@@ -46,7 +46,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
           <View style={styles.elementDiv}>
             <Text style={[styles.mainLabel,{}]}>Expenses: </Text>
-            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.expense)} {currency}</Text>
+            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.expense.toFixed(2))} {currency}</Text>
           </View>
 
           {/* <View style={styles.elementDiv}>
@@ -82,7 +82,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
           <View style={styles.elementDiv}>
             <Text style={[styles.mainLabel,{}]}>Expenses: </Text>
-            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.monthsTotalExpenses)} {currency}</Text>
+            <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.monthsTotalExpenses.toFixed(2))} {currency}</Text>
           </View>
 
           <View style={styles.elementDiv}>
@@ -107,7 +107,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
             <View style={[,{width:"100%"}]}>
             <View style={styles.elementDiv}>
               <Text style={styles.mainLabel}>Balance: </Text>
-              <Text style={[styles.resLabel,{ color: outputData.balance < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}]}>{numberInputValidation.converToString(outputData.balance)} {currency}</Text>
+              <Text style={[styles.resLabel,{ color: outputData.balance < 0 ? Colors.primaryBgColor.persianRed : Colors.primaryBgColor.prime}]}>{numberInputValidation.converToString(outputData.balance.toFixed(2))} {currency}</Text>
             </View>
 
             <View style={styles.elementDiv}>
@@ -117,7 +117,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
             <View style={styles.elementDiv}>
               <Text style={[styles.mainLabel,{}]}>Expenses: </Text>
-              <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.expense)} {currency}</Text>
+              <Text style={[styles.resLabel,{color:Colors.primaryBgColor.persianRed}]}>{numberInputValidation.converToString(outputData.expense.toFixed(2))} {currency}</Text>
             </View>
 
             <View style={styles.elementDiv}>

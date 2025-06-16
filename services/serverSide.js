@@ -14,7 +14,7 @@ const createCurrentDate = async() => {
   const arr = currDay.split("-")
   const day = arr[2]
   const month = arr[1] // arr[1]
-  const year = "2026" // arr[0]
+  const year = arr[0] // arr[0]
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]
 }
@@ -2218,7 +2218,7 @@ const getCompareMonthData = async() => {
           }
         }
       }
-      console.log("ALOOOHA",obj)
+      return obj
     }
   } catch (error) {
     console.error(error)
@@ -2245,7 +2245,7 @@ const getCompareYearData = async() => {
         
         const month = data[i].month
         const year = data[i].year
-        const date = year + "-" + month
+        const date = year
         
         if(obj[date] === undefined){
           obj[date] = {
@@ -2268,7 +2268,57 @@ const getCompareYearData = async() => {
           }
         }
       }
-      console.log("ALOOOHA",obj)
+      return obj
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const getComparedYears = async() => {
+  try {
+    let obj = {}
+    const data = await db.getAllAsync(
+      `
+        SELECT * FROM balance
+      `
+    )
+
+    if(data.length > 0){
+      for(let i = 0; i < data.length; i++){
+        const amount = data[i].moneyValue
+        const expense = amount
+        const income = amount
+        const balanceType = data[i].balanceType
+
+        const isIncome = balanceType === "plus"
+        
+        const month = data[i].month
+        const year = data[i].year
+        const date = year
+        
+        if(obj[date] === undefined){
+          obj[date] = {
+            amount: amount,
+            date: date,
+            income: isIncome ? income : 0,
+            expense : !isIncome ? expense : 0
+          }
+        }else if(obj[date]){
+          const prevAmount = obj[date].amount
+          const prevExpense = obj[date].expense
+          const prevIncome = obj[date].income
+
+          obj[date] = {
+            amount: prevAmount + amount,
+            date:date,
+            income: isIncome ? prevIncome + income : prevIncome,
+            expense: !isIncome ? prevExpense + expense : prevExpense
+
+          }
+        }
+      }
+      return obj
     }
   } catch (error) {
     console.error(error)
@@ -2338,5 +2388,6 @@ export default {
   getCategoryMonths,
   getCategoryDays,
   getCompareMonthData,
-  getCompareYearData 
+  getCompareYearData,
+  getComparedYears
 }

@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, Dimensions } from 'react-native'
-import React, { useEffect } from 'react'
+import { StyleSheet, Text, View, Dimensions, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { months } from '../constants/Dates.js'
 
 const { width } = Dimensions.get("window")
 
-const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
+const CompareComp = ({ outputData, typeDate, setGivenWidth }) => {
 
 
     /* 
@@ -13,26 +13,41 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
 
     */
 
+    const [renderItems,setRenderItems] = useState([])
+
+    const renderData = () => {
+      if(Object.keys(outputData).length > 0){
+        let elements = []
+        let index = 0
+        for(const [key,value] of Object.entries(outputData)){
+          elements.push(
+            <View style={styles.elementDiv} key={index}>
+              <Text>{key}</Text>
+              <Text>{value.amount}</Text>
+            </View>
+          )
+          index++
+        }
+        setRenderItems(elements)
+      }
+    }
+
     useEffect(() => {
-      
+      console.log(outputData,"ALLOO")
+      renderData()
     },[outputData])
   return (
     <View style={styles.container} onLayout={(ev) => setGivenWidth(ev.nativeEvent.layout.width)}>
       <View style={styles.layout}>
-        <View>
-          {/* <Text style={styles.label}>{typeDate === "month" ? months[outputData?.monthsIncomeDate] : outputData.year}</Text>  */}
-        <Text style={styles.label}>Compare Component</Text>
-        </View>
-
-        <Text>we need the dates with these properties</Text>
-        <Text>balance, expense, income</Text>
-        {/* Stats of the Month comp here */}
+        <ScrollView contentContainerStyle={styles.elementContainer} horizontal>
+          {renderItems}
+        </ScrollView>
       </View>
     </View>
   )
 }
 
-export default GraphComp
+export default CompareComp
 
 const styles = StyleSheet.create({
     container:{
@@ -49,6 +64,15 @@ const styles = StyleSheet.create({
       borderRadius:6,
       width:width - 50,
       height:200,
-      alignItems:"center"
     },
+    elementDiv:{
+    },
+    elementContainer:{
+      flexDirection:"row",
+      height:"100%",
+      width:"100%",
+      alignItems:"flex-end",
+      gap:30,
+      paddingHorizontal:20
+    }
 })

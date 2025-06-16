@@ -62,6 +62,9 @@ const transactions = () => {
   const [cateMonths,setCateMonths] = useState({})
   const [cateDays,setCateDays] = useState({})
 
+  const [compareMonths,setCompareMonths] = useState({})
+  const [compareYears,setCompareYears] = useState({})
+
   const [tabs,setTabs] = useState("month")
 
 
@@ -177,7 +180,7 @@ const transactions = () => {
   const context = useSharedValue({y:0})
 
   const gesture = Gesture.Pan().onStart(() => {
-    /* context.value = {y: balanceContainerY.value}
+    context.value = {y: balanceContainerY.value}
   }).onUpdate((event) => {
     balanceContainerY.value = event.translationY + context.value.y
     balanceContainerY.value = Math.max(balanceContainerY.value,MAX_TRANSLATE_Y-50)
@@ -186,7 +189,7 @@ const transactions = () => {
       scrollTo(-SCREEN_HEIGHT / 2.7)
     }else if(balanceContainerY.value < -SCREEN_HEIGHT / 1.5){
       scrollTo(MAX_TRANSLATE_Y - insets.top)
-    } */
+    }
   })
 
   const animatedDateBackground = useAnimatedStyle(() => {
@@ -336,7 +339,15 @@ const transactions = () => {
   const fetchCompareData = async() => {
     try {
       const monthData = await db.getCompareMonthData()
-      
+      const yearData = await db.getCompareYearData()
+
+
+      if(monthData){
+        setCompareMonths(monthData)
+      }
+      if(yearData){
+        setCompareYears(yearData)
+      }
     } catch (error) {
       console.error(error)
     }
@@ -376,7 +387,7 @@ const transactions = () => {
     */
     fetchData()
     fetchCompareData()
-  },[])
+  },[value])
   
   return (
     
@@ -504,10 +515,10 @@ const transactions = () => {
               <TransactionDataComponent typeDate={tabs} dateData={days} cateDays={cateDays} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "month" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={months} cateMonths={cateMonths} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
+              <TransactionDataComponent typeDate={tabs} comparedData={compareMonths} dateData={months} cateMonths={cateMonths} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "year" &&(
-              <TransactionDataComponent typeDate={tabs} dateData={years} cateYears={cateYears} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
+              <TransactionDataComponent typeDate={tabs} comparedData={compareYears} dateData={years} cateYears={cateYears} transModalVisible={transModalVisible} setTransModalVisible={setTransModalVisible} setId={setId}/>
             )}
             {!swiped && !dayPressed && tabs === "all" && (
               <FilterTransactionComp scrollbehaviour={false} setScrollingDown={setScrollingDown} setContentOffSetY={setContentOffSetY} style={{position:"absolute",top:150,height:450}} filteredData={filteredData} setFilteredData={setFilteredData} setTransModalVisible={setTransModalVisible} setId={setId}/>
