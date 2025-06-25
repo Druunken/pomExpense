@@ -234,9 +234,9 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown, filteredData, setFil
 
     useEffect(() => {
       elementToRender(true,filteredData)
-      animateValidtion(filteredData.length > 0 ? true : false)
+      animateValidtion(filteredData?.length > 0 ? true : false)
     },[filteredData])
-
+    
 
   return (
     <Animated.View style={[styles.container,animatedContainer,style && style,givinStyle,{borderWidth:0}]}>

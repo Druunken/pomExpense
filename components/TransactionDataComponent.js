@@ -349,7 +349,7 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
         }}>
 
           <StatsComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
-          <CategoryComp outputData={outputCate && outputCate} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          <CategoryComp outputData={outputCate && outputCate} typeDate={typeDate} setGivenWidth={setGivenWidth} isVisible={scrollIndex === 1}/>
           { typeDate !== "day" && (
             <CompareComp outputData={comparedData && comparedData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
           )}

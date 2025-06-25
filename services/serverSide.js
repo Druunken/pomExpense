@@ -2046,14 +2046,6 @@ const getCategoryMonths = async() => {
   try {
     const obj = {}
 
-    /* 
-      obj = {
-        "2025-05-22": {
-
-        }
-      }
-    */
-
     const getData = await db.getAllAsync(
       `
       SELECT * FROM balance
@@ -2070,14 +2062,12 @@ const getCategoryMonths = async() => {
         const amount = getData[i].moneyValue
         const balanceType = getData[i].balanceType
 
-        
-
         if(obj[date] === undefined){
         obj[date] = {
           [cate]:{
             amount: amount,
             date: date,
-            transactions: 1
+            transactions: 1,
           }
         }
           /* if date exists but check category exists aswell*/
@@ -2088,7 +2078,8 @@ const getCategoryMonths = async() => {
           obj[date][cate] = {
             amount: prevAmount + amount,
             date:date,
-            transactions: prevTrans + 1
+            transactions: prevTrans + 1,
+
           }
 
           /* check if cate doesn't exists */
