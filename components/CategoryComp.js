@@ -46,11 +46,9 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth, isVisible }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={{fontFamily:"BoldFont",fontSize:22,color:Colors.primaryBgColor.black}}>Category Stats</Text>
       <View style={styles.layout} onLayout={(ev) => setGivenWidth(ev.nativeEvent.layout.width)}>
-{/*         <View style={styles.elementContainer}>
-        {renderItems}
-        </View> */}
-        <DonutChartComp width={dimensions.width} height={dimensions.height} isVisible={isVisible} outputData={outputData} />
+        <DonutChartComp width={width} height={dimensions.height} isVisible={isVisible} outputData={outputData}/>
       </View>
     </View>
   )
@@ -62,16 +60,14 @@ const styles = StyleSheet.create({
     container:{
         width:width,
         alignItems:"center",
-        height:250,
     },
     label:{
       fontSize:15,
       fontFamily:"MainFont",
     },
     layout:{
-      borderRadius:6,
       width:width - 50,
-      height:200,
+      height:500,
     },
     elementDiv:{
       gap:10,

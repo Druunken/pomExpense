@@ -14,7 +14,7 @@ const createCurrentDate = async() => {
   const arr = currDay.split("-")
   const day = arr[2]
   const month = arr[1] // arr[1]
-  const year = arr[0] // arr[0]
+  const year = "2026" // arr[0]
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]
 }
@@ -2068,9 +2068,10 @@ const getCategoryMonths = async() => {
             amount: amount,
             date: date,
             transactions: 1,
+            percentage: 0,
           }
         }
-          /* if date exists but check category exists aswell*/
+          /* if date exists then check category exists */
         }else if(cate in obj[date]){
           const prevAmount = obj[date][cate].amount
           const prevTrans = obj[date][cate].transactions
@@ -2079,19 +2080,21 @@ const getCategoryMonths = async() => {
             amount: prevAmount + amount,
             date:date,
             transactions: prevTrans + 1,
+            percentage:0
 
           }
 
-          /* check if cate doesn't exists */
+          /* if cate doesn't exists */
         }else if(!(cate in obj[date])){
           obj[date][cate] = {
             amount: amount,
             date: date,
-            transactions: 1
+            transactions: 1,
+            percentage:0
           }
         }
       }
-      console.log(obj)
+
       return obj
     }
   } catch (error) {

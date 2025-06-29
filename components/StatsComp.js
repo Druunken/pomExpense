@@ -145,6 +145,7 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth }) => {
     },[outputData])
   return (
     <View style={styles.container} onLayout={(ev) => setGivenWidth(ev.nativeEvent.layout.width)}>
+      <Text style={{fontFamily:"BoldFont",fontSize:22,color:Colors.primaryBgColor.black}}>Stats</Text>
       <View style={styles.layout}>
         <View>
           {/* <Text style={styles.label}>{typeDate === "month" ? months[outputData?.monthsIncomeDate] : outputData.year}</Text>  */}
