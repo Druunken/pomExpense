@@ -60,7 +60,7 @@ const DonutChartComp = ({ width, height, isVisible, outputData }) => {
       txtElements.push(
         <View style={styles.elemContainer} key={index}>
         <View style={styles.graphContainer}>
-            <BasicChartComp pressed={pressed} setPressed={setPressed} width={width} percentage={progress} bgColor={clrArr[index]} index={index} cateLabel={key} label={(progress * 100).toFixed(2)} val={numberInputValidation.converToString((value.amount).toFixed(2))} />
+            <BasicChartComp pressed={pressed} setPressed={setPressed} width={width} percentage={progress} bgColor={clrArr[index]} index={index} cateLabel={key} label={(progress * 100).toFixed(2)} isVisible={isVisible} val={numberInputValidation.converToString((value.amount).toFixed(2))} />
         </View>
 
         </View>
@@ -91,8 +91,12 @@ const DonutChartComp = ({ width, height, isVisible, outputData }) => {
   }
 
   useEffect(() => {
-    renderData()
-  },[isVisible,outputData]) 
+    if(outputData){
+      if(Object.keys(outputData)?.length > 0){
+      renderData()
+    }
+    }
+  },[outputData,isVisible]) 
 
 
   return (

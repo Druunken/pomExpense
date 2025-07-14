@@ -46,7 +46,6 @@ const GraphComp = ({ outputData, typeDate, setGivenWidth, isVisible }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{fontFamily:"BoldFont",fontSize:22,color:Colors.primaryBgColor.black}}>Category Stats</Text>
       <View style={styles.layout} onLayout={(ev) => setGivenWidth(ev.nativeEvent.layout.width)}>
         <DonutChartComp width={width} height={dimensions.height} isVisible={isVisible} outputData={outputData}/>
       </View>

@@ -1,134 +1,183 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, width } from 'react-native-reanimated'
-
-import Svg, { Circle, Path, G } from 'react-native-svg'
-
-import { Colors } from '@/constants/Colors'
-import DonutSegment from './SvgComponents/DonutSegment'
-import BasicChartComp from './SvgComponents/BasicChartComp'
-import numberInputValidation from '@/services/numberInputValidation';
-
-const radius = 50;
-const strokeWidth = 15;
-const cx = 80
-const cy = 80
-const clrArr = [Colors.primaryBgColor.brown,Colors.primaryBgColor.darkPurple,Colors.primaryBgColor.dark,Colors.primaryBgColor.primeLight,Colors.primaryBgColor.persianRed]
+import React, { useState } from "react";
+import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
+import { Svg, Path, Circle, G, Text as SvgText } from "react-native-svg";
+import { pie, arc } from "d3-shape";
+import { scaleOrdinal } from "d3-scale";
 
 
-const ChartView = ({ percentage, outputData, isVisible, width, height }) => {
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedProps,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
-    const [infoItems,setInfoItems] = useState([])
-    const [renderItems,setRenderItems] = useState([])
-    const [pressed,setPressed] = useState(false)
+import numberValidation from '../services/numberInputValidation'
 
-    const animatedChart = useAnimatedStyle(() => {
-        return{
-        }
-    })
-    
-    const renderData = () =>{
-    let elements = []
-    let txtElements = []
-    let index = 0
-    let initialRotationVal = 0
-    let totalAmount = 0
-    let len = 0
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
-    for(const [key,value] of Object.entries(outputData)){
-      totalAmount += Math.abs(value.amount)
-      len++
+function enforceMinAngle(pieData, minAngle) {
+  const totalAngle = 2 * Math.PI;
+  const angles = pieData.map((d) => d.endAngle - d.startAngle);
+  const smallSlices = angles.map((angle) => angle < minAngle);
+
+  const extraAngleNeeded = smallSlices.reduce(
+    (sum, isSmall, i) => sum + (isSmall ? minAngle - angles[i] : 0),
+    0
+  );
+
+  const totalLargeAngle = angles.reduce(
+    (sum, angle, i) => sum + (smallSlices[i] ? 0 : angle),
+    0
+  );
+
+  const adjustedAngles = angles.map((angle, i) => {
+    if (smallSlices[i]) {
+      return minAngle;
+    } else {
+      return angle - (angle / totalLargeAngle) * extraAngleNeeded;
     }
+  });
 
-    for(const [key,value] of Object.entries(outputData)){
-      const progress = Math.abs(value.amount) / totalAmount
-      const uniqueKey = `${key}-${index}`
-
-      const pressHandler =  () => {
-         console.log("Pressed segment with key:", uniqueKey);
-      }
-
-      txtElements.push(
-        <View style={styles.elemContainer} key={index}>
-
-        <View style={styles.graphContainer}>
-            <BasicChartComp pressed={pressed} setPressed={setPressed} width={width} percentage={progress} bgColor={clrArr[index]} index={index} cateLabel={key} label={(progress * 100).toFixed(2)} val={numberInputValidation.converToString((value.amount).toFixed(2))} />
-        </View>
-
-        </View>
-      )
-
-      elements.push(
-        <DonutSegment
-        key={uniqueKey} 
-        cx={cx}
-        cy={cy}
-        radius={radius}
-        progress={progress} // the percentage here
-        strokeWidth={strokeWidth}
-        stroke={clrArr[index]}
-        opacity={0.8}
-        index={index + 1}
-        isVisible={isVisible}
-        rotation={index !== 0 ? initialRotationVal * 360  : 0}
-        onPress={pressHandler}
-        />
-      )
-      initialRotationVal += progress  // the percentage here
-      index++
-    }
-    setInfoItems(txtElements) 
-    setRenderItems(elements)
-  }
-
-    useEffect(()  => {
-        renderData()
-    },[])
-
-  return (
-    <View style={[styles.container,{width:"100%"}]}>
-        <View style={styles.chartDiv}>
-            <Animated.View style={[animatedChart,styles.chart,{borderWidth:1}]}>
-                <Svg width={200} height={200}>
-                    <G>
-                        {/* <DonutSegment 
-                        cx={cx}
-                        cy={cy}
-                        radius={radius}
-                        progress={1}
-                        strokeWidth={40}
-                        stroke={Colors.primaryBgColor.gray}
-                        opacity={0.5}
-                        background={true}
-                        /> */}
-                        { renderItems }
-                    </G>
-                </Svg>
-            </Animated.View>
-        </View>
-    </View>
-  )
+  let currentAngle = 0;
+  return pieData.map((slice, i) => {
+    const newStartAngle = currentAngle;
+    const newEndAngle = currentAngle + adjustedAngles[i];
+    currentAngle = newEndAngle;
+    return {
+      ...slice,
+      startAngle: newStartAngle,
+      endAngle: newEndAngle,
+    };
+  });
 }
 
-export default ChartView
+const ChartView = ({
+  data = [],
+  width = 300,
+  height = 300,
+  onSlicePress = () => {},
+}) => {
+  const [selectedSlice, setSelectedSlice] = useState(null);
+  const [selectedAmount, setSelectedAmount] = useState(null);
+
+  const radius = Math.min(width, height) / 2 - 10;
+  const innerRadius = radius * 0.6;
+
+  const rawPieData = pie()
+    .value((d) => d.amount)
+    .sort(null)(data);
+
+  const MIN_ANGLE = 0.3;
+  const pieData = enforceMinAngle(rawPieData, MIN_ANGLE);
+
+  const arcGenerator = arc().outerRadius(radius).innerRadius(innerRadius);
+
+  const colorScale = scaleOrdinal()
+    .domain(pieData.map((slice) => slice.data.date))
+    .range(["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"]);
+
+  const strokeWidths = pieData.map(() => useSharedValue(6));
+  const fontSizes = pieData.map(() => useSharedValue(8));
+
+  const handlePress = (index, slice) => {
+    setSelectedSlice(index);
+    setSelectedAmount(slice.data.amount); // Show this inside the center circle
+    onSlicePress(data[index]);
+
+    strokeWidths.forEach((strokeWidth, i) => {
+      strokeWidth.value = withTiming(i === index ? 2 : 6, { duration: 500 });
+    });
+    fontSizes.forEach((fontSize, i) => {
+      fontSize.value = withTiming(i === index ? 12 : 8, { duration: 500 });
+    });
+  };
+
+  return (
+    <View style={styles.container}>
+      <Svg width={width} height={height}>
+        <G x={width / 2} y={height / 2}>
+          {pieData.map((slice, index) => {
+            const path = arcGenerator(slice);
+            const animatedPathProps = useAnimatedProps(() => ({
+              strokeWidth: strokeWidths[index].value,
+            }));
+
+            return (
+              <TouchableWithoutFeedback
+                key={index}
+                onPress={() => handlePress(index, slice)}
+              >
+                <AnimatedPath
+                  animatedProps={animatedPathProps}
+                  d={path}
+                  fill={colorScale(slice.data.date)}
+                  stroke="white"
+                />
+              </TouchableWithoutFeedback>
+            );
+          })}
+
+          <Circle cx={0} cy={0} r={innerRadius} fill="white" />
+
+          {selectedAmount !== null && (
+            <SvgText
+              x={0}
+              y={5}
+              textAnchor="middle"
+              fontSize="18"
+              fontWeight="bold"
+              fill="#333"
+            >
+              {numberValidation.converToString(Number(selectedAmount.toFixed(2)))}
+            </SvgText>
+          )}
+        </G>
+      </Svg>
+
+      {pieData.map((slice, index) => {
+        const [labelX, labelY] = arcGenerator.centroid(slice);
+        const labelOffset = 1.3;
+        const adjustedLabelX = labelX * labelOffset + width / 2;
+        const adjustedLabelY = labelY * labelOffset + height / 2;
+
+        const animatedFontSizeStyle = useAnimatedStyle(() => ({
+          fontSize: fontSizes[index].value,
+        }));
+
+        return (
+          <Animated.Text
+            key={`label-${index}`}
+            onPress={() => handlePress(index, slice)}
+            style={[
+              styles.label,
+              {
+                left: adjustedLabelX,
+                top: adjustedLabelY,
+              },
+              animatedFontSizeStyle,
+            ]}
+          >
+            {slice.data.date}
+          </Animated.Text>
+        );
+      })}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    container:{
-        width:"100%",
-        borderWidth:1,
-        height:300,
-        borderRadius:20,
-        paddingHorizontal:20,
-        paddingTop:10
-    },
-    chart:{
-        borderRadius:10,
-    },
-    chartDiv:{
-        backgroundColor:Colors.primaryBgColor.gray
-    },
-    elemContainer:{
-        borderWidth:1,
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  label: {
+    position: "absolute",
+    color: "black",
+    fontWeight: "bold",
+    textAlign: "center",
+    transform: [{ translateX: -25 }, { translateY: -10 }],
+  },
+});
 
-    }
-})
+export default ChartView;

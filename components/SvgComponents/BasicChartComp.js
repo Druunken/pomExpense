@@ -9,7 +9,7 @@ import { Circle, G, Path, Svg } from 'react-native-svg';
 
 const WIDTH = 200
 
-const BasicChartComp = ({ label, percentage, bgColor, val, cateLabel, index, width, pressed, setPressed  }) => {
+const BasicChartComp = ({ label, percentage, bgColor, val, cateLabel, index, width, pressed, setPressed, isVisible  }) => {
 
 
     const elemWidth = useSharedValue(0)
@@ -74,23 +74,19 @@ const BasicChartComp = ({ label, percentage, bgColor, val, cateLabel, index, wid
         opacity: closeOp.value
       }
     })
-
-    const onPressHandler = () => {
-        console.log(percentage,"Percentage")
-    }
-
     const onClose = (  ) => {
       closeAnimate()
       
     }
 
     useEffect(() =>{ 
-      console.log( percentage < 0.1)
-      setTimeout(() => {
-        containerOp.value = withTiming(1,{ duration:250 })
-        elemWidth.value = withSpring(percentage * 200 + ( percentage < 0.1 ? 50 : percentage < 0.2 ? 40 : percentage < 0.3 ? 35 : -4),{damping: 14})
-      }, 300 * index);
-    },[percentage])
+      if(isVisible){
+        setTimeout(() => {
+          containerOp.value = withTiming(1,{ duration:250 })
+          elemWidth.value = withSpring(percentage * 200 + ( percentage < 0.1 ? 50 : percentage < 0.2 ? 40 : percentage < 0.3 ? 35 : -4),{damping: 14})
+        }, 300 * index);
+        }
+    },[percentage,isVisible])
   return (
     <Animated.View style={[animatedContainer,styles.container,]}>
 

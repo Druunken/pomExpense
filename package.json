@@ -1,5 +1,5 @@
 {
-  "name": "pompomexpense",
+  "name": "pomExpense",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -18,6 +18,12 @@
     "@expo/vector-icons": "~14.0.2",
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
+    "@shopify/react-native-skia": "1.5.0",
+    "d3-array": "^3.2.4",
+    "d3-color": "^3.1.0",
+    "d3-interpolate": "^3.0.1",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "expo": "~52.0.17",
     "expo-blur": "~14.0.1",
     "expo-constants": "~17.0.3",
@@ -35,7 +41,7 @@
     "lottie-react-native": "7.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.76.9",
+    "react-native": "^0.76.9",
     "react-native-bouncy-checkbox": "^4.1.2",
     "react-native-calendars": "^1.1307.0",
     "react-native-gesture-handler": "~2.20.2",

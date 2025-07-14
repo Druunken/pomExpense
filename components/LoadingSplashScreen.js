@@ -28,8 +28,8 @@ const LoadingSplashScreen = ({ title, visible }) => {
 
     useEffect(() => {
         if(visible){
+            indexVal.value = 1
             opacityVal.value = withTiming(1,{ duration: 250 })
-            indexVal.value = withTiming(1,{ duration: 250 })
             layoutX.value = withSpring(-1)
         }
     },[visible])

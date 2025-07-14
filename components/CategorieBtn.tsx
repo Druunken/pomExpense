@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import React, { useState} from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Colors } from '@/constants/Colors'
+import LottieView from 'lottie-react-native';
 
 interface CategorieProps{
     label:string;
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
         height:45,
         justifyContent:"center",
         zIndex:5,
-    }
+    },
 })
 
 export default CategorieBtn

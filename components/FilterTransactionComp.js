@@ -54,7 +54,7 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown, filteredData, setFil
       const backgroundColor = interpolateColor(
         scrollBg.value,
         [0,1],
-        [givinStyle ? Colors.primaryBgColor.black : Colors.primaryBgColor.newPrime ,Colors.primaryBgColor.newPrimeLight]
+        [givinStyle ? Colors.primaryBgColor.chillOrange : Colors.primaryBgColor.newPrime ,Colors.primaryBgColor.newPrimeLight]
       )
       return{
         height: containerHeight.value,
@@ -239,10 +239,10 @@ const FilterTransactionComp = ({ givinStyle, scrollingDown, filteredData, setFil
     
 
   return (
-    <Animated.View style={[styles.container,animatedContainer,style && style,givinStyle,{borderWidth:0}]}>
+    <Animated.View style={[styles.container,animatedContainer,style && style,givinStyle,{}]}>
       { givinStyle && (
         <View style={{width:"100%",justifyContent:"center",alignItems:"center"}}>
-          <View style={{width:60,height:5,backgroundColor:Colors.primaryBgColor.white,borderRadius:10}}/>
+          <View style={{width:90,height:8,backgroundColor:Colors.primaryBgColor.black,borderRadius:10}}/>
         </View>
       )}
       <View style={styles.transactionContainer}>
@@ -332,7 +332,6 @@ const styles = StyleSheet.create({
     itemContainer:{
       gap:10,
       paddingBottom:200,
-      paddingTop:50
     },
     title:{
       fontSize:13,

@@ -1,89 +1,44 @@
-import React, { useEffect } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native'
-import Svg, { Circle, G, Path } from 'react-native-svg';
+import React, { forwardRef, useEffect } from 'react';
+import { Path as SkiaPath } from '@shopify/react-native-skia';
 import Animated, {
-  useAnimatedProps,
   useSharedValue,
+  useAnimatedProps,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+// Forward ref to SkiaPath
+const ForwardedPath = forwardRef((props, ref) => {
+  return <SkiaPath ref={ref} {...props} />;
+});
 
-const DonutSegment = ({
-  cx,
-  cy,
-  radius,
-  strokeWidth,
-  stroke,
-  progress, 
-  rotation = 0,
-  opacity = 0.5,
-  background = false,
-  index,
-  isVisible,
-  onPress,
-  onPress2
-}) => {
-  const circumference = 2 * Math.PI * radius;
-  const strokeWidthVal = useSharedValue(strokeWidth)
+const AnimatedPath = Animated.createAnimatedComponent(ForwardedPath);
 
-  const progressValue = useSharedValue(0)
+// DonutSegment forwards ref as well (optional)
+const DonutSegment = forwardRef(({ path, stroke, opacity = 0.8, isVisible }, ref) => {
+  const strokeWidth = useSharedValue(15);
 
-  const animatedProps = useAnimatedProps(() => {
-    const dashLength = circumference * progressValue.value;
-    return {
-      strokeDasharray: [dashLength, circumference - dashLength],
-      strokeWidth: strokeWidthVal.value
-    };
-  });
-
-  const onPressHandler = () => {
-    strokeWidthVal.value = withSpring(32)
-    onPress()
-    onPress2?.()
-  }
+  const animatedProps = useAnimatedProps(() => ({
+    strokeWidth: strokeWidth.value,
+  }));
 
   useEffect(() => {
-      if(isVisible){
-        progressValue.value = withSpring(progress,{ duration: 800 * (index + 1 )})
-        console.log(progress)
-      }
+    if (isVisible) {
+      strokeWidth.value = withSpring(selected ? 30 : 15);
+    }
+  }, [isVisible]);
 
-    },[isVisible])
-    
+  if (!isVisible) return null;
 
   return (
-    <Svg>
-      <TouchableOpacity onPress={() => console.log("YES")}>
-        <Text>Press</Text>
-      </TouchableOpacity>
-      <Path
-      d='M 80 20 A 20 20 0 0 1 80 100'
-      fill={"transparent"}
-      strokeWidth={10}
-      stroke={"white"}
-      onPress={() => {console.log(index)}}
-      />
-
-      {/* <AnimatedCircle
-      cx={cx}
-      cy={cy}
-      r={radius}
-      strokeWidth={strokeWidth}
-      strokeLinecap="round" 
-      fill="none"
+    <AnimatedPath
+      ref={ref}
+      path={path}
       stroke={stroke}
+      strokeCap="round"
       opacity={opacity}
-      animatedProps={!background && animatedProps}
-      strokeDasharray={background && [circumference, 0]}
-      rotation={-90 + rotation}
-      originX={cx}
-      originY={cy}
-      onPress={onPressHandler}
-    /> */}
-    </Svg>
+      animatedProps={animatedProps}
+    />
   );
-};
+});
 
 export default DonutSegment;

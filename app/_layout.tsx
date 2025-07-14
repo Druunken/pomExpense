@@ -13,7 +13,7 @@ export default function RootLayout() {
 
 
 
-
+  
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
     const prepareApp = async() => {

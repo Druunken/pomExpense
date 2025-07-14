@@ -7,6 +7,8 @@ import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 
+
+
 import Mainpom from '../assets/icons/pompomFriends.svg'
 import  db  from '../services/serverSide.js'
 import { incomeActiveContext, usersBalanceContext } from "../hooks/balanceContext";

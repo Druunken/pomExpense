@@ -6,21 +6,24 @@ module.exports = (() => {
 
   const { transformer, resolver } = config;
 
-  // Handling SVG files
   config.transformer = {
     ...transformer,
     babelTransformerPath: require.resolve('react-native-svg-transformer'),
   };
 
-  // Ensure resolver is correctly pointing to the right root folder
   config.resolver = {
     ...resolver,
     alias: {
-      '@': path.resolve(__dirname, 'PomPomExpense'), // Point to the PomPomExpense folder as the base folder
+      '@': path.resolve(__dirname), // adjust if needed
     },
-    assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'), // Handling SVG files
-    sourceExts: [...resolver.sourceExts, 'svg', 'js'], // Ensure `.js` is included here
+    assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
+    sourceExts: [...resolver.sourceExts, 'svg', 'ts', 'tsx', 'js'], // add ts and tsx here
   };
+
+  config.watchFolders = [
+    __dirname,
+    path.resolve(__dirname, '..'), // watch your app source folder explicitly
+  ];
 
   return config;
 })();

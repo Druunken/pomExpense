@@ -25,7 +25,7 @@ const SwipeLabelDataComp = ({ setState, dataLength, label, backLabel, forwLabel,
 
     const animatedBackOp = useAnimatedStyle(() => {
         return {
-            opacity: arrBackOp.value
+            opacity: arrBackOp.value,
         }
     })
 
@@ -69,17 +69,17 @@ const SwipeLabelDataComp = ({ setState, dataLength, label, backLabel, forwLabel,
         <View style={styles.div}>
             <Animated.View style={animatedBackOp}>
                 <TouchableOpacity activeOpacity={0.9} style={styles.btn} onPress={pressBack} disabled={backLabel === ""}>
-                    <Ionicons name='arrow-back' size={40}/>
+                    <Ionicons name='arrow-back-circle' size={30}/>
                     <Text style={styles.btnLabel}>{backLabel}</Text>
                 </TouchableOpacity>
             </Animated.View>
             <View style={{minWidth:80,justifyContent:"center",alignItems:"center"}}>
                 <Text style={styles.label}>{label}</Text>
-                <Text style={[styles.label,{fontSize:13,color:Colors.primaryBgColor.gray}]}>{yearLabel}</Text>
+                <Text style={[styles.label,{fontSize:11,color:Colors.primaryBgColor.gray,fontFamily:"MainFont",borderWidth:1,paddingHorizontal:10,borderRadius:5}]}>{yearLabel}</Text>
             </View>
-            <Animated.View style={animatedForwBtn}>
+            <Animated.View style={[animatedForwBtn,]}>
             <TouchableOpacity activeOpacity={0.9} style={styles.btn} onPress={pressForw}  disabled={forwLabel === ""}>
-                <Ionicons name='arrow-forward' size={40}/>
+                <Ionicons name='arrow-forward-circle' size={30}/>
                 <Text style={styles.btnLabel}>{forwLabel}</Text>
             </TouchableOpacity>
             </Animated.View>
@@ -93,20 +93,38 @@ export default SwipeLabelDataComp
 const styles = StyleSheet.create({
     container:{
         width:"100%",
+        paddingHorizontal:20,
+        paddingTop:13,
+        marginBottom:15
     },
     div:{
         flexDirection:"row",
-        justifyContent:"center",
-        gap:60,
-        alignItems:"center"
+        justifyContent:"space-between",
+        alignItems:"center",
+        backgroundColor:Colors.primaryBgColor.chillOrange,
+        padding:5,
+        borderRadius:10,
+        marginBottom:10,
+        borderWidth:1,
+        
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 4,
+
     },
     label:{
-        fontSize:25,
-        fontFamily:"MainFont",
+        fontSize:20,
+        fontFamily:"BoldFont",
         color:Colors.primaryBgColor.black
     },
     btnLabel:{
-        fontSize:13,
+        fontSize:11,
         color:Colors.primaryBgColor.gray,
         fontFamily:"MainFont"
     },

@@ -24,6 +24,7 @@ export const Colors = {
     gray:"#737373",
     chillOrange:'#fff4d1',
     darkPurple:'#bebfdb',
+    newPrimeTxt:'#96e3d0'
   },
   txtColor:{
     prime:"white",

@@ -67,6 +67,7 @@ const transactions = () => {
 
   const [tabs,setTabs] = useState("month")
 
+  const dateContainerOp = useSharedValue(0)
 
   const mainNavContainerOp = useSharedValue(1)
   const mainNavContainerIndex = useSharedValue(1)
@@ -91,7 +92,7 @@ const transactions = () => {
   const searchNavIndex = useSharedValue(0)
   const searchNavX = useSharedValue(-50)
 
-  const balanceContainerY = useSharedValue(0)
+  const balanceContainerY = useSharedValue(-SCREEN_HEIGHT)
 
   const validateFData = Array.isArray(filteredData) && filteredData.length > 0
 
@@ -150,12 +151,12 @@ const transactions = () => {
   })
 
   const animatedBalanceContainer = useAnimatedStyle(() => {
-    const borderRadius = interpolate(
+    /* const borderRadius = interpolate(
       balanceContainerY.value,
       [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y],
       [15,5],
       Extrapolation.CLAMP
-    )
+    ) */
     const backgroundColor = interpolateColor(
       balanceContainerY.value,
       [MAX_TRANSLATE_Y + 100,-300],
@@ -163,7 +164,6 @@ const transactions = () => {
     )
 
     return {
-      borderRadius,
       backgroundColor,
       transform: [
         {translateY: balanceContainerY.value}
@@ -197,11 +197,12 @@ const transactions = () => {
       balanceContainerY.value,
       [MAX_TRANSLATE_Y+300,-360],
       [
-        Colors.primaryBgColor.prime,Colors.primaryBgColor.lightGray
+        Colors.primaryBgColor.black,Colors.primaryBgColor.black
       ],
     )
     return{
-      backgroundColor
+      backgroundColor,
+      opacity: dateContainerOp.value
     }
   })
 
@@ -292,12 +293,8 @@ const transactions = () => {
 
   useEffect(() => {
     /* scrollTo(-SCREEN_HEIGHT / 2.6) */
-    scrollTo(-SCREEN_HEIGHT)
   },[])
 
-  useEffect(() => {
-    console.log("new value")
-  },[value])
 
   useDerivedValue(() => {
     if (balanceContainerY.value < -SCREEN_HEIGHT / 1.5) {
@@ -388,13 +385,13 @@ const transactions = () => {
     fetchData()
     fetchCompareData()
   },[value])
+
   
   return (
     
   <GestureHandlerRootView>  
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor:"black"}}>
     <View style={styles.container}>
-      <StatusBar hidden={true} />
         <Animated.View style={[styles.dateContainer, animatedDateBackground, {zIndex:0}]}>
           
           <View style={styles.calendarContainer}>
@@ -460,7 +457,7 @@ const transactions = () => {
         </Animated.View>
 
           <GestureDetector gesture={gesture}>
-          <Animated.View  style={[styles.modalBalanceContainer,animatedBalanceContainer,{backgroundColor:"black",borderRadius:13}]}>
+          <Animated.View  style={[styles.modalBalanceContainer,animatedBalanceContainer,{borderRadius:15}]}>
             <View style={[{width:80,height:5,backgroundColor:Colors.primaryBgColor.black,marginTop:10,justifyContent:"center",alignSelf:"center",borderRadius:5}]}/>
               <View style={[styles.balanceContainer]}>
               {/* <HeaderComp/> */}
@@ -474,7 +471,7 @@ const transactions = () => {
             )}
 
             {!dayPressed && !swiped && (
-              <View style={{paddingHorizontal:30,width:"100%",marginTop:tabs === "all" ? 0 : 0}}>
+              <View style={{paddingHorizontal:20,width:"100%",marginTop:tabs === "all" ? 0 : 0}}>
                 <View style={[styles.categorieBtnContainer,{width:"100%"}]}>  
                   {/* second container */}
                   <Animated.View style={[animatedSecondNav,{position:"absolute",width:"100%",borderColor:Colors.primaryBgColor.darkPurple,top:0}]}>
@@ -486,8 +483,8 @@ const transactions = () => {
                   </Animated.View>
                   </Animated.View>
                   {/* main container */}
-                  <Animated.View style={[animatedAllNav,{paddingLeft:10}]}>
-                    <TouchableOpacity onPress={navAllPressHandler}>
+                  <Animated.View style={[animatedAllNav,{padding:0,borderWidth:1,borderRadius:10,backgroundColor:Colors.primaryBgColor.chillOrange,borderColor:Colors.primaryBgColor.black}]}>
+                    <TouchableOpacity style={{borderWidth:2,height:"100%",width:"100%",padding:10,borderRadius:10,borderColor:Colors.primaryBgColor.brown}} onPress={navAllPressHandler}>
                       <Text style={{
                         color: Colors.primaryBgColor.black,
                         fontSize:17,
@@ -537,10 +534,9 @@ const transactions = () => {
 
 const styles = StyleSheet.create({
   container:{
-    backgroundColor: Colors.primaryBgColor.lightGray,
     height:"100%",
     width:"100%",
-    position:"relative"
+    position:"relative",
   },
   amountLabel:{
     fontSize:9,
@@ -646,7 +642,6 @@ const styles = StyleSheet.create({
   },
   dateContainer:{
     height:550,
-    backgroundColor:Colors.primaryBgColor.prime,
     position:"relative",
     zIndex:-1
   },

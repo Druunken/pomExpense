@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Colors'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 
@@ -13,10 +13,9 @@ import CategoryComp from '../components/CategoryComp.js'
 import CompareComp from '../components/CompareComp.js'
 
 const transactionStyle = {
-    backgroundColor:Colors.primaryBgColor.black,
     borderRadius:30,
     paddingTop:15,
-    height:200
+    height:200,
   }
 
 
@@ -24,6 +23,7 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
 
   const [data,setData] = useState({})
   const [outputData,setOutputData] = useState({})
+  const [prevOutputData,setPrevOutputData] = useState({})
   const [outputCate,setOutputCate] = useState({})
   const [trackingIndex,setTrackingIndex] = useState(0)
   const [dataLength,setDataLength] = useState(0)
@@ -52,12 +52,26 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
 
   const mainContainerOp = useSharedValue(0)
 
-  const lIndicatorBg = useSharedValue(0)
-  const lIndicatorWidth = useSharedValue(10)
+  const lIndicatorBg = useSharedValue(1)
+  const lIndicatorWidth = useSharedValue(15)
+  const lIndicatorOp = useSharedValue(1)
+
   const mIndicatorBg = useSharedValue(0)
   const mIndicatorWidth = useSharedValue(10)
+  const mIndicatorOp = useSharedValue(1)
+
   const rIndicatorBg = useSharedValue(0)
   const rIndicatorWidth = useSharedValue(10)
+  const rIndicatorOp = useSharedValue(1)
+
+  const lTextOp = useSharedValue(0)
+  const lTextY = useSharedValue(-50)
+
+  const mTextOp = useSharedValue(0)
+  const mTextY = useSharedValue(-50)
+
+  const rTextOp = useSharedValue(0)
+  const rTextY = useSharedValue(-50)
 
     /* 
     
@@ -75,6 +89,28 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
 
     */
 
+
+    const animatedTextL = useAnimatedStyle(() =>{
+      return{
+        opacity: lTextOp.value,
+        transform: [{ translateY: lTextY.value }]
+      }
+    })
+
+    const animatedTextM = useAnimatedStyle(() =>{
+      return{
+        opacity: mTextOp.value,
+        transform: [{ translateY: mTextY.value }]
+      }
+    })
+
+    const animatedTextR = useAnimatedStyle(() =>{
+      return{
+        opacity: rTextOp.value,
+        transform: [{ translateY: rTextY.value }]
+      }
+    })
+
     const animatedIndicatorL = useAnimatedStyle(() => {
       const backgroundColor = interpolateColor(
         lIndicatorBg.value,
@@ -83,7 +119,8 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
       )
       return{
         backgroundColor,
-        width:lIndicatorWidth.value
+        width:lIndicatorWidth.value,
+        opacity: lIndicatorOp.value
       }
     })
 
@@ -95,7 +132,8 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
       )
       return{
         backgroundColor,
-        width: mIndicatorWidth.value
+        width: mIndicatorWidth.value,
+        opacity: mIndicatorOp.value
       }
     })
 
@@ -107,7 +145,8 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
       )
       return{
         backgroundColor,
-        width: rIndicatorWidth.value
+        width: rIndicatorWidth.value,
+        opacity: rIndicatorOp.value
       }
     })
 
@@ -208,6 +247,9 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
       if(typeDate === "month"){
         if(data && dataLength > 0) {
           setOutputData(data[trackingIndex])
+          if(data[trackingIndex - 1] !== undefined){
+            setPrevOutputData(data[trackingIndex - 1])
+          }
           setLabel(months[data[trackingIndex]?.monthsIncomeDate])
           setYearLabel(data[trackingIndex]?.yearsIncomeDate)
           setQueryState(data[trackingIndex]?.monthsIncomeDate)
@@ -251,6 +293,12 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
 
         if(data && dataLength > 0){
           setOutputData(Object.values(data)[trackingIndex])
+
+          if(Object.values(data)[trackingIndex - 1] !== undefined){
+            setPrevOutputData(Object.values(data)[trackingIndex - 1])
+          }else{
+            setPrevOutputData(undefined)
+          }
           setLabel(!isDay ? norm : valid)
           setYearLabel(isDay ? norm.split("-")[0] + " " + months[norm.split("-")[1]] : "...")
           setQueryState(Object.keys(data)[trackingIndex])
@@ -288,19 +336,72 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
     },[scrollingDown])
 
 
-    /*  INDICATOR */
-    useEffect(() => {
-      if(scrollIndex === 0){
-        lIndicatorBg.value = withTiming(1,{ duration:250 }) 
-        lIndicatorWidth.value = withSpring(15)
+    const timeOutIdRef = useRef(null)
+    const handleScrollPage = (index) => {
+      if(timeOutIdRef.current){
+        clearTimeout(timeOutIdRef.current)
+        timeOutIdRef.current = null
+      }
+      if(index === 0){
+        mIndicatorOp.value = withTiming(0,{duration:500 })
+        lIndicatorOp.value = withTiming(0,{ duration:500 })
+        rIndicatorOp.value = withTiming(0,{ duration: 500 })
+
+        lTextOp.value = withTiming(1,{ duration:250 })
+        lTextY.value = withSpring(0,{ damping: 14})
+
+        timeOutIdRef.current = setTimeout(() => {
+
+          lIndicatorOp.value = withTiming(1,{ duration:250 })
+          lIndicatorWidth.value = withSpring(15)
+          lIndicatorBg.value = withTiming(1,{ duration:250 })
+
+          mIndicatorOp.value = withTiming(1,{duration:250 })
+          rIndicatorOp.value = withTiming(1,{ duration: 250 })
+
+          lTextOp.value = withTiming(0,{duration:250})
+          lTextY.value = withSpring(-50)
+        }, 2000);
+
+        mTextY.value = withSpring(-50)
+        mTextOp.value = withTiming(0,{ duration:250 })
+
+        rTextY.value = withSpring(-50)
+        rTextOp.value = withTiming(0,{ duration:250 })
+
         if(mIndicatorBg.value === 1){
           mIndicatorBg.value = withTiming(0,{ duration:250 })
           mIndicatorWidth.value = withSpring(10)
         }
 
-      }else if(scrollIndex === 1){
-        mIndicatorBg.value = withTiming(1,{ duration:250 })
-        mIndicatorWidth.value = withSpring(15)
+      }else if(index === 1){
+        mIndicatorOp.value = withTiming(0,{duration:500 })
+        lIndicatorOp.value = withTiming(0,{ duration:500 })
+        rIndicatorOp.value = withTiming(0,{ duration: 500 })
+
+        mTextOp.value = withTiming(1,{ duration: 250})
+        mTextY.value = withSpring(0,{ damping: 14})
+
+        timeOutIdRef.current = setTimeout(() => {
+          mTextOp.value = withTiming(0, { duration: 250 })
+          mTextY.value = withTiming(-50, { duration: 250 })
+
+          mIndicatorBg.value = withTiming(1,{ duration:250 })
+          mIndicatorWidth.value = withSpring(15)
+          mIndicatorOp.value = withTiming(1,{ duration: 320})
+
+
+          lIndicatorOp.value = withTiming(1,{ duration: 280 })
+          rIndicatorOp.value = withTiming(1,{ duration: 300 })
+        }, 2000);
+
+        lTextY.value = withSpring(-50)
+        lTextOp.value = withTiming(0,{ duration:250 })
+
+        rTextY.value = withSpring(-50)
+        rTextOp.value = withTiming(0,{ duration:250 })
+
+
         if(lIndicatorBg.value === 1){
           lIndicatorBg.value = withTiming(0,{ duration:250 })
           lIndicatorWidth.value = withSpring(10)
@@ -309,16 +410,40 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
           rIndicatorBg.value = withTiming(0,{ duration:250 })
           rIndicatorWidth.value = withSpring(10)
         }
-      }else if(scrollIndex === 2){
-        rIndicatorBg.value = withTiming(1,{ duration:250 })
-        rIndicatorWidth.value = withSpring(15)
+      }else if(index === 2){
+        mIndicatorOp.value = withTiming(0,{duration:500 })
+        lIndicatorOp.value = withTiming(0,{ duration:500 })
+        rIndicatorOp.value = withTiming(0,{ duration: 500 })
+
+        rTextOp.value = withTiming(1,{duration:250})
+        rTextY.value = withSpring(0,{ damping: 14})
+
+        timeOutIdRef.current = setTimeout(() => {
+          rIndicatorBg.value = withTiming(1,{ duration:250 })
+          rIndicatorWidth.value = withSpring(15)
+          rIndicatorOp.value = withTiming(1,{ duration: 250 })
+
+          mIndicatorOp.value = withTiming(1,{duration:250 })
+          lIndicatorOp.value = withTiming(1,{ duration:250 })
+
+          lTextY.value = withSpring(-50)
+          lTextOp.value = withTiming(0,{ duration:250 })
+
+          rTextOp.value = withTiming(0,{duration:250})
+          rTextY.value = withSpring(-50)
+        }, 2000);
+
+        mTextY.value = withSpring(-50,{damping:14})
+        mTextOp.value = withTiming(0,{ duration:250 })
+
         if(mIndicatorBg.value === 1){
           mIndicatorBg.value = withTiming(0,{ duration:250 })
           mIndicatorWidth.value = withSpring(10)
         }
       }
-    },[scrollIndex])
+    }
 
+    /*  INDICATOR */
     useEffect(() => {
       if(typeof cateYears === "object"){
         if(Object.values(cateYears).length > 0){
@@ -329,7 +454,6 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
 
   return (
     <Animated.View style={[styles.container,animatedMainContainer,{}]}>
-      {/* <Text style={styles.label}>{typeDate === "day" ? "Day component" : typeDate === "month" ? "Month component" : "Year component"}</Text> */}
       <SwipeLabelDataComp setState={setTrackingIndex} dataLength={dataLength} label={label} backLabel={backLabel} forwLabel={forwLabel} yearLabel={yearLabel}/>
       <Animated.View style={[animatedContainer,styles.graphContainer,{zIndex:0}]} >
         <View style={styles.indicatorDiv}>
@@ -338,6 +462,15 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
           { typeDate !== "day" && (
             <Animated.View style={[styles.scrollIndicator,animatedIndicatorR]}/>
           )}
+          <Animated.View style={[animatedTextL,{ position:"absolute"}]}>
+            <Text style={styles.indText}>Stats</Text>
+          </Animated.View>
+          <Animated.View style={[animatedTextM,{ position:"absolute"}]}>
+            <Text style={styles.indText}>Category Stats</Text>
+          </Animated.View>
+          <Animated.View style={[animatedTextR,{ position:"absolute"}]}>
+            <Text style={styles.indText}>Compare Stats</Text>
+          </Animated.View>
         </View>
         <ScrollView nestedScrollEnabled contentContainerStyle={styles.scrollDiv} horizontal pagingEnabled  scrollEnabled showsHorizontalScrollIndicator={false} onScroll={(ev) => {
           const offsetX = ev.nativeEvent.contentOffset.x
@@ -345,13 +478,14 @@ const TransactionDataComponent = ({ typeDate, dateData, transModalVisible, compa
           const pageIndex = Math.round(offsetX / pageWidth)
           if(scrollIndex !== pageIndex){
             setScrollIndex(pageIndex)
+            handleScrollPage(pageIndex)
           }
         }}>
 
-          <StatsComp outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+          <StatsComp prevData={prevOutputData} outputData={outputData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
           <CategoryComp outputData={outputCate && outputCate} typeDate={typeDate} setGivenWidth={setGivenWidth} isVisible={scrollIndex === 1}/>
           { typeDate !== "day" && (
-            <CompareComp outputData={comparedData && comparedData} typeDate={typeDate} setGivenWidth={setGivenWidth}/>
+            <CompareComp outputData={comparedData && comparedData} typeDate={typeDate} setGivenWidth={setGivenWidth} isVisible={scrollIndex === 2}/>
           )}
         </ScrollView>
       </Animated.View>
@@ -367,9 +501,7 @@ export default TransactionDataComponent
 const styles = StyleSheet.create({
   container:{
     width:"100%",
-    marginTop:5,
-    flex:1,
-    gap:15
+    overflow:"hidden",
   },
   indicatorDiv:{
     width:"100%",
@@ -401,4 +533,9 @@ const styles = StyleSheet.create({
     backgroundColor:Colors.primaryBgColor.gray,
     borderRadius:10,
   },
+  indText:{
+    fontFamily:"BoldFont",
+    fontSize:18,
+    color:Colors.primaryBgColor.black
+  }
 })

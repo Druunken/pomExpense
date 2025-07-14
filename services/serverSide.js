@@ -14,7 +14,7 @@ const createCurrentDate = async() => {
   const arr = currDay.split("-")
   const day = arr[2]
   const month = arr[1] // arr[1]
-  const year = "2026" // arr[0]
+  const year = arr[0] // arr[0]
   const fullDate = `${year}-${month}-${day}`
   return [day,month,year,fullDate]
 }
@@ -1753,7 +1753,7 @@ const getDayTrans = async(day,month,year) => {
         const yearDate = data[i].year
         const dateStr = data[i].date
         const balanceType = data[i].balanceType
-        const isIncome = balanceType === "plus"
+        const isIncome = balanceType === "plus" || balanceType === " "
         const income = isIncome ? amount : 0
         const expense = !isIncome ? amount : 0
         let numbersOfTrans = 0
