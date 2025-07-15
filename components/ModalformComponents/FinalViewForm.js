@@ -16,7 +16,7 @@ const FinalViewForm = ({
     setPointerSeen,
 }) => {
 
-    const { setValue, currency, fixedCostAmount } = useContext(usersBalanceContext)
+    const { setValue, currency, fixedCostAmount, deviceBottomInset } = useContext(usersBalanceContext)
 
 
     const [isGoalBig,setIsGoalBig] = useState(incomeNum <= goalNum)
@@ -30,6 +30,7 @@ const FinalViewForm = ({
     },[prevIncome,prevGoal])
 
     useEffect(() => {
+        console.log(deviceBottomInset)
         setPointerSeen(prev => {
           const copy = prev
           copy[7] = 1
@@ -51,7 +52,8 @@ const FinalViewForm = ({
        <View style={styles.warnDiv}>
             <Text style={styles.warnLabel} >{isGoalBig ? "Saving Goal is to high" : ""}</Text>
        </View>
-        <View style={{justifyContent:"center",alignItems:"center"}}>
+        <View style={{flex:1}} />
+        <View style={{justifyContent:"center",alignItems:"center",marginBottom:deviceBottomInset}}>
             <TouchableOpacity disabled={isGoalBig} style={[styles.finishBtn,{opacity:isGoalBig ? 0.5 : 1}]} onPress={() => {
                 setPointer(8)
                 setValue(prevVal)
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
         width:"100%",
         alignItems:"center",
         height:"100%",
+        flex:1
     },
     finishBtn:{
         backgroundColor:Colors.primaryBgColor.prime,

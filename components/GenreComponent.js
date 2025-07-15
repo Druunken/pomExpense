@@ -5,21 +5,21 @@ import GenreElement from './GenreElement.js'
 import CondBtn from './CondBtn.tsx'
 import { Colors } from '@/constants/Colors.ts'
 
-const GenreComponent = ({ visible, setVisible, setCate, setSubType }) => {
+const GenreComponent = ({ visible, setVisible, setCate, setSubType, vertical = false }) => {
   const inset = useSafeAreaInsets()
 
 
   
   return (
-    <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10,opacity: visible ? 1 : 0}]}>
+    <View style={[styles.container, {paddingTop:inset.top,paddingHorizontal:15, zIndex:visible ? 100 : -10,opacity: visible ? 1 : 0,backgroundColor: vertical ? Colors.primaryBgColor.white : Colors.primaryBgColor.black}]}>
       <View style={styles.layout}> 
         <View style={styles.header}>
           <Text style={styles.label}>Select Type</Text>
         </View>
         <View style={styles.content}>
-          <GenreElement setVisible={setVisible} setCate={setCate} setSubType={setSubType}/>
+          <GenreElement setVisible={setVisible} setCate={setCate} setSubType={setSubType} vertical={vertical} importType='fixed cost' />
         </View>
-        <View style={[styles.footer,{paddingBottom:inset.bottom}]}>
+        <View style={[styles.footer,{paddingBottom:inset.bottom,justifyContent:"center",alignItems:"center"}]}>
           <CondBtn label={"Go Back"} style={{width:"100%"}} onPress={() => setVisible(false)} genreTypes={true}/>
         </View>
       </View>
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   label:{
     fontSize:30,
     fontFamily:"MainFont",
-    color:Colors.primaryBgColor.white
+    color:Colors.primaryBgColor.gray
   },
   layout:{
     width:"100%",
@@ -59,5 +59,6 @@ const styles = StyleSheet.create({
   },
   footer:{
     width:"100%",
-  }
+  },
+
 })

@@ -1,6 +1,9 @@
-import React,{createContext, FC, ReactNode, useEffect, useState} from "react";
+import React,{createContext, FC, ReactNode, useEffect, useState } from "react";
 import db from '../services/serverSide.js'
 import numberInputValidation from "../services/numberInputValidation.js";
+import { Dimensions } from "react-native";
+
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface IncomeContextType {
     incomeActive: boolean
@@ -29,6 +32,17 @@ interface BalanceContextType {
     setSavingVal: React.Dispatch<React.SetStateAction<string>>
     markedDates : object
     setMarkedDates: React.Dispatch<React.SetStateAction<object>>
+
+    deviceWidth : number
+    setDeviceWidth : React.Dispatch<React.SetStateAction<number>>
+    deviceHeight : number
+    setDeviceHeight: React.Dispatch<React.SetStateAction<number>>
+
+    deviceTopInset : number
+    setDeviceTopInset : React.Dispatch<React.SetStateAction<number>>
+    deviceBottomInset : number
+    setDeviceBottomInset : React.Dispatch<React.SetStateAction<number>>
+
 }
 
 interface IncomeProviderProps {
@@ -61,6 +75,14 @@ const defaultBalanceContextType: BalanceContextType = {
     setMarkedDates: () => {}, 
     savingVal: "",
     setSavingVal: () => {},
+    deviceWidth: 0,
+    setDeviceWidth: () => {},
+    deviceHeight: 0,
+    setDeviceHeight: () => {},
+    deviceTopInset: 0,
+    setDeviceTopInset: () => {},
+    deviceBottomInset: 0,
+    setDeviceBottomInset: () => {},
 
 }
 
@@ -70,6 +92,8 @@ export const usersBalanceContext = createContext<BalanceContextType>(defaultBala
 
 
 export const IncomeProvider: FC<IncomeProviderProps> = ({children}) => {
+
+    
     const [incomeActive,setIncomeActive] = useState<boolean>(false)
     const [currentIncome,setCurrentIncome] = useState<string>("")
     const [automateIncomeDay,setAutomateIncomeDay] = useState<string | null>(null)
@@ -110,6 +134,9 @@ export const IncomeProvider: FC<IncomeProviderProps> = ({children}) => {
 }
 
 export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
+
+    const inset = useSafeAreaInsets()
+
     const [currency, setCurrency] = useState<string>("");
     const [firstLaunch, setFirstLaunch] = useState<boolean>(true);
     const [value, setValue] = useState<string>("");
@@ -117,6 +144,11 @@ export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
     const [fixedCostAmount, setFixedCostAmount] = useState<string>("0,00");
     const [savingVal,setSavingVal] = useState<string>("0,00")
     const [markedDates,setMarkedDates] = useState<object>({})
+
+    const [deviceWidth,setDeviceWidth] = useState<number>(0)
+    const [deviceHeight,setDeviceHeight] = useState<number>(0)
+    const [deviceTopInset,setDeviceTopInset] = useState<number>(0)
+    const [deviceBottomInset,setDeviceBottomInset] = useState<number>(0)
 
     const setMarkingPoints = async() => {
         try {
@@ -143,19 +175,36 @@ export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
             console.error("SET MARKING POINTS")
         }
     }
+    
     const getValues = async() => {
         try {
+
+            const dimensions = Dimensions.get("screen")
+            console.log(inset.bottom,"bottome inset")
+
             const getCurrency = await db.getCurrency()
             const getValue = await db.getBalance()
             const getUsername = await db.getUsername()
             const getCosts = await db.getTotalCosts()
             const getSavingVal = await db.getSavingGoal()
+
+
             setMarkingPoints()
             
             const convertStr = numberInputValidation.converToString(getValue)
             const costsStr = numberInputValidation.converToString(getCosts)
             const savingStr = numberInputValidation.converToString(getSavingVal)
 
+            /* screen size */
+            setDeviceWidth(dimensions.width)
+            setDeviceHeight(dimensions.height)
+
+            setDeviceBottomInset(inset.bottom)
+            setDeviceTopInset(inset.top)
+
+            
+
+            /* clients finance */
             setCurrency(getCurrency)
             setValue(convertStr)
             setUsername(getUsername)
@@ -185,7 +234,11 @@ export const BalanceProvider: FC<IncomeProviderProps> = ({ children }) => {
             markedDates,
             setMarkedDates,
             savingVal,
-            setSavingVal
+            setSavingVal,
+            deviceWidth,
+            deviceHeight,
+            deviceBottomInset,
+            deviceTopInset,
         }}>
             {children}
         </usersBalanceContext.Provider>

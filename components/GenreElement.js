@@ -1,13 +1,13 @@
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 
-import { generalTypes, foodTypes, drinkTypes, sweetTypes } from '../constants/GenreTypes.js'
+import { generalTypes, foodTypes, drinkTypes, sweetTypes, fixedCostTypes } from '../constants/GenreTypes.js'
 import { Colors } from '@/constants/Colors.ts'
 import LottieView from 'lottie-react-native'
 
 
 
-const GenreElement = ({ setVisible, setCate, setSubType }) => {
+const GenreElement = ({ setVisible, setCate, setSubType, vertical = false, importType="general" }) => {
 
 
     /*  refs neeed to be created for every instance of lottie View */
@@ -101,7 +101,8 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
             borderWidth: pressedList[0] === type ? 5 : 
             3,
             borderColor: pressedList[0] === type ? Colors.primaryBgColor.brown:
-            Colors.primaryBgColor.dark
+            Colors.primaryBgColor.dark,
+            width: vertical ? "100%" : 80
         }]} 
         onPress={(ev) => {
             setPressedList([type])
@@ -144,7 +145,7 @@ const GenreElement = ({ setVisible, setCate, setSubType }) => {
         
         <View style={{}}>
             {/* <Text style={styles.mainLabel}>General Types</Text> */}
-            <FlatList numColumns={3} contentContainerStyle={styles.container} key={item => item.id} data={generalTypes} keyExtractor={item => item.id} renderItem={({item}) => <Element title={item.name} type={item.type}/>}/>
+            <FlatList numColumns={vertical ? 1 : 3} contentContainerStyle={styles.container} key={item => item.id} data={importType === "fixed cost" ? fixedCostTypes : importType === "general" ? generalTypes : []} keyExtractor={item => item.id} renderItem={({item}) => <Element  title={item.name} type={item.type}/>}/>
         </View>
 
         {/* <View>

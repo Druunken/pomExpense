@@ -205,9 +205,9 @@ const styles = StyleSheet.create({
         alignItems:"center", 
     },
     touchDiv:{
-        borderRadius:4,
+        borderRadius:10,
         backgroundColor:Colors.primaryBgColor.darkPurple,
-        height:10,
+        height:15,
         borderWidth:1,
         borderColor:Colors.primaryBgColor.white,
     },

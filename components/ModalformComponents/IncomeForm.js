@@ -17,6 +17,7 @@ const IncomeForm = ({ setPointer, setPointerSeen, pointerSeen, prevIncome, setPr
     incomeActive,setIncomeActive
   } = useContext(incomeActiveContext)
 
+
   const [incomeAddup,setIncomeAddup] = useState(false)
   const [isOnFocus,setIsOnFocus] = useState(false)
 

@@ -9,7 +9,6 @@ const CurrencyForm = ({ setPointer, setPointerSeen, pointerSeen,  prevCurrency, 
   const { currency,setCurrency } = useContext(usersBalanceContext)
 
   const validation = () => {
-
     if(pointerSeen[7] === 1){
       setPointer(7)
       setPrevCurrency(currency)

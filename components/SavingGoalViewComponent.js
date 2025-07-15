@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
 import LottieView from 'lottie-react-native';
 import Animated ,{ useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
@@ -20,6 +20,7 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
     const [outcomeLabelClr,setOutcomLabelClr] = useState(Colors.primaryBgColor.prime)
 
     const [spendedWidth,setSpendedWidth] = useState(0)
+    const [spendedVal,setSpendedVal] = useState("")
     const [savingStatus,setSavingStatus] = useState("good")
     const [savingWidth,setSavingWidth] = useState(0)
     const [fixedWidth,setFixedWidth] = useState(0)
@@ -156,11 +157,13 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
                     const processedIncome = monthExpense[0].monthsIncomeAutomateProcessed > 0
                     const expense = monthExpense[0].monthsTotalExpenses 
                     const income = monthExpense[0].monthsIncomeVal + (!processedIncome ? monthExpense[0].monthsStaticIncomeVal : 0)
+                    const incomeNonStatic = monthExpense[0].monthsIncomeVal
                     const convertString = numberInputValidation.converToString((income - monthExpense[0].monthsSavingGoalVal - Math.abs(expense)))
                     const convertNum = numberInputValidation.convertToNumber(convertString)
                     const finalResNum = numberInputValidation.converToString(convertNum.toFixed(2))
                     const spendedWidthMod = (250 / income) * Math.abs(expense) 
                     let savingWidthMod = (income / 250 ) * (numberInputValidation.convertToNumber(savingVal) / 25)
+
                     setSavingVal(numberInputValidation.converToString(monthExpense[0].monthsSavingGoalVal))
                     setMonthsTotalExpense(finalResNum)
                     setSpendedWidth(spendedWidthMod)
@@ -173,10 +176,12 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
                         const resFixedCost = Math.abs(actualNum)
                         const res = numberInputValidation.converToString((convertNum - resFixedCost).toFixed(2))
                         savingWidthMod = (250 / income) * (income - numberInputValidation.convertToNumber(savingVal))
+                        
                         setAmountWarning(res)
                         setFixedCostsDebited(false)
                         setSavingWidth(savingWidthMod)
                         setFixedWidth((250 / income) * resFixedCost)
+                        setSpendedVal(incomeNonStatic + Math.abs(expense))
 
                         if(numberInputValidation.convertToNumber(res) < 0 && convertNum > 0){
                             setOutcomLabelClr(Colors.primaryBgColor.brown)
@@ -214,14 +219,14 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
   return (
     <Animated.View style={[styles.productContainer,animatedProductContainer,{display:savingVisible ? "flex" : "none"}]}>
         {savingGoalActive ? (
-            <>
+            <ScrollView contentContainerStyle={{width:"100%",paddingHorizontal:20,gap:13}}>
                 <Animated.View style={[styles.productDiv, animatedSavingGoal, {borderBottomWidth:0}]}>
                     <View style={[styles.layout,{flexDirection:"row",justifyContent:"center",alignItems:"center",gap:20}]}>
                     <View style={styles.layoutDiv}>
                         <Text style={[styles.lightLabel,{color:outcomeLabelClr,fontSize:25}]}>{fixedCostsDebited ? monthsTotalExpense : amountWarning}$</Text>
                         <Text style={[styles.label,{fontSize:17}]}>{savingStatus === "good" ? "Remaining" : "Diff"}</Text>
                         <Text style={[styles.lightLabel,{color:Colors.primaryBgColor.black,fontSize:25}]}>{monthsTotalExpense}$</Text>
-                        <Text style={[styles.label,{fontSize:17}]}>Total Amount</Text>
+                        <Text style={[styles.label,{fontSize:17}]}>Limit</Text>
                     </View>
                     <Text style={styles.label}>to achieve</Text>
                     <View style={styles.layoutDiv}>
@@ -240,7 +245,7 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
                             </View>
                         </View>
                     </View> */}
-                    <ProgressBar savingVisible={savingVisible} spendedClr={outcomeLabelClr} savingWidth={savingWidth} fixedWidth={fixedWidth} spendedWidth={spendedWidth} width={250} />
+                    <ProgressBar savingVisible={savingVisible} spendedClr={outcomeLabelClr} fixedVal={fixedCostAmount} spendedVal={spendedVal} currency={currency} savingWidth={savingWidth} fixedWidth={fixedWidth} spendedWidth={spendedWidth} width={250}/>
                     {/* {!fixedCostsDebited && (
                     <View style={{justifyContent:"center",alignItems:"center",backgroundColor:"white",padding:5,borderRadius:5}}>
                         <LottieView loop autoPlay style={{width:30,height:30}} resizeMode='cover' source={require("../assets/lottie/info_lottie.json")} />
@@ -253,14 +258,7 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
                     </View>
                     )} */}
                     </Animated.View>
-
-                        {/* CREATE A HALF DONUT SHAPED CHART INSTEAD OF A STRAIGH LINE */}
-                        <Text style={{marginTop:50}}>Create a half donut shaped chart instead of a straight line</Text>
-                        <View style={{width:"100%",borderWidth:1}}>
-                             <ProgressBarSvg width={250}/>
-                             <Text>Saving Goal: 250</Text>
-                        </View>
-                    {/* <Animated.View style={[styles.productDiv,animatedProductSecond,{marginTop:5,justifyContent:"center",alignItems:"center",gap:0,borderBottomWidth:0}]}>
+                    <Animated.View style={[styles.productDiv,animatedProductSecond,{marginTop:30,justifyContent:"center",alignItems:"center",gap:0,borderBottomWidth:0}]}>
 
                     <Text style={[styles.productLabel,{fontSize:28}]}>Stats:</Text>
                     <View style={{flexDirection:"row",gap:30}}>
@@ -307,8 +305,9 @@ const SavingGoalViewComponent = ({ savingVisible, statusCount, visibleOverview }
                                 <Text style={[styles.label]}>You got cooked. No plus this month</Text>
                             </View>
                         </View>
-                    </Animated.View> */}
-            </>
+                    </Animated.View>
+                    
+            </ScrollView>
         ): (
             <>
                 <View style={{width:"100%",justifyContent:"center",alignItems:"center"}}>
@@ -380,7 +379,6 @@ const styles = StyleSheet.create({
         gap:15,
         position:"absolute",
         top:80,
-        paddingHorizontal:20,
 
     },
     productLabel:{
@@ -393,7 +391,7 @@ const styles = StyleSheet.create({
         gap:10,
         borderBottomWidth:0.3,
         width:"100%",
-        paddingBottom:10,
+        paddingBottom:5,
     },
     touchContainer:{
         width:"100%",

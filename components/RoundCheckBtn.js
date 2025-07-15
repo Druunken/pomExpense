@@ -3,10 +3,12 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Colors } from '@/constants/Colors'
 
-const RoundCheckBtn = ({ onPress, setShowAdd, fn }) => {
+const RoundCheckBtn = ({ onPress, setShowAdd, fn, cond }) => {
+
+
   return (
-    <View style={styles.container} >
-        <TouchableOpacity onPress={() => {
+    <View style={[styles.container,{ opacity: cond ? 0.5 : 1}]} >
+        <TouchableOpacity disabled={cond} onPress={() => {
             setShowAdd(false)
             fn()
         }} style={styles.btn} >

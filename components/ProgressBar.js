@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Colors } from '@/constants/Colors'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 
-const ProgressBar = ({ savingVisible, spendedWidth, savingWidth, fixedWidth, width, spendedClr }) => {
+const ProgressBar = ({ savingVisible, spendedWidth, savingWidth, fixedWidth, width, spendedClr, spendedVal, fixedVal, currency }) => {
 
     const fixedWidthVal = useSharedValue(0)
     const spendedWidthVal = useSharedValue(0)
@@ -26,7 +26,6 @@ const ProgressBar = ({ savingVisible, spendedWidth, savingWidth, fixedWidth, wid
     })
 
     useEffect(() => {
-        console.log(spendedWidth,"here")
         
         if(savingVisible){
             fixedWidthVal.value = withSpring(fixedWidth)
@@ -56,13 +55,13 @@ const ProgressBar = ({ savingVisible, spendedWidth, savingWidth, fixedWidth, wid
     <View style={[styles.container,{width:"100%",marginTop:22,borderBottomWidth:0}]}>
         <View style={{width:width,flexDirection:"row",marginBottom:5,height:"100%"}}>
             {savingWidth !== 0 && (
-                <>
+                <View style={{flexDirection:"row"}}>
                     <View style={[{justifyContent:"center",alignItems:"center",height:"100%",width:savingWidth}]}>
                     </View>
                     <View style={{backgroundColor:Colors.primaryBgColor.white,justifyContent:"center",alignItems:"center",borderRadius:10,height:"100%",width:55}}>
                         <Text style={styles.infoLabel}>Goal</Text>
                     </View>
-                </>
+                </View>
             )}
         </View>
       <View style={[styles.progressDiv,{width:width,flexDirection:"row"}]}>
@@ -75,11 +74,13 @@ const ProgressBar = ({ savingVisible, spendedWidth, savingWidth, fixedWidth, wid
                 <View style={{height:"100%",backgroundColor:Colors.primaryBgColor.gray,width:55,padding:0,borderRadius:10,justifyContent:"center",alignItems:"center"}}>
                     <Text style={styles.infoLabel}>Fixed Cost</Text>
                 </View>
+                <Text style={styles.infoLabel}>{fixedVal}{currency}</Text>
             </View>
-            <View style={[{width:spendedWidth,minWidth:60,maxWidth:width}]}>
+            <View style={[{width:spendedWidth,minWidth:75,maxWidth:width}]}>
                 <View style={{height:"100%",backgroundColor:spendedClr,width:55,paddingHorizontal:0,borderRadius:10,justifyContent:"center",alignItems:"center",opacity:spendedWidth !== 0 ? 1 : 0}}>
                     <Text style={styles.infoLabel}>Spended</Text>
                 </View>
+                <Text style={styles.infoLabel}>{spendedVal}{currency}</Text>
             </View>
             {/* <View style={[styles.savingDiv,{marginLeft:savingWidth + 50,minWidth:80}]}>
                 <View style={[{justifyContent:"center",alignItems:"center",height:"100%"}]}>
@@ -102,7 +103,8 @@ const styles = StyleSheet.create({
     infoLabel:{
         fontFamily:"MainFont",
         color:Colors.primaryBgColor.black,
-        fontSize:10
+        fontSize:10,
+        textAlign:"center"
     },
     progressDiv:{
         backgroundColor:Colors.primaryBgColor.black,

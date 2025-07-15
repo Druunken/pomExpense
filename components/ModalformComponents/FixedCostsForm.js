@@ -24,7 +24,8 @@ const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
 
   const addRow = async() => {
     const num = inputConverter.convertToNumber(amount)
-    const created = await db.createCostsColumn(title,num,"Fixed Cost")
+    console.log(cate)
+    const created = await db.createCostsColumn(title,num,cate)
     /* const getData = await db.getMonthProps() */
     if(created) getAllItems()
   }
@@ -87,7 +88,7 @@ const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
       )}
       {showAdd && (
         <View style={{paddingTop:0}}>
-          <FixedCostsRowInput amount={amount} setAmount={setAmount} title={title} setTitle={setTitle} setShowAdd={setShowAdd} fn={() => {
+          <FixedCostsRowInput cate={cate} setCate={setCate} amount={amount} setAmount={setAmount} title={title} setTitle={setTitle} setShowAdd={setShowAdd} fn={() => {
             addRow()
             const actualCost = numberInputValidation.convertToNumber(fixedCostAmount)
             const actualAmount = numberInputValidation.convertToNumber(amount)
@@ -98,17 +99,18 @@ const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
             setAmount("")
             setCate("")
             setTitle("")
+  
           }} />
         </View>
       )}
       {!showAdd && (
-        <View style={{paddingBottom:0}} >
+        <View style={{height:80,width:"100%",justifyContent:"center",alignItems:"center"}} >
           <AddRoundBtn setShowAdd={setShowAdd} />
         </View>
       )}
       {!showAdd && (
         <View style={{justifyContent:"center", alignItems:"center", flexDirection:"row", gap:10}}>
-          <CondBtn type={"confirm"} label={"Confirm"} onPress={() => {
+          <CondBtn type={"confirm"} cond={data.length < 1} label={"Confirm"} onPress={() => {
             db.activateCosts()
             setPointer(prev => prev + 1)
             setPointerSeen((prev) => {
@@ -117,7 +119,7 @@ const FixedCostsForm = ({ setPointer, setPointerSeen, inset}) => {
               return copy
             })
           }}/>
-          <CondBtn type={'cancel'} label={'Skip'} onPress={() => {
+          <CondBtn type={''} label={'Skip'} onPress={() => {
             db.deactiveCosts()
             db.deleteAllCosts()
             setFixedCostAmount("0,00")

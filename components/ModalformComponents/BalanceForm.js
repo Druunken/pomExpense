@@ -17,14 +17,6 @@ const BalanceForm = ({ setPointer, setPointerSeen, prevVal, setPrevVal, pointerS
   const isSeen = pointerSeen[7] !== 1
 
 
-  useEffect(() => {
-    console.log(value)
-    if(value === ""){
-      console.log("no value")
-    }else if(value.length > 0){
-      console.log("ok some value here")
-    }
-  },[value])
   return (
       <View style={styles.container}>
         <KeyboardAvoidingView style={styles.keyboardDiv} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100}>

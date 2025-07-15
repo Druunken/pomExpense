@@ -28,7 +28,7 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
     const [prevCurrency, setPrevCurrency] = useState("")
     const [prevUsername, setPrevUsername] = useState("")
 
-    const [savingValid,setSavingValid] = useState(true)
+    const [savingValid,setSavingValid] = useState(false)
 
     const { fixedCostAmount, currency, savingVal } = useContext(usersBalanceContext)
     const { currentIncome } = useContext(incomeActiveContext)
@@ -50,7 +50,7 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
         setPointerSeen({1 : 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
     },[])
 
-    const backToOverview = pointer != 7 && pointerSeen[6] === 1
+    const backToOverview = pointer !== 7 && pointerSeen[6] === 1
     const backBtnVis = pointer - 1 !== 0
     const forBtnVis = pointer + 1 < 8 && pointerSeen[pointer] === 1 
 
@@ -92,7 +92,7 @@ const ModalEntryForm = ({ visible, pointer, setPointer }) => {
             <View style={[styles.container]}>
                 <View style={[styles.header,{height:Platform.OS === "ios" ? inset.top * 2 : 60}]}>
                     <View style={[styles.headerLayout]}>
-                            {!savingValid && (
+                            {backToOverview && (
                                 <BacktoFinal setPointer={setPointer} />
                             )}
                         {pointer !== 7 && (
